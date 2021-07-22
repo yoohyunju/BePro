@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class Recipe extends Fragment {
+public class RecipeActivity extends Fragment {
 
     // @NonNull : null 허용하지 않음
     // @Nullable : null 허용

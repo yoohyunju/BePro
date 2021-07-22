@@ -13,10 +13,10 @@ public class MainActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager; //앱 fragment에서 작업을 추가, 삭제, 교체하고 백 스택에 추가하는 클래스
     private FragmentTransaction transaction; //fragment 변경을 위한 트랜잭션(작업단위)
-    private Home mHome;
-    private Recipe mRecipe;
-    private MyPage mMyPage;
-    private Notice mNotice;
+    private HomeActivity mHome;
+    private RecipeActivity mRecipe;
+    private MyPageActivity mMyPage;
+    private NoticeActivity mNotice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +26,10 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView mNavView = findViewById(R.id.navigation);
         mNavView.setOnNavigationItemSelectedListener(new ItemSelectedListener()); //BottomNavigationView에 이벤트 리스너 연결
 
-        mHome = new Home(); //fragment 객체 생성
-        mRecipe = new Recipe();
-        mMyPage = new MyPage();
-        mNotice = new Notice();
+        mHome = new HomeActivity(); //fragment 객체 생성
+        mRecipe = new RecipeActivity();
+        mMyPage = new MyPageActivity();
+        mNotice = new NoticeActivity();
 
         fragmentManager = getSupportFragmentManager();
 
