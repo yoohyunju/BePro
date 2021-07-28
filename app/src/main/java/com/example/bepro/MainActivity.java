@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
+    //뒤로가기 버튼 막아두기
+    @Override
+    public void onBackPressed(){
 
-
+    }
 }
