@@ -1,12 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="notice">
-    </TextView>
+    <TableLayout
+        android:id="@+id/table"
+        android:stretchColumns="*"
+        android:layout_margin="20dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
 
-</LinearLayout>
+        <TableRow android:layout_height="10dp"
+            android:background="#BDBDBD">
+            <TextView
+                android:layout_column="1"
+                android:padding="10dp"
+                android:text="NO."
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_column="1"
+                android:padding="10dp"
+                android:text="제목"
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_column="1"
+                android:padding="10dp"
+                android:text="작성자"
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_column="1"
+                android:padding="10dp"
+                android:text="작성일"
+                android:textSize="20sp"/>
+        </TableRow>
+    </TableLayout>
+</RelativeLayout>

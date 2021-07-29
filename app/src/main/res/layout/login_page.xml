@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--input 형식 제한 추가-->
+    <!--login 성공 후 화면 전환/실패 시 화면 전환-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"></LinearLayout>
+            <!--아이콘 찾아서 추가하기-->
+            <EditText
+                android:id="@+id/loginId"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:ems="10"
+                android:inputType="text"
+                android:hint="아이디를 입력하세요"
+                android:textColorHint="#B2CCFF"
+                android:textColor="#4374D9"
+                android:textStyle="bold"
+                android:backgroundTint="#6799FF">
+            </EditText>
+
+            <EditText
+                android:id="@+id/loginPwd"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:hint="비밀번호를 입력하세요"
+                android:textColorHint="#B2CCFF"
+                android:textColor="#4374D9"
+                android:textStyle="bold"
+                android:backgroundTint="#6799FF"></EditText>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"></LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_weight="1">
+            <!--sns 로그인 버튼 추가-->
+
+            <ImageButton
+                android:id="@+id/kakaobtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="130dp"
+                android:layout_marginTop="40dp"
+                android:padding="0dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/facebook" />
+
+            <ImageButton
+                android:id="@+id/googlebtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="40dp"
+                android:padding="0dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/kakao" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/login"
+                android:layout_width="300dp"
+                android:layout_height="150dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:background="@drawable/login_start_btn"
+                android:text="Log in"
+                android:textColor="#4374D9"
+                android:textSize="17dp"
+                android:textStyle="bold"></Button>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <Button
+                    android:id="@+id/createMembtn"
+                    android:layout_width="150dp"
+                    android:layout_height="55dp"
+                    android:layout_marginLeft="55dp"
+                    android:text="Create Account?"
+                    android:textColor="#6799FF"
+                    android:background="#00FF0000"></Button>
+                <Button
+                    android:id="@+id/findMembtn"
+                    android:layout_width="150dp"
+                    android:layout_height="55dp"
+                    android:text="Forget ID OR PW?"
+                    android:textColor="#6799FF"
+                    android:background="#00FF0000"></Button>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
