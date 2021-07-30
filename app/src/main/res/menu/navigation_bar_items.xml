@@ -3,27 +3,21 @@
     <item
         android:id="@+id/home"
         android:icon="@drawable/ic_baseline_home_24"
-        android:enabled="true"
-        android:checked="true"
         android:title="home" />
     <item
         android:id="@+id/recipe"
         android:icon="@drawable/ic_baseline_sticky_note_2_24"
-        android:enabled="true"
         android:title="recipe" />
     <item
         android:id="@+id/add"
         android:icon="@drawable/ic_baseline_add_circle_outline_24"
-        android:enabled="true"
         android:title="add" />
     <item
         android:id="@+id/myPage"
         android:icon="@drawable/ic_baseline_person_outline_24"
-        android:enabled="true"
         android:title="myPage" />
     <item
         android:id="@+id/notice"
         android:icon="@drawable/ic_baseline_info_24"
-        android:enabled="true"
         android:title="notice" />
 </menu>

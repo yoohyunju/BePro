@@ -12,9 +12,45 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="#82a9dd">
+        android:background="@color/skyBlue">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="나의 냉장고"
+                    android:textColor="@color/black"
+                    android:textSize="25dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_baseline_keyboard_arrow_down_24"
+                    android:textSize="25dp"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/ic_baseline_settings_24"/>
+            </LinearLayout>
+        </LinearLayout>
+
     </androidx.appcompat.widget.Toolbar>
 
+    <!--콘텐츠-->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,9 +64,11 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="start"
-        app:menu="@menu/navigation_items"
         app:layout_constraintBottom_toBottomOf="parent"
         app:itemIconTint="@drawable/bottom_menu_color"
-        app:itemTextColor="@drawable/bottom_menu_color"/>
+        app:itemTextColor="@drawable/bottom_menu_color"
+        app:menu="@menu/navigation_bar_items"/>
+
+
 
 </LinearLayout>

@@ -18,16 +18,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".LoginActivity"
             android:parentActivityName=".IntroActivity"/>
+
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|adjustUnspecified"/>
+            android:windowSoftInputMode="adjustPan|adjustUnspecified"/> <!--앱 실행 시 키보드 조절-->
+
         <activity
             android:name=".CreateMemActivity"
             android:parentActivityName=".LoginActivity" />
+
         <activity android:name=".FindMemActivity"
-            android:parentActivityName=".LoginActivity"></activity>
+            android:parentActivityName=".LoginActivity"/>
+
     </application>
 
 </manifest>
