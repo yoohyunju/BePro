@@ -11,11 +11,11 @@ public class LoginRequest extends StringRequest {
     final static private String URL = "http://192.168.0.17:81/login.php";
     private Map<String, String> map;
 
-    public LoginRequest(String userID, String userPassword, Response.Listener<String> listener){
+    public LoginRequest(String userEmail, String userPassword, Response.Listener<String> listener){
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();
-        map.put("userID", userID);
+        map.put("userEmail", userEmail);
         map.put("userPassword", userPassword);
 
         //데이터 전송 확인, Logcat

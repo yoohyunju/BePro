@@ -19,14 +19,14 @@ import org.json.JSONObject;
 public class LoginActivity extends AppCompatActivity {
     //로그인 버튼 클릭 시 전환되는 로그인 화면
     Button login, create, forget;
-    EditText id, pwd;
+    EditText email, pwd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
 
-        id = (EditText) findViewById(R.id.loginId);
+        email = (EditText) findViewById(R.id.loginId);
         pwd = (EditText) findViewById(R.id.loginPwd);
 
         loginSetting();
@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userID = id.getText().toString();
+                String userEmail = email.getText().toString();
                 String userPassword = pwd.getText().toString();
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                                 startActivity(intent);
                             }else{
                                 Toast.makeText(getApplicationContext(), "로그인에 실패했습니다..", Toast.LENGTH_SHORT).show();
-                                id.setText(null);
+                                email.setText(null);
                                 pwd.setText(null);
                             }
                         }catch (Exception e){
@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 };
-                LoginRequest loginRequest = new LoginRequest(userID, userPassword, responseListener);
+                LoginRequest loginRequest = new LoginRequest(userEmail, userPassword, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
                 queue.add(loginRequest);
             }

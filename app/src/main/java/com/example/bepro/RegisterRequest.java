@@ -12,20 +12,19 @@ public class RegisterRequest extends StringRequest {
     final static private String URL = "http://192.168.0.17:81/register.php";
     private Map<String, String> map;
 
-    public RegisterRequest(String userID, String userPassword, String userEmail, Response.Listener<String> listener){
+    public RegisterRequest(String userNick, String userEmail, String userPassword, Response.Listener<String> listener){
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();
-        map.put("userID", userID);
-        map.put("userPassword", userPassword);
+        map.put("userNick", userNick);
         map.put("userEmail", userEmail);
+        map.put("userPassword", userPassword);
 
-        System.out.println("responseListener: "+listener);
-        /*데이터 전송 확인, Logcat
+        //데이터 전송 확인, Logcat
         for(String key:map.keySet()){
             String value = map.get(key).toString();
             System.out.println(key+": " + map);
-        }*/
+        }
     }
 
     @Override
