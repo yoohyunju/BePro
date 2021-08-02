@@ -4,15 +4,15 @@
         echo("db 연결 실패 : ". mysqli_connect_error());
     }
     mysqli_query($con, "utf8");
-    $userID = $_POST["userID"];
+    $userEmail = $_POST["userEmail"];
     $userPassword = $_POST["userPassword"];
 
-    $statement = mysqli_prepare($con, "SELECT * FROM users WHERE user_id = ? AND user_password = ?");
-    mysqli_stmt_bind_param($statement, "ss", $userID, $userPassword);
+    $statement = mysqli_prepare($con, "SELECT * FROM users WHERE user_email = ? AND user_password = ?");
+    mysqli_stmt_bind_param($statement, "ss", $userEmail, $userPassword);
     mysqli_stmt_execute($statement);
 
     mysqli_stmt_store_result($statement);
-    mysqli_stmt_bind_result($statement, $userID, $userPassword, $userEmail);
+    mysqli_stmt_bind_result($statement, $userID, $userEmail, $userPassword);
 
     $response = array();
     $response["success"] = false;
@@ -20,8 +20,8 @@
     while(mysqli_stmt_fetch($statement)){
         $response["success"] = true;
         $response["userID"] = $userID;
-        $response["userPassword"] = $userPassword;
         $response["userEmail"] = $userEmail;
+        $response["userPassword"] = $userPassword;
     }
 
     echo json_encode($response);
