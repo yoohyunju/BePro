@@ -1,9 +1,12 @@
 package com.example.bepro;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -13,13 +16,14 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
-    //로그인 버튼 클릭 시 전환되는 로그인 화면
     Button login, create, forget;
     EditText email, pwd;
+    CheckBox autologin, saveid;
+    String userEmail, userPassword, id, password;
+    private boolean loginchecked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,19 +32,47 @@ public class LoginActivity extends AppCompatActivity {
 
         email = (EditText) findViewById(R.id.loginId);
         pwd = (EditText) findViewById(R.id.loginPwd);
+        login = (Button) findViewById(R.id.login);
+        forget = (Button) findViewById(R.id.findMembtn);
+        create = (Button) findViewById(R.id.createMembtn);
+        autologin = (CheckBox) findViewById(R.id.autologin);
+        saveid = (CheckBox) findViewById(R.id.saveid);
 
+        PrefsHelper.init(getApplicationContext());
+
+        //자동로그인이 체크 되었는지 확인
+        id = PrefsHelper.read("userEmail", "");
+        password = PrefsHelper.read("userPassword", "");
+
+        if(id != "" && password != ""){
+            userEmail = id;
+            userPassword = password;
+            //PrefsHelper.clear(); > 자동로그인 파일 비우기(테스트용)
+            Toast.makeText(getApplicationContext(), "자동 로그인되었습니다.", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+
+        autologinSetting();
         loginSetting();
         createAcSetting();
         forgetAcSetting();
     }
 
+    //로그인 버튼
     public void loginSetting(){
-        login = (Button) findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userEmail = email.getText().toString();
-                String userPassword = pwd.getText().toString();
+                userEmail = email.getText().toString();
+                userPassword = pwd.getText().toString();
+
+                //자동 로그인 체크가 되면 파일에 put
+                if(loginchecked == true){
+                    System.out.println("들어왔음");
+                    PrefsHelper.write("userEmail", userEmail);
+                    PrefsHelper.write("userPassword", userPassword);
+                }
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
@@ -69,8 +101,18 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    //자동로그인 체크버튼(OnClick 안에 함수 호출하려니 작동 안됨, boolean 으로 대체)
+    public void autologinSetting(){
+        autologin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginchecked = true;
+            }
+        });
+    }
+
+    //회원가입 버튼
     public void createAcSetting(){
-        create = (Button) findViewById(R.id.createMembtn);
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,8 +123,8 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    //아이디 비번 찾기 버튼
     public void forgetAcSetting(){
-        forget = (Button) findViewById(R.id.findMembtn);
         forget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

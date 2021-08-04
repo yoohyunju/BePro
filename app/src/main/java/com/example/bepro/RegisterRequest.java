@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class RegisterRequest extends StringRequest {
     //onResponse에 못들어갈 경우 IPv4 주소로 URL 변경하기, 서버 주소로 변경(수정)
-    final static private String URL = "http://192.168.0.17:81/register.php";
+    final static private String URL = "http://192.168.0.11:81/register.php";
     private Map<String, String> map;
 
     public RegisterRequest(String userNick, String userEmail, String userPassword, Response.Listener<String> listener){

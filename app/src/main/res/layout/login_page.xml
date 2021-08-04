@@ -50,7 +50,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"></LinearLayout>
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <CheckBox
+                    android:id="@+id/autologin"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="자동 로그인"
+                    android:textColor="#4374D9"
+                    android:buttonTint="#4374D9"
+                    android:layout_margin="10dp"></CheckBox>
+                <CheckBox
+                    android:id="@+id/saveid"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="아이디 비밀번호 저장"
+                    android:textColor="#4374D9"
+                    android:buttonTint="#4374D9"
+                    android:layout_margin="10dp"></CheckBox>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

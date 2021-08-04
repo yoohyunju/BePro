@@ -37,9 +37,9 @@ public class CreateMemActivity extends AppCompatActivity {
     int mailSend = 0;
     MainHandler mainHandler;
 
-    private boolean Nickvalidate = false;
-    private boolean Emailvalidate = false;
-    private boolean EmailCheck = false;
+    private boolean Nickvalidate = false; //별명 중복 확인
+    private boolean Emailvalidate = false; //이메일 중복 체크
+    private boolean EmailCheck = false; //회원가입 완료
 
     private AlertDialog dialog;
     private CountDownTimer countDownTimer;
@@ -187,7 +187,7 @@ public class CreateMemActivity extends AppCompatActivity {
         });
     }
 
-    //입력 완료 후 회원가입 버튼 세팅
+    //회원가입 완료 버튼
     public void buttonSetting(){
         register.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -199,7 +199,7 @@ public class CreateMemActivity extends AppCompatActivity {
 
                 if(!Nickvalidate){
                     AlertDialog.Builder builder = new AlertDialog.Builder(CreateMemActivity.this);
-                    dialog = builder.setMessage("닉네임 입력을 확인해주세요.").setNegativeButton("확인", null).create();
+                    dialog = builder.setMessage("별명 입력을 확인해주세요.").setNegativeButton("확인", null).create();
                     dialog.show();
                     return;
                 }
@@ -256,6 +256,7 @@ public class CreateMemActivity extends AppCompatActivity {
         });
     }
 
+    //이메일 형식 확인
     public static boolean isValidEmail(String email) {
         boolean err = false; String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
         Pattern p = Pattern.compile(regex);
@@ -264,7 +265,7 @@ public class CreateMemActivity extends AppCompatActivity {
         return err;
     }
 
-
+    //메일 스레드 (전송)
     class MailThread extends Thread{
         public void run(){
             GMailSender gMailSender = new GMailSender("bepro.emailac@gmail.com", "bowaaaougekvqjhh");
@@ -282,6 +283,7 @@ public class CreateMemActivity extends AppCompatActivity {
         }
     }
 
+    //메일 스레드
     class BackgroundThread extends Thread{
         public void run(){
             while(true){
@@ -305,6 +307,7 @@ public class CreateMemActivity extends AppCompatActivity {
         }
     }
 
+    //메일 핸들러(분/초 카운트 - 인증코드 입력)
     class MainHandler extends Handler{
         @Override
         public void handleMessage(Message massage){
