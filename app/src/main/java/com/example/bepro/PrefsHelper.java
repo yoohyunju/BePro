@@ -32,6 +32,11 @@ public class PrefsHelper {
         prefsEditor.commit();
     }
 
+    public static void remove(String key){
+        prefsEditor.remove(key);
+        prefsEditor.commit();
+    }
+
     public static void clear() {
         prefsEditor.clear();
         prefsEditor.commit();

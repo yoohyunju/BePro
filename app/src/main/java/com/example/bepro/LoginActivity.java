@@ -22,8 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     Button login, create, forget;
     EditText email, pwd;
     CheckBox autologin, saveid;
-    String userEmail, userPassword, id, password;
-    private boolean loginchecked = false;
+    String userEmail, userPassword, id, password, idSet, pwdSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,21 +38,29 @@ public class LoginActivity extends AppCompatActivity {
         saveid = (CheckBox) findViewById(R.id.saveid);
 
         PrefsHelper.init(getApplicationContext());
+        //PrefsHelper.clear(); // 자동로그인, 아이디 저장 파일 비우기(테스트용)
 
-        //자동로그인이 체크 되었는지 확인
+        //단말 파일 key, value 값 가져오기
         id = PrefsHelper.read("userEmail", "");
         password = PrefsHelper.read("userPassword", "");
+        idSet = PrefsHelper.read("saveID", "");
+        pwdSet = PrefsHelper.read("savePWD", "");
 
+        //자동 로그인 (checked)
         if(id != "" && password != ""){
             userEmail = id;
             userPassword = password;
-            //PrefsHelper.clear(); > 자동로그인 파일 비우기(테스트용)
             Toast.makeText(getApplicationContext(), "자동 로그인되었습니다.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         }
 
-        autologinSetting();
+        //아이디 저장 (checked)
+        if(idSet != "" && pwdSet != ""){
+            email.setText(idSet);
+            pwd.setText(pwdSet);
+        }
+
         loginSetting();
         createAcSetting();
         forgetAcSetting();
@@ -68,10 +75,18 @@ public class LoginActivity extends AppCompatActivity {
                 userPassword = pwd.getText().toString();
 
                 //자동 로그인 체크가 되면 파일에 put
-                if(loginchecked == true){
-                    System.out.println("들어왔음");
+                if(autologin.isChecked()){
                     PrefsHelper.write("userEmail", userEmail);
                     PrefsHelper.write("userPassword", userPassword);
+                }
+
+                //아이디 비번 저장 체크 확인
+                if(saveid.isChecked()){
+                    PrefsHelper.write("saveID", userEmail);
+                    PrefsHelper.write("savePWD", userPassword);
+                }else if (saveid.isChecked() && PrefsHelper.read("saveID", "") == ""){
+                    PrefsHelper.remove("saveID");
+                    PrefsHelper.remove("savePWD");
                 }
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -97,16 +112,6 @@ public class LoginActivity extends AppCompatActivity {
                 LoginRequest loginRequest = new LoginRequest(userEmail, userPassword, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
                 queue.add(loginRequest);
-            }
-        });
-    }
-
-    //자동로그인 체크버튼(OnClick 안에 함수 호출하려니 작동 안됨, boolean 으로 대체)
-    public void autologinSetting(){
-        autologin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginchecked = true;
             }
         });
     }

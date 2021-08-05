@@ -272,7 +272,7 @@ public class CreateMemActivity extends AppCompatActivity {
 
             GmailCode = gMailSender.getEmailCode();
             try{
-                gMailSender.sendMail("냉장고엔 무엇이? 회원가입 이메일 인증", "인증 코드는 "+GmailCode+" 입니다!", email.getText().toString());
+                gMailSender.sendMail("냉장고엔 무엇이? 회원가입 이메일 인증", "환영합니다! 인증 코드는 "+GmailCode+" 입니당!", email.getText().toString());
             }catch (SendFailedException e){
 
             }catch (MessagingException e){
