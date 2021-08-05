@@ -11,12 +11,14 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -78,18 +80,20 @@ public class HomeActivity extends Fragment {
             @Override
             public void onItemClick(FoodAdapter.ViewHolder holder, View view, int position) {
                 FoodItems item = adapter.getItem(position); //아이템 클릭 시 어댑터에서 해당 아이템 객체 가져옴
-                //showDialog();
+                showDetailDialog();
             }
         });
 
         //품목 상세 정보 팝업
-        //mDetailDialog.setContentView(R.layout.detail_item_popup);
+        mDetailDialog = new Dialog(getContext()); //dialog 초기화
+        mDetailDialog.setContentView(R.layout.detail_item_popup);
 
 
         return homeView;
     }
 
-    public void showDialog() {
+    //품목 정보 팝업창
+    public void showDetailDialog() {
         //팝업창 사이즈 조절
         WindowManager.LayoutParams params = mDetailDialog.getWindow().getAttributes();
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -108,6 +112,7 @@ public class HomeActivity extends Fragment {
             }
         });
     }
+
 
 
 }

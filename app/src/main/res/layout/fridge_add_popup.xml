@@ -13,18 +13,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2">
-        </LinearLayout>
+            android:layout_weight="2"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="5"
+            android:layout_weight="2"
             android:orientation="horizontal">
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"></LinearLayout>
+                android:layout_weight="1"/>
 
             <!--pop box area-->
             <LinearLayout
@@ -37,8 +36,21 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_weight="1">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="20dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20dp"
+                            android:text="냉장고 추가하기"
+                            android:textColor="@color/skyBlue"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -47,105 +59,84 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="20dp"
-                            android:text="품목 등록창"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/selfAddBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="25dp">
-                        <TextView
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:text="직접 등록하기"
-                            android:textSize="15dp"/>
-
+                            android:textSize="13dp"
+                            android:text="추가할 냉장고 명을 입력해주세요."/>
                     </LinearLayout>
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:layout_weight="9"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1">
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_weight="8">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="냉장고명"
+                            android:textSize="15dp"/>
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:background="@color/gray"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="20dp"
-                        android:layout_weight="8"
-                        android:gravity="center">
-
-                        <LinearLayout
-                            android:layout_width="100dp"
-                            android:layout_height="70dp"
-                            android:gravity="center">
-
-                            <TextView
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:background="@drawable/ic_baseline_photo_camera_24"/>
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="15dp"
-                            android:layout_margin="10dp"
-                            android:text="영수증/바코드로 등록하기"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="10dp"
-                            android:text="(영역 터치 시 카메라로 전환)"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
                         android:layout_weight="1">
                     </LinearLayout>
 
                 </LinearLayout>
+
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
-                    android:layout_gravity="center">
+                    android:layout_gravity="center"
+                    android:gravity="center">
 
                     <Button
-                        android:id="@+id/addCancelBtn"
+                        android:id="@+id/fridgeAddCancelBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/black"
-                        android:text="취소"/>
+                        android:backgroundTint="@color/gray"
+                        android:layout_margin="5dp"
+                        android:text="취소"
+                        android:textColor="@color/black"/>
+
+                    <Button
+                        android:id="@+id/fridgeNameAddBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/skyBlue"
+                        android:layout_margin="5dp"
+                        android:text="확인"
+                        android:textColor="@color/black"/>
                 </LinearLayout>
 
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"></LinearLayout>
+                android:layout_weight="1"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"></LinearLayout>
+            android:layout_weight="2"/>
 
     </LinearLayout>
 

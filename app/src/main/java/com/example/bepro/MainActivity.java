@@ -39,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private NoticeActivity mNotice;
     private BottomNavigationView mNavView;
 
-    private Dialog mAddItemDialog;
-    private Button mAddCancelBtn;
+    private LinearLayout mFridgeListOpenBtn, mAddFridgeBtn, mSelfAddBtn;
+    private Dialog mAddItemDialog, mFridgeListDialog, mFridgeAddDialog, mSelfAddDialog;
+    private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +57,35 @@ public class MainActivity extends AppCompatActivity {
         mMyPage = new MyPageActivity();
         mNotice = new NoticeActivity();
 
-        mAddItemDialog = new Dialog(MainActivity.this); //dialog 초기화
-        mAddItemDialog.setContentView(R.layout.add_item_popup); //품목 추가 팝업 xml 파일 연결
+        //dialog 초기화
+        mAddItemDialog = new Dialog(MainActivity.this);
+        mAddItemDialog.setContentView(R.layout.add_item_popup); //품목 추가 팝업 xml 연결
+
+        mFridgeListDialog = new Dialog(MainActivity.this);
+        mFridgeListDialog.setContentView(R.layout.fridge_list_popup); //냉장고 리스트 팝업 xml 연결
+
+        mFridgeAddDialog = new Dialog(MainActivity.this);
+        mFridgeAddDialog.setContentView(R.layout.fridge_add_popup); //냉장고 추가 팝업 xml 연결
+
+        mSelfAddDialog = new Dialog(MainActivity.this);
+        mSelfAddDialog.setContentView(R.layout.self_item_add_popup);
+
+        mFridgeListOpenBtn = findViewById(R.id.fridgeListOpenBtn);
+        mFridgeListOpenBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFridgeListDialog(); //냉장고 리스트 팝업 함수 호출
+            }
+        });
 
         fragmentManager = getSupportFragmentManager();
 
         transaction = fragmentManager.beginTransaction(); //트랜잭션 시작
         transaction.replace(R.id.frameLayout, mHome).commitAllowingStateLoss();
 
-
     }
 
+    //BottomNavigationView 이벤트 리스너 구현
     private class ItemSelectedListener implements NavigationBarView.OnItemSelectedListener {
         @Override
         public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
@@ -82,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case R.id.add:
-                    showDialog(); //Dialog 함수 호출
+                    showItemAddDialog(); //Dialog 함수 호출
                     //Toast.makeText(getApplicationContext(), "Open Click", Toast.LENGTH_SHORT);
                     break;
 
@@ -104,7 +123,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void showDialog(){
+    //품목 추가 팝업창
+    public void showItemAddDialog(){
 
         //팝업창 사이즈 조절
         WindowManager.LayoutParams params = mAddItemDialog.getWindow().getAttributes();
@@ -120,10 +140,92 @@ public class MainActivity extends AppCompatActivity {
         mAddCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAddItemDialog.dismiss(); //다이얼로그 닫기
+                mAddItemDialog.dismiss(); //Dialog 닫기
+            }
+        });
+
+        //직접 추가하기 버튼
+        mSelfAddBtn = mAddItemDialog.findViewById(R.id.selfAddBtn);
+        mSelfAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSelfAddDialog();
             }
         });
 
     }
 
+    //냉장고 리스트 팝업창
+    public void showFridgeListDialog(){
+
+        //팝업창 사이즈 조절
+        WindowManager.LayoutParams params = mFridgeListDialog.getWindow().getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+        mFridgeListDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mFridgeListDialog.setCanceledOnTouchOutside(false);
+
+        mFridgeListDialog.show(); //Dialog 띄우기
+
+        mFridgeListCancelBtn = mFridgeListDialog.findViewById(R.id.fridgeListCancelBtn); //냉장고 리스트 취소 버튼
+        mFridgeListCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFridgeListDialog.dismiss(); //Dialog 닫기
+            }
+        });
+
+        mAddFridgeBtn = mFridgeListDialog.findViewById(R.id.addFridgeBtn); //냉장고 추가 버튼
+        mAddFridgeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFridgeListDialog.dismiss();
+                showFridgeAddDialog();
+            }
+        });
+
+    }
+
+    //냉장고 추가하기 팝업창
+    public void showFridgeAddDialog(){
+        //팝업창 사이즈 조절
+        WindowManager.LayoutParams params = mFridgeAddDialog.getWindow().getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+        mFridgeAddDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mFridgeAddDialog.setCanceledOnTouchOutside(false);
+
+        mFridgeAddDialog.show();
+
+        mFridgeAddCancelBtn = mFridgeAddDialog.findViewById(R.id.fridgeAddCancelBtn);
+        mFridgeAddCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFridgeAddDialog.dismiss();
+            }
+        });
+    }
+
+    //품목 직접 추가하기 팝업
+    public void showSelfAddDialog(){
+        //팝업창 사이즈 조절
+        WindowManager.LayoutParams params = mSelfAddDialog.getWindow().getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+        mSelfAddDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //기본 백그라운드를 투명으로 변경
+        mSelfAddDialog.setCanceledOnTouchOutside(false); //창 바깥 부분 터치 닫기 설정 해제
+
+        mSelfAddDialog.show();
+
+        mSelfAddCancelBtn = mSelfAddDialog.findViewById(R.id.selfAddCancelBtn);
+        mSelfAddCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelfAddDialog.dismiss();
+            }
+        });
+    }
 }
