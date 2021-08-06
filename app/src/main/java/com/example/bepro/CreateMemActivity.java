@@ -42,7 +42,6 @@ public class CreateMemActivity extends AppCompatActivity {
     private boolean EmailCheck = false; //회원가입 완료
 
     private AlertDialog dialog;
-    private CountDownTimer countDownTimer;
     private int time = 59;
     int min = 2;
 

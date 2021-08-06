@@ -8,74 +8,40 @@
     <!--input 형식/글자수 제한 추가-->
     <!--input 데이터 전송/화면 전환-->
     <!--sns 연동 추가-->
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="6"
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"></LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_margin="10dp"
-                    android:orientation="horizontal">
-                    <EditText
-                        android:id="@+id/memNick"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="7"
-                        android:layout_marginRight="10dp"
-                        android:ems="10"
-                        android:inputType="text"
-                        android:hint="별명을 입력하세요"
-                        android:textColorHint="#B2CCFF"
-                        android:textColor="#4374D9"
-                        android:textStyle="bold"
-                        android:backgroundTint="#6799FF"></EditText>
-                        <Button
-                            android:id="@+id/nickCheck"
-                            android:layout_width="0dp"
-                            android:layout_height="40dp"
-                            android:layout_weight="3"
-                            android:text="확인"
-                            android:textColor="#4374D9"
-                            android:textSize="11dp"
-                            android:textStyle="bold"
-                            android:background="@drawable/login_start_btn"></Button>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_margin="10dp"
-                    android:orientation="horizontal">
-                    <EditText
-                        android:id="@+id/memEmail"
-                        android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:layout_weight="7"
-                        android:layout_marginRight="10dp"
-                        android:ems="10"
-                        android:inputType="textEmailAddress"
-                        android:hint="이메일을 입력하세요"
-                        android:textColorHint="#B2CCFF"
-                        android:textColor="#4374D9"
-                        android:textStyle="bold"
-                        android:backgroundTint="#6799FF"></EditText>
-
+                android:layout_weight="1"></LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/memNick"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"
+                    android:layout_marginRight="10dp"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:hint="별명을 입력하세요"
+                    android:textColorHint="#B2CCFF"
+                    android:textColor="#4374D9"
+                    android:textStyle="bold"
+                    android:backgroundTint="#6799FF"></EditText>
                     <Button
-                        android:id="@+id/EmailCheck"
+                        android:id="@+id/nickCheck"
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_weight="3"
@@ -84,124 +50,123 @@
                         android:textSize="11dp"
                         android:textStyle="bold"
                         android:background="@drawable/login_start_btn"></Button>
-                </LinearLayout>
-                <!--아이콘 찾아서 추가하기-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_margin="10dp"
-                    android:orientation="horizontal">
-                    <EditText
-                        android:id="@+id/code"
-                        android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:layout_weight="7"
-                        android:layout_marginRight="10dp"
-                        android:ems="10"
-                        android:hint="인증번호를 입력하세요"
-                        android:textColorHint="#B2CCFF"
-                        android:textColor="#4374D9"
-                        android:textStyle="bold"
-                        android:backgroundTint="#6799FF"></EditText>
-
-                    <Button
-                        android:id="@+id/codeCheck"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_weight="3"
-                        android:text="확인"
-                        android:textColor="#4374D9"
-                        android:textSize="11dp"
-                        android:textStyle="bold"
-                        android:background="@drawable/login_start_btn"></Button>
-                </LinearLayout>
-                <EditText
-                    android:id="@+id/memPwd"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_margin="10dp"
-                    android:ems="10"
-                    android:inputType="textPassword"
-                    android:hint="비밀번호를 입력하세요"
-                    android:textColorHint="#B2CCFF"
-                    android:textColor="#4374D9"
-                    android:textStyle="bold"
-                    android:backgroundTint="#6799FF"></EditText>
-                <EditText
-                    android:id="@+id/checkPwd"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_margin="10dp"
-                    android:ems="10"
-                    android:inputType="textPassword"
-                    android:hint="비밀번호를 한번 더 입력하세요"
-                    android:textColorHint="#B2CCFF"
-                    android:textColor="#4374D9"
-                    android:textStyle="bold"
-                    android:backgroundTint="#6799FF"></EditText>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1">
-                    <!--sns 로그인 버튼 추가-->
-                    <ImageButton
-                        android:id="@+id/kakaobtn"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginLeft="130dp"
-                        android:padding="0dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/facebook" />
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/memEmail"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="7"
+                    android:layout_marginRight="10dp"
+                    android:ems="10"
+                    android:inputType="textEmailAddress"
+                    android:hint="이메일을 입력하세요"
+                    android:textColorHint="#B2CCFF"
+                    android:textColor="#4374D9"
+                    android:textStyle="bold"
+                    android:backgroundTint="#6799FF"></EditText>
 
-                    <ImageButton
-                        android:id="@+id/googlebtn"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginLeft="70dp"
-                        android:padding="0dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/kakao" />
-                </LinearLayout>
-                <LinearLayout
+                <Button
+                    android:id="@+id/EmailCheck"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="3"
+                    android:text="확인"
+                    android:textColor="#4374D9"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/login_start_btn"></Button>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/code"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="7"
+                    android:layout_marginRight="10dp"
+                    android:ems="10"
+                    android:hint="인증번호를 입력하세요"
+                    android:textColorHint="#B2CCFF"
+                    android:textColor="#4374D9"
+                    android:textStyle="bold"
+                    android:backgroundTint="#6799FF"></EditText>
+
+                <Button
+                    android:id="@+id/codeCheck"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="3"
+                    android:text="확인"
+                    android:textColor="#4374D9"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/login_start_btn"></Button>
+            </LinearLayout>
+            <EditText
+                android:id="@+id/memPwd"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:hint="비밀번호를 입력하세요"
+                android:textColorHint="#B2CCFF"
+                android:textColor="#4374D9"
+                android:textStyle="bold"
+                android:backgroundTint="#6799FF"></EditText>
+            <EditText
+                android:id="@+id/checkPwd"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:hint="비밀번호를 한번 더 입력하세요"
+                android:textColorHint="#B2CCFF"
+                android:textColor="#4374D9"
+                android:textStyle="bold"
+                android:backgroundTint="#6799FF"></EditText>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:orientation="vertical">
+                <Button
+                    android:id="@+id/createMembtn"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="3"
-                    android:orientation="vertical">
-                    <Button
-                        android:id="@+id/createMembtn"
-                        android:layout_width="300dp"
-                        android:layout_height="150dp"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
-                        android:background="@drawable/login_start_btn"
-                        android:text="회원 가입"
-                        android:textColor="#4374D9"
-                        android:textSize="17dp"
-                        android:textStyle="bold"></Button>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1">
-                    </LinearLayout>
-
+                    android:layout_margin="30dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/login_start_btn"
+                    android:text="회원 가입"
+                    android:textColor="#4374D9"
+                    android:textSize="17dp"
+                    android:textStyle="bold"></Button>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="7">
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </FrameLayout>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Button" />
+    </LinearLayout>
 </LinearLayout>

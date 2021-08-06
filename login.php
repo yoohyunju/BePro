@@ -12,7 +12,7 @@
     mysqli_stmt_execute($statement);
 
     mysqli_stmt_store_result($statement);
-    mysqli_stmt_bind_result($statement, $userIDX, $userID, $userPassword, $userNickname, $userImg, $userDate, $userUpdate, $userAuthority, $userEmail);
+    mysqli_stmt_bind_result($statement, $userIDX, $userPassword, $userNickname, $userImg, $userDate, $userUpdate, $userAuthority, $userEmail);
 
     $response = array();
     $response["success"] = false;
@@ -20,7 +20,6 @@
     while(mysqli_stmt_fetch($statement)){
         $response["success"] = true;
         $response["userIDX"] = $userIDX;
-        $response["userID"] = $userID;
         $response["userPassword"] = $userPassword;
         $response["userNickname"] = $userNickname;
         $response["userImg"] = $userImg;
