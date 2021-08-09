@@ -2,7 +2,6 @@ package com.example.bepro;
 
 import android.content.Intent;
 
-import android.content.pm.PackageInstaller;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     String userEmail, userPassword, id, password, idSet, pwdSet;
     private SessionCallback sessionCallback;
     private AlertDialog dialog;
+    boolean kakaologin;
+    String userNICK, userEMAIL, userType, userPWD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +47,16 @@ public class LoginActivity extends AppCompatActivity {
         sessionCallback = new SessionCallback(); //초기화
         Session.getCurrentSession().addCallback(sessionCallback); //현재 세션에 콜백
 
-        /*//자동 로그인 (현재 앱에 토큰이 있다면 바로 로그인)
-        boolean kakaologin = Session.getCurrentSession().checkAndImplicitOpen();
+        //자동 로그인 (현재 앱에 토큰이 있다면 바로 로그인)
+        kakaologin = Session.getCurrentSession().checkAndImplicitOpen();
 
         if(kakaologin){
             Toast.makeText(getApplicationContext(), "카카오톡 자동 로그인", Toast.LENGTH_SHORT).show();
             Session.getCurrentSession().checkAndImplicitOpen();
-        }*/
+        }
 
-        /*//단말에서 토큰 삭제 (테스트용) -> 로그아웃 구현 시 사용
-        UserManagement.getInstance()
+        //단말에서 토큰 삭제 (테스트용) -> 로그아웃 구현 시 사용
+        /*UserManagement.getInstance()
                 .requestLogout(new LogoutResponseCallback() {
                     @Override
                     public void onCompleteLogout() {
@@ -228,14 +229,45 @@ public class LoginActivity extends AppCompatActivity {
                 //로그인에 성공했을 때, MeV2Response에 로그인한 유저의 정보를 담고 있음.
                 @Override
                 public void onSuccess(MeV2Response result) {
-                    //MainActivity에서 intent로 전달된 값을 변수로 저장해 사용 or DB에 데이터를 추가해야 하는지?
-                    Toast.makeText(getApplicationContext(), "카카오톡 로그인 완료", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    intent.putExtra("name", result.getNickname());
-                    intent.putExtra("email", result.getKakaoAccount().getEmail());
-                    intent.putExtra("profile", result.getProfileImagePath());
-                    startActivity(intent);
+                    userNICK = result.getNickname();
+                    userEMAIL = result.getKakaoAccount().getEmail();
+                    userType = "kakao";
+                    userPWD = "kakao";
 
+                    if(!kakaologin){
+                        Response.Listener<String> responseListener = new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    boolean success = jsonObject.getBoolean("success");
+                                    if(success){
+                                        System.out.println("넣겠음");
+                                        Response.Listener<String> responseListener1 = new Response.Listener<String>() {
+                                            @Override
+                                            public void onResponse(String response) {
+
+                                            }
+                                        };
+                                        RegisterRequest registerRequest1 = new RegisterRequest(userNICK, userEMAIL, userPWD, userType, responseListener1);
+                                        RequestQueue queue1 = Volley.newRequestQueue(LoginActivity.this);
+                                        queue1.add(registerRequest1);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+                        snsRequest registerRequest = new snsRequest(userType, userEMAIL, responseListener);
+                        RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+                        queue.add(registerRequest);
+
+                        //MainActivity에서 intent로 전달된 값을 변수로 저장해 사용 or DB에 데이터를 추가해야 하는지?
+                        Toast.makeText(getApplicationContext(), "카카오톡 로그인 완료", Toast.LENGTH_SHORT).show();
+
+                    }
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
                     finish();
                 }
             });

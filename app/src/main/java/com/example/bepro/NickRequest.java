@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NickRequest extends StringRequest {
-    final static private String URL = "http://192.168.0.11:81/nick.php";
+    final static private String URL = "http://192.168.0.17:81/nick.php";
     private Map<String, String> map;
 
     public NickRequest(String userNick, Response.Listener<String> listener){

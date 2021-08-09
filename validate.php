@@ -11,14 +11,13 @@
     mysqli_stmt_execute($statement);
 
     mysqli_stmt_store_result($statement);
-    mysqli_stmt_bind_result($statement, $userIDX, $userPassword, $userNickname, $userImg, $userDate, $userUpdate, $userAuthority, $userEmail);
+    mysqli_stmt_bind_result($statement, $userPassword, $userNickname, $userImg, $userDate, $userUpdate, $userAuthority, $userEmail, $userType, $userIDX);
 
     $response = array();
     $response["success"] = true;
 
     while(mysqli_stmt_fetch($statement)){
         $response["success"] = false;
-        $response["userIDX"] = $userIDX;
         $response["userPassword"] = $userPassword;
         $response["userNickname"] = $userNickname;
         $response["userImg"] = $userImg;
@@ -26,6 +25,8 @@
         $response["userUpdate"] = $userUpdate;
         $response["userAuthority"] = $userAuthority;
         $response["userEmail"] = $userEmail;
+        $response["userType"] = $userType;
+        $response["userIDX"] = $userIDX;
     }
 
     echo json_encode($response);

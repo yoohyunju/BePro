@@ -36,6 +36,7 @@ public class CreateMemActivity extends AppCompatActivity {
     static int value;
     int mailSend = 0;
     MainHandler mainHandler;
+    String userType = "normal";
 
     private boolean Nickvalidate = false; //별명 중복 확인
     private boolean Emailvalidate = false; //이메일 중복 체크
@@ -164,9 +165,9 @@ public class CreateMemActivity extends AppCompatActivity {
                         }
                     }
                 };
-                ValidateRequest validateRequest = new ValidateRequest(userEmail, responseListener);
+                snsRequest snsRequest = new snsRequest(userType, userEmail, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(CreateMemActivity.this);
-                queue.add(validateRequest);
+                queue.add(snsRequest);
 
             }
         });
@@ -248,7 +249,7 @@ public class CreateMemActivity extends AppCompatActivity {
                         }
                     }
                 };
-                RegisterRequest registerRequest = new RegisterRequest(userNICK, userEMAIL, userPWD, responseListener);
+                RegisterRequest registerRequest = new RegisterRequest(userNICK, userEMAIL, userPWD, userType, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(CreateMemActivity.this);
                 queue.add(registerRequest);
             }
