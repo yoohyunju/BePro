@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayout mFridgeListOpenBtn, mAddFridgeBtn, mSelfAddBtn;
     private Dialog mAddItemDialog, mFridgeListDialog, mFridgeAddDialog, mSelfAddDialog;
-    private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn;
+    private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn, mSelfItemAddBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +69,13 @@ public class MainActivity extends AppCompatActivity {
         mFridgeAddDialog.setContentView(R.layout.fridge_add_popup); //냉장고 추가 팝업 xml 연결
 
         mSelfAddDialog = new Dialog(MainActivity.this);
-        mSelfAddDialog.setContentView(R.layout.self_item_add_popup);
+        mSelfAddDialog.setContentView(R.layout.self_item_add_popup); //품목 직접 추가 팝업 xml 연결
 
         mFridgeListOpenBtn = findViewById(R.id.fridgeListOpenBtn);
         mFridgeListOpenBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFridgeListDialog(); //냉장고 리스트 팝업 함수 호출
+                showFridgeListDialog(); /*냉장고 리스트 팝업 함수 호출*/
             }
         });
 
@@ -102,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
                 case R.id.add:
                     showItemAddDialog(); //Dialog 함수 호출
-                    //Toast.makeText(getApplicationContext(), "Open Click", Toast.LENGTH_SHORT);
                     break;
 
                 case R.id.myPage:
@@ -136,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
 
         mAddItemDialog.show(); //Dialog 띄우기
 
-        mAddCancelBtn = mAddItemDialog.findViewById(R.id.addCancelBtn); //품목 추가 취소 버튼
+        //품목 추가 취소 버튼
+        mAddCancelBtn = mAddItemDialog.findViewById(R.id.addCancelBtn);
         mAddCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,9 +150,55 @@ public class MainActivity extends AppCompatActivity {
         mSelfAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mAddItemDialog.dismiss(); //이전 다이얼로그 닫기
                 showSelfAddDialog();
             }
         });
+
+    }
+
+    //품목 직접 추가하기 팝업
+    public void showSelfAddDialog(){
+        //팝업창 사이즈 조절
+        WindowManager.LayoutParams params = mSelfAddDialog.getWindow().getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+        mSelfAddDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //기본 백그라운드를 투명으로 변경
+        mSelfAddDialog.setCanceledOnTouchOutside(false); //창 바깥 부분 터치 닫기 설정 해제
+
+        mSelfAddDialog.show();
+
+        /*리사이클러뷰에 레이아웃 매니저 설정
+        RecyclerView recyclerView = findViewById(R.id.addFoodRecyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager); //TODO: 오류 수정하기
+
+        SelfAddItemAdapter adapter = new SelfAddItemAdapter();
+        */
+        //취소 버튼
+        mSelfAddCancelBtn = mSelfAddDialog.findViewById(R.id.selfAddCancelBtn);
+        mSelfAddCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelfAddDialog.dismiss();
+                showItemAddDialog(); //이전 다이얼로그 재시작
+            }
+        });
+
+        /*품목 추가하기 버튼
+        mSelfItemAddBtn = mSelfItemAddBtn.findViewById(R.id.selfItemAddBtn);
+        mSelfItemAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: 품목 카드뷰 추가
+                adapter.addItem(new FoodItems("", "", null));
+                recyclerView.setAdapter(adapter);
+
+            }
+        });
+
+         */
 
     }
 
@@ -204,28 +251,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mFridgeAddDialog.dismiss();
+                showFridgeListDialog(); //이전 다이얼로그 재시작
+
             }
         });
     }
 
-    //품목 직접 추가하기 팝업
-    public void showSelfAddDialog(){
-        //팝업창 사이즈 조절
-        WindowManager.LayoutParams params = mSelfAddDialog.getWindow().getAttributes();
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = WindowManager.LayoutParams.MATCH_PARENT;
-
-        mSelfAddDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //기본 백그라운드를 투명으로 변경
-        mSelfAddDialog.setCanceledOnTouchOutside(false); //창 바깥 부분 터치 닫기 설정 해제
-
-        mSelfAddDialog.show();
-
-        mSelfAddCancelBtn = mSelfAddDialog.findViewById(R.id.selfAddCancelBtn);
-        mSelfAddCancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSelfAddDialog.dismiss();
-            }
-        });
-    }
 }

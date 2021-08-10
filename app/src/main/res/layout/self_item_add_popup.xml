@@ -7,7 +7,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#CC212121"
         android:gravity="center">
 
         <LinearLayout
@@ -99,7 +98,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp">
+
                             <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/addFoodRecyclerView"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"/>
                         </LinearLayout>
