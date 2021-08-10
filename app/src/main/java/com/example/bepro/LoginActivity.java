@@ -1,7 +1,10 @@
 package com.example.bepro;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.kakao.auth.ApiErrorCode;
+import com.kakao.auth.AuthType;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
 import com.kakao.network.ErrorResult;
@@ -26,18 +30,25 @@ import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.kakao.usermgmt.callback.MeV2ResponseCallback;
 import com.kakao.usermgmt.response.MeV2Response;
 import com.kakao.util.exception.KakaoException;
+import com.nhn.android.naverlogin.OAuthLogin;
+import com.nhn.android.naverlogin.OAuthLoginHandler;
+import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
 
 import org.json.JSONObject;
 
+
 public class LoginActivity extends AppCompatActivity {
-    Button login, create, forget;
+    OAuthLoginButton naver;
+    Button login, create, forget, kakao;
     EditText email, pwd;
     CheckBox autologin, saveid;
     String userEmail, userPassword, id, password, idSet, pwdSet;
     private SessionCallback sessionCallback;
     private AlertDialog dialog;
-    boolean kakaologin;
+    boolean kakaologin, naverlogin;
     String userNICK, userEMAIL, userType, userPWD;
+    OAuthLogin mOAuthLoginModule;
+    SharedPreferences userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +58,25 @@ public class LoginActivity extends AppCompatActivity {
         sessionCallback = new SessionCallback(); //초기화
         Session.getCurrentSession().addCallback(sessionCallback); //현재 세션에 콜백
 
+        naver = (OAuthLoginButton) findViewById(R.id.naver);
+        kakao = (Button) findViewById(R.id.kakao);
+        email = (EditText) findViewById(R.id.loginId);
+        pwd = (EditText) findViewById(R.id.loginPwd);
+        login = (Button) findViewById(R.id.login);
+        forget = (Button) findViewById(R.id.findMembtn);
+        create = (Button) findViewById(R.id.createMembtn);
+        autologin = (CheckBox) findViewById(R.id.autologin);
+        saveid = (CheckBox) findViewById(R.id.saveid);
+
         //자동 로그인 (현재 앱에 토큰이 있다면 바로 로그인)
-        kakaologin = Session.getCurrentSession().checkAndImplicitOpen();
+        /*kakaologin = Session.getCurrentSession().checkAndImplicitOpen();
 
         if(kakaologin){
             Toast.makeText(getApplicationContext(), "카카오톡 자동 로그인", Toast.LENGTH_SHORT).show();
             Session.getCurrentSession().checkAndImplicitOpen();
-        }
+        }*/
 
-        //단말에서 토큰 삭제 (테스트용) -> 로그아웃 구현 시 사용
+        //카카오톡 토큰 삭제 (테스트용) -> 로그아웃 구현 시 사용
         /*UserManagement.getInstance()
                 .requestLogout(new LogoutResponseCallback() {
                     @Override
@@ -64,14 +85,65 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
         */
+        //카카오 로그인 버튼
+        kakao.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, LoginActivity.this);
+            }
+        });
 
-        email = (EditText) findViewById(R.id.loginId);
-        pwd = (EditText) findViewById(R.id.loginPwd);
-        login = (Button) findViewById(R.id.login);
-        forget = (Button) findViewById(R.id.findMembtn);
-        create = (Button) findViewById(R.id.createMembtn);
-        autologin = (CheckBox) findViewById(R.id.autologin);
-        saveid = (CheckBox) findViewById(R.id.saveid);
+        //네이버 sns 로그인 개발자 인증
+        mOAuthLoginModule = OAuthLogin.getInstance();
+        mOAuthLoginModule.init(
+                LoginActivity.this
+                ,getString(R.string.naver_client_id)
+                ,getString(R.string.naver_client_secret)
+                ,getString(R.string.app_name)
+        );
+
+        //네이버 토큰 삭제 -> 로그아웃
+        //mOAuthLoginModule.logout(LoginActivity.this);
+
+        if (mOAuthLoginModule.getAccessToken(LoginActivity.this) != null) {
+            //이미 로그인 된 상태 (자동 로그인)
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            Toast.makeText(getApplicationContext(), "네이버 자동 로그인", Toast.LENGTH_SHORT).show();
+            finish();
+        }else{
+            //로그인 한 적이 없는 경우 (DB 세팅, 로그인)
+            naver.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    @SuppressLint("HandlerLeak")
+                    OAuthLoginHandler mOAuthLoginHandler = new OAuthLoginHandler() {
+                        @Override
+                        public void run(boolean success) {
+                            if (success) {
+                                NaverHandler naver = new NaverHandler(LoginActivity.this, mOAuthLoginModule, LoginActivity.this);
+                                naver.run(true);
+
+                                userData = getSharedPreferences("userData", MODE_PRIVATE);
+                                userNICK = userData.getString("nickname", "");
+                                userEMAIL = userData.getString("email", "");
+                                System.out.println("낭낭" + userNICK + userEMAIL);
+                                naverlogin = true;
+                                Toast.makeText(getApplicationContext(), "네이버 로그인 완료", Toast.LENGTH_SHORT).show();
+                                naverLogin();
+                            } else {
+                                String errorCode = mOAuthLoginModule
+                                        .getLastErrorCode(LoginActivity.this).getCode();
+                                String errorDesc = mOAuthLoginModule.getLastErrorDesc(LoginActivity.this);
+                                Toast.makeText(LoginActivity.this, "errorCode:" + errorCode
+                                        + ", errorDesc:" + errorDesc, Toast.LENGTH_SHORT).show();
+                            }
+                        };
+                    };
+                    mOAuthLoginModule.startOauthLoginActivity(LoginActivity.this, mOAuthLoginHandler);
+                }
+            });
+        }
 
         PrefsHelper.init(getApplicationContext());
         //PrefsHelper.clear(); // 자동로그인, 아이디 저장 파일 비우기(테스트용)
@@ -276,6 +348,40 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onSessionOpenFailed(KakaoException e) {
             Toast.makeText(getApplicationContext(), "로그인 도중 오류가 발생했습니다. 인터넷 연결을 확인해주세요: "+e.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void naverLogin() {
+        userType = "naver";
+        userPWD = "naver";
+        if (naverlogin) {
+            System.out.println(naverlogin);
+            Response.Listener<String> responseListener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        boolean success = jsonObject.getBoolean("success");
+                        if (success) {
+                            System.out.println("넣겠음");
+                            Response.Listener<String> responseListener1 = new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+
+                                }
+                            };
+                            RegisterRequest registerRequest1 = new RegisterRequest(userNICK, userEMAIL, userPWD, userType, responseListener1);
+                            RequestQueue queue1 = Volley.newRequestQueue(LoginActivity.this);
+                            queue1.add(registerRequest1);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            snsRequest registerRequest = new snsRequest(userType, userEMAIL, responseListener);
+            RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+            queue.add(registerRequest);
         }
     }
 
