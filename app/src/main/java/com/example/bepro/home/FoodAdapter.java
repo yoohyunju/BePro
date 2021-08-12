@@ -1,14 +1,15 @@
-package com.example.bepro;
+package com.example.bepro.home;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.bepro.R;
 
 import org.jetbrains.annotations.NotNull;
 

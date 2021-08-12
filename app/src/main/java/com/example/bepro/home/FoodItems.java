@@ -1,4 +1,4 @@
-package com.example.bepro;
+package com.example.bepro.home;
 
 public class FoodItems {
     private String foodName; //식품명
