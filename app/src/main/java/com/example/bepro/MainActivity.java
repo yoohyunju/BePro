@@ -184,11 +184,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //TODO: 품목 카드뷰 추가
                 //리사이클러뷰에 레이아웃 매니저 설정
-                RecyclerView recyclerView = findViewById(R.id.addFoodRecyclerView);
+                RecyclerView recyclerView = mSelfAddDialog.findViewById(R.id.addFoodRecyclerView);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
                 recyclerView.setLayoutManager(layoutManager);
 
                 SelfAddItemAdapter adapter = new SelfAddItemAdapter();
+                //임시 데이터
                 adapter.addItem(new FoodItems("바나나", "2", 1));
                 recyclerView.setAdapter(adapter);
 
