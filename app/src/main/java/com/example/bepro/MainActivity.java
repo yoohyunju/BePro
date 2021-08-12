@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class MainActivity extends AppCompatActivity {
-
     private FragmentManager fragmentManager; //앱 fragment에서 작업을 추가, 삭제, 교체하고 백 스택에 추가하는 클래스
     private FragmentTransaction transaction; //fragment 변경을 위한 트랜잭션(작업단위)
 

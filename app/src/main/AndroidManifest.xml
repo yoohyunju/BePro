@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bepro">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -11,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BePro"
         android:usesCleartextTraffic="true">
+
         <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,20 +20,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".LoginActivity"
-            android:parentActivityName=".IntroActivity"/>
-
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".LoginActivity"
+            android:parentActivityName=".IntroActivity" />
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|adjustUnspecified"/> <!--앱 실행 시 키보드 조절-->
-
+            android:windowSoftInputMode="adjustPan|adjustUnspecified" /> <!-- 앱 실행 시 키보드 조절 -->
         <activity
             android:name=".CreateMemActivity"
             android:parentActivityName=".LoginActivity" />
+        <activity
+            android:name=".FindMemActivity"
+            android:parentActivityName=".LoginActivity" />
 
-        <activity android:name=".FindMemActivity"
-            android:parentActivityName=".LoginActivity"/>
+       <activity android:name=".fridge_setting.FridgeMemberActivity">
+           <intent-filter>
+               <action android:name="android.intent.action.MAIN" />
+               <category android:name="android.intent.category.LAUNCHER" />
+           </intent-filter>
+       </activity>
 
     </application>
 

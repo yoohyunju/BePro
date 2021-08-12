@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/accelerate_decelerate_interpolator">
+    <translate
+        android:fromXDelta="100%p"
+        android:toXDelta="0%p"
+        android:duration="500"
+        android:repeatCount="0"
+        android:fillAfter="true"
+    />
+<!--    차례대로-->
+<!--    애니메이션이 시작되는 x좌표의 위치, 몇 퍼센트부터 시작할 것인가?-->
+<!--    애니메이션이 종료되는 x좌표의 위치-->
+<!--    애니메이션의 지속 시간 (ms 단위.)-->
+<!--    애니메이션의 반복 횟수-->
+<!--    애메이션이 종료된 후에도 위치를 유지시킬 것인가?-->
+</set>
