@@ -32,19 +32,18 @@ public class CreateMemActivity extends AppCompatActivity {
     EditText nick, pwd, checkpwd, email, code;
     Button check, register, codecheck, nickCheck;
 
-    String GmailCode;
-    static int value;
-    int mailSend = 0;
-    MainHandler mainHandler;
-    String userType = "normal";
+    String GmailCode; //사용자가 입력한 인증코드
+    static int value; //이메일 전송
+    int mailSend = 0; //이메일 전송
+    MainHandler mainHandler; //이메일 전송
+    private int time = 59, min = 2; //인증 코드 시간
+    String userType = "normal"; //일반 회원가입
 
     private boolean Nickvalidate = false; //별명 중복 확인
     private boolean Emailvalidate = false; //이메일 중복 체크
     private boolean EmailCheck = false; //회원가입 완료
 
-    private AlertDialog dialog;
-    private int time = 59;
-    int min = 2;
+    private AlertDialog dialog; //알림
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,6 +171,7 @@ public class CreateMemActivity extends AppCompatActivity {
             }
         });
 
+        //인증코드 확인 버튼
         codecheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,25 +197,28 @@ public class CreateMemActivity extends AppCompatActivity {
                 String userEMAIL = email.getText().toString();
                 String PWDCheck = checkpwd.getText().toString();
 
+                //별명 확인 체크
                 if(!Nickvalidate){
                     AlertDialog.Builder builder = new AlertDialog.Builder(CreateMemActivity.this);
                     dialog = builder.setMessage("별명 입력을 확인해주세요.").setNegativeButton("확인", null).create();
                     dialog.show();
                     return;
                 }
+                //이메일 인증 체크
                 if(!Emailvalidate){
                     AlertDialog.Builder builder = new AlertDialog.Builder(CreateMemActivity.this);
                     dialog = builder.setMessage("이메일 입력을 확인해주세요.").setNegativeButton("확인", null).create();
                     dialog.show();
                     return;
                 }
+                //인증코드 입력 체크
                 if(!EmailCheck){
                     AlertDialog.Builder builder = new AlertDialog.Builder(CreateMemActivity.this);
                     dialog = builder.setMessage("인증코드 입력을 확인해주세요.").setNegativeButton("확인", null).create();
                     dialog.show();
                     return;
                 }
-
+                //빈칸 체크
                 if(userEMAIL.equals("") || userPWD.equals("") || userNICK.equals("")){
                     AlertDialog.Builder builder = new AlertDialog.Builder(CreateMemActivity.this);
                     dialog = builder.setMessage("모두 입력해주세요.").setNegativeButton("확인", null).create();
@@ -223,7 +226,6 @@ public class CreateMemActivity extends AppCompatActivity {
                     return;
                 }
 
-                //중복, 필수 입력 검사, 이메일 인증? 추가(수정)
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

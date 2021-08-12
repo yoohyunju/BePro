@@ -30,12 +30,13 @@ import javax.mail.SendFailedException;
 public class FindMemActivity extends AppCompatActivity {
     EditText inputEmail;
     Button sendEmail;
-    private AlertDialog dialog;
-    static int value;
-    int mailSend = 0;
-    String GmailCode;
-    MainHandler mainHandler;
-    String password;
+
+    private AlertDialog dialog; //알림
+    static int value; //이메일 전송
+    int mailSend = 0; //이메일 전송
+    MainHandler mainHandler; //이메일 전송
+    String password; //이메일로 전송될 사용자 비번
+    String GmailCode; //사용자 입력 인증 코드
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class FindMemActivity extends AppCompatActivity {
         sendEmailSetting();
     }
 
+    //이메일 전송 버튼
     public void sendEmailSetting() {
         sendEmail.setOnClickListener(new View.OnClickListener() {
             @Override

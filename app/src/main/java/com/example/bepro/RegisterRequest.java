@@ -7,6 +7,7 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+//회원 가입
 public class RegisterRequest extends StringRequest {
     //onResponse에 못들어갈 경우 IPv4 주소로 URL 변경하기, 서버 주소로 변경(수정)
     final static private String URL = "http://192.168.0.17:81/register.php";

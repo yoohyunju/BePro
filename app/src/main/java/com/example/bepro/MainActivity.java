@@ -4,10 +4,22 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -18,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private RecipeActivity mRecipe;
     private MyPageActivity mMyPage;
     private NoticeActivity mNotice;
+    public String image, nick, email;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,19 +41,25 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView mNavView = findViewById(R.id.navigation);
         mNavView.setOnNavigationItemSelectedListener(new ItemSelectedListener()); //BottomNavigationView에 이벤트 리스너 연결
 
+        Intent intent = getIntent();
+        image = intent.getStringExtra("userImage");
+        nick = intent.getStringExtra("userNick");
+        email = intent.getStringExtra("userEmail");
+
         mHome = new HomeActivity(); //fragment 객체 생성
         mRecipe = new RecipeActivity();
         mMyPage = new MyPageActivity();
         mNotice = new NoticeActivity();
 
+        mMyPage.imageUrl = image;
+        mMyPage.userEmail = email;
+        mMyPage.userNick = nick;
+
         fragmentManager = getSupportFragmentManager();
 
         transaction = fragmentManager.beginTransaction(); //트랜잭션 시작
         transaction.replace(R.id.frameLayout, mHome).commitAllowingStateLoss();
-
-
     }
-
 
     class ItemSelectedListener implements BottomNavigationView.OnNavigationItemSelectedListener{
 
@@ -67,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
+
     //뒤로가기 버튼 막아두기
     @Override
     public void onBackPressed(){

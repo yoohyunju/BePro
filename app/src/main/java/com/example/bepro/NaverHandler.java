@@ -34,9 +34,9 @@ public class NaverHandler extends OAuthLoginHandler {
     public void run(boolean success) {
         if (success) {
             final String accessToken = mOAuthLoginModule.getAccessToken(mContext);
-            // 얘가 있어야 유저 정보를 가져올 수 있습니다.
+            // 유저 정보
             ProfileTask task = new ProfileTask();
-            // 이 클래스가 유저정보를 가져오는 업무를 담당합니다.
+            // 유저 정보 가져오기
             task.execute(accessToken);
         } else {
             String errorCode = mOAuthLoginModule.getLastErrorCode(mContext).getCode();
@@ -46,6 +46,7 @@ public class NaverHandler extends OAuthLoginHandler {
         }
     }
 
+    //네이버 json 파일 접근 -> 사용자 정보 get
     class ProfileTask extends AsyncTask<String, Void, String> {
         String result;
         @Override
@@ -81,20 +82,25 @@ public class NaverHandler extends OAuthLoginHandler {
             return result;
         }
 
+        //가져온 데이터 activity 전송
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             try {
-                //토큰 인증 -> json에 접속 -> 데이터 받아오기
                 JSONObject object = new JSONObject(result);
                 if(object.getString("resultcode").equals("00")) {
-                    JSONObject jsonObject = new JSONObject(object.getString("response"));
-                    SharedPreferences.Editor editor = activity.userData.edit();
-                    editor.putString("email", jsonObject.getString("email"));
-                    editor.putString("nickname", jsonObject.getString("nickname"));
-                    editor.apply();
-                    Intent intent = new Intent(activity, MainActivity.class);
-                    activity.startActivity(intent);
+                        JSONObject jsonObject = new JSONObject(object.getString("response"));
+                        SharedPreferences.Editor editor = activity.userData.edit();
+                        editor.putString("email", jsonObject.getString("email"));
+                        editor.putString("nickname", jsonObject.getString("nickname"));
+                        editor.putString("profile_image", jsonObject.getString("profile_image"));
+                        editor.apply();
+
+                        Intent intent = new Intent(activity, MainActivity.class);
+                        intent.putExtra("userImage", jsonObject.getString("profile_image"));
+                        intent.putExtra("userEmail", jsonObject.getString("email"));
+                        intent.putExtra("userNick", jsonObject.getString("nickname"));
+                        activity.startActivity(intent);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -7,21 +7,20 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-//SNS 타입 - EMAIL 존재하는지
-public class snsRequest extends StringRequest {
-    final static private String URL = "http://192.168.0.17:81/sns.php";
+public class DeleteRequest extends StringRequest{
+    final static private String URL = "http://192.168.0.17:81/delete.php";
     private Map<String, String> map;
 
-    public snsRequest(String snsName, String UserEmail, Response.Listener<String> listener){
+    public DeleteRequest(String UserType, String UserEmail, Response.Listener<String> listener){
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();
-        map.put("snsName", snsName);
+        map.put("userType", UserType);
         map.put("userEmail", UserEmail);
     }
 
     @Override
-    protected Map<String, String> getParams() throws AuthFailureError{
+    protected Map<String, String> getParams() throws AuthFailureError {
         return map;
     }
 }

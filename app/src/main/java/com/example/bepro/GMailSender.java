@@ -14,6 +14,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+//이메일 전송 (공통)
 public class GMailSender extends javax.mail.Authenticator{
     private String mailhost = "smtp.gmail.com";
     private String user;

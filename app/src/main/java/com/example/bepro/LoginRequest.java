@@ -7,6 +7,7 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+//로그인
 public class LoginRequest extends StringRequest {
     final static private String URL = "http://192.168.0.17:81/login.php";
     private Map<String, String> map;
@@ -19,10 +20,10 @@ public class LoginRequest extends StringRequest {
         map.put("userPassword", userPassword);
 
         //데이터 전송 확인, Logcat
-        for(String key:map.keySet()){
+        /*for(String key:map.keySet()){
             String value = map.get(key).toString();
             System.out.println(key+": " + map);
-        }
+        }*/
     }
 
     @Override
