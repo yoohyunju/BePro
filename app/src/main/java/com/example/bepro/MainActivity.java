@@ -7,22 +7,19 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
+import com.example.bepro.home.FoodItems;
+import com.example.bepro.home.HomeActivity;
+import com.example.bepro.home.SelfAddItemAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -169,13 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSelfAddDialog.show();
 
-        /*리사이클러뷰에 레이아웃 매니저 설정
-        RecyclerView recyclerView = findViewById(R.id.addFoodRecyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager); //TODO: 오류 수정하기
 
-        SelfAddItemAdapter adapter = new SelfAddItemAdapter();
-        */
         //취소 버튼
         mSelfAddCancelBtn = mSelfAddDialog.findViewById(R.id.selfAddCancelBtn);
         mSelfAddCancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -186,19 +177,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*품목 추가하기 버튼
-        mSelfItemAddBtn = mSelfItemAddBtn.findViewById(R.id.selfItemAddBtn);
+        //품목 추가하기 버튼
+        mSelfItemAddBtn = mSelfAddDialog.findViewById(R.id.selfItemAddBtn);
         mSelfItemAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO: 품목 카드뷰 추가
-                adapter.addItem(new FoodItems("", "", null));
+                //리사이클러뷰에 레이아웃 매니저 설정
+                RecyclerView recyclerView = findViewById(R.id.addFoodRecyclerView);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+                recyclerView.setLayoutManager(layoutManager);
+
+                SelfAddItemAdapter adapter = new SelfAddItemAdapter();
+                adapter.addItem(new FoodItems("바나나", "2", 1));
                 recyclerView.setAdapter(adapter);
 
             }
         });
-
-         */
 
     }
 
