@@ -1,9 +1,14 @@
 package com.example.bepro.home;
 
+import android.app.DatePickerDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,11 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bepro.R;
 
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
-public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.ViewHolder> {
+public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.ViewHolder> implements OnSelfAddItemClickListener {
     ArrayList<FoodItems> items = new ArrayList<FoodItems>();
+    OnSelfAddItemClickListener listener;
+    int position;
 
     @NonNull
     @NotNull
@@ -26,18 +34,39 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = inflater.inflate(R.layout.add_food_items, viewGroup, false);
 
-        return new ViewHolder(itemView); //뷰객체 생성과 동시에 뷰객체 반환
+        return new ViewHolder(itemView, this); //뷰객체 생성과 동시에 뷰객체 반환
     }
 
     @Override
-    // 뷰홀더가 재사용 될 시 호출, 데이터만 바꿔줌
-    public void onBindViewHolder(@NonNull @NotNull ViewHolder viewHolder, int position) {
-        FoodItems foodItem = items.get(position);
-        viewHolder.setItem(foodItem);
-        //holder.tvFoodName.setText(foodItem.getFoodName());
-        //holder.tvFoodExp.setText(foodItem.getFoodExpiryDate());
-        //holder.tvFoodRemain.setText(foodItem.getRemainDate());
+    // 뷰홀더가 재활용 될 시 호출, 데이터만 바꿔줌
+    public void onBindViewHolder(@NonNull @NotNull ViewHolder viewHolder, final int position) {
+        //FoodItems foodItem = items.get(position);
+        //viewHolder.setItem(foodItem);
 
+        //viewHolder.mFoodName.setText(items.get(position).getFoodName()); //식품명
+        //viewHolder.mFoodTotal.setText(items.get(position).getFoodTotalCount()); //개수
+        //viewHolder.mFoodRemainDate.setText(items.get(position).getFoodRemainDate()); //남은날짜
+        //viewHolder.tvFoodExp.setText(foodItem.getFoodExpiryDate()); //유통기한
+
+        //삭제 버튼 이벤트 리스너 연결
+        viewHolder.selfItemDeleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: 선택한 아이템이 삭제되긴 하는데 문자가 이상한데로 가는건가?..
+                setPosition(position); //클릭한 아이템 position set
+                removeItem(position); //아이템 삭제 함수 호출
+                Toast.makeText(v.getContext(), position + "번째 아이템 삭제", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
+
+    //품목 아이템 카드뷰 삭제 메소드
+    public void removeItem(int position){
+        items.remove(position);
+        notifyItemRemoved(position);
+        notifyDataSetChanged(); //갱신처리
     }
 
     @Override
@@ -61,26 +90,177 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
         items.set(position, item);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView tvFoodName;
-        TextView tvFoodTotal;
-        TextView tvFoodRemain;
+    public void setPosition(int position) { this.position = position; }
 
-        public ViewHolder(@NonNull @NotNull View itemView) { //뷰홀더 생성자로 뷰객체 전달
+    public int getPosition() { return position; }
+
+    public void setOnItemClickListener(OnSelfAddItemClickListener listener){
+        this.listener = listener;
+    }
+
+    @Override
+    public void onItemClick(ViewHolder holder, View view, int position) { //interface 구현
+        if(listener != null){
+            listener.onItemClick(holder, view, position);
+        }
+    }
+
+    //커스텀 뷰홀더
+    static class ViewHolder extends RecyclerView.ViewHolder{
+        TextView selfItemDeleteBtn, mFoodRemainDate;
+        LinearLayout tvSelfAddFoodName, editAddFoodName, editFoodTotalCountView;
+        EditText mFoodName, mFoodTotal;
+
+        Calendar calendar;
+        int dateEndY, dateEndM, dateEndD;
+        int dDayValue = 0;
+        int currentYear, currentMonth, currentDay;
+        private final int ONE_DAY = 24 * 60 * 60 * 1000; //Millisecond 형태의 하루(24 시간), 86400000 = 24시간 * 60분 * 60초 * 1000(=1초)
+
+        TextView dateResult;
+        LinearLayout datePicker;
+
+        public ViewHolder(@NonNull @NotNull View itemView, final OnSelfAddItemClickListener listener) { //뷰홀더 생성자로 뷰객체 전달
             super(itemView);
 
-
             //뷰객체에 들어있는 텍스트뷰 참조
-            tvFoodName = itemView.findViewById(R.id.selfAddFoodName);
-            tvFoodTotal = itemView.findViewById(R.id.selfAddFoodTotalCount);
-            tvFoodRemain = itemView.findViewById(R.id.selfAddFoodRemainDate);
+            mFoodName = itemView.findViewById(R.id.editAddFoodName); //식품명
+            mFoodTotal = itemView.findViewById(R.id.editFoodTotalCount); //개수
+            mFoodRemainDate = itemView.findViewById(R.id.selfAddFoodRemainDate); //남은날짜
+
+            selfItemDeleteBtn = itemView.findViewById(R.id.selfItemDeleteBtn); //삭제버튼
+
+            /* TODO: 1. editText 클릭시 키보드 노출, 이외 영역 클릭 시 키보드 사라짐
+                     2. 다른 아이템 editText 클릭시 포커스 이동 */
+
+            //아이템 뷰에 click 이벤트 리스너 연결
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+
+                    if(listener != null){
+                        listener.onItemClick(ViewHolder.this, v, position);
+                    }
+                }
+            });
+
+            //현재 년월일 저장
+            calendar = Calendar.getInstance();
+            currentYear = calendar.get(Calendar.YEAR);
+            currentMonth = calendar.get(Calendar.MONTH);
+            currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+            //TODO: 직접등록이 아닌 자동등록의 경우 DB 데이터 가져와서 '-' 기준으로 split 후 년월일 구분해서 저장하기
+
+            datePicker = itemView.findViewById(R.id.selfAddFoodDatePicker); //달력 다이얼로그 버튼
+            //edit_endDateBtn = (TextView) findViewById(R.id.tvFoodExpDate);
+            dateResult = (TextView) itemView.findViewById(R.id.selfAddFoodRemainDate);
+
+            //한국어 설정
+            Locale.setDefault(Locale.KOREAN);
+
+            // 디데이 날짜 입력
+            //edit_endDateBtn.setText(currentYear + "년 " + (currentMonth + 1) + "월 " + currentDay + "일");
+
+            //datePicker : 디데이 날짜 입력 버튼, 클릭시 DatePickerDialog 띄움
+            datePicker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new DatePickerDialog(itemView.getContext(), endDateSetListener, currentYear, currentMonth, currentDay).show();
+                }
+            });
+
         }
 
         public void setItem(FoodItems item){
-            tvFoodName.setText(item.getFoodName());
-            tvFoodTotal.setText(item.getFoodExpiryDate());
-            tvFoodRemain.setText(item.getFoodRemainDate());
+            //selfAddFoodName.setText(item.getFoodName());
+            //editFoodTotal.setText(item.getFoodExpiryDate());
+            //tvFoodRemain.setText(item.getFoodRemainDate());
+
+
         }
+
+        //DatePickerDialog 팝업, 종료일 저장, 기존에 입력한 값이 있으면 해당 데이터 설정후 띄움
+        private DatePickerDialog.OnDateSetListener endDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                //edit_endDateBtn.setText(year + "년 " + (month + 1) + "월 " + day + "일");
+
+                dDayValue = dDayResult_int(dateEndY, dateEndM, dateEndD);
+
+                dateResult.setText(getDday(year, month, day));
+
+            }
+        };
+
+        //D-day 반환 함수
+        private String getDday(int mYear, int mMonth, int mDay) {
+
+            //D-day 설정
+            final Calendar dDayCalendar = Calendar.getInstance();
+            dDayCalendar.set(mYear, mMonth, mDay);
+
+            //millisecond 으로 환산 후 d-day 에서 today 의 차를 구함
+            final long dDay = dDayCalendar.getTimeInMillis() / ONE_DAY; //사용자 선택 날짜
+            final long today = Calendar.getInstance().getTimeInMillis() / ONE_DAY; //오늘 날짜
+            long result = dDay - today;
+
+            //출력 시 d-day 에 맞게 표시
+            String strFormat;
+
+            if (result > 0) { //남은 기한
+                strFormat = "D-%d";
+            } else if (result == 0) { //당일
+                strFormat = "Today";
+            } else { //지난 기한
+                result *= -1;
+                strFormat = "D+%d";
+            }
+
+            final String strCount = (String.format(strFormat, result));
+
+            return strCount;
+        }
+
+
+        //D-day 값 계산 함수
+        public int onCalculatorDate (int dateEndY, int dateEndM, int dateEndD) {
+            try {
+                Calendar today = Calendar.getInstance(); //현재 날짜
+                Calendar dDay = Calendar.getInstance();
+
+                //시작일, 종료일 데이터 저장
+                Calendar calendar = Calendar.getInstance();
+                int cyear = calendar.get(Calendar.YEAR);
+                int cmonth = (calendar.get(Calendar.MONTH) + 1);
+                int cday = calendar.get(Calendar.DAY_OF_MONTH);
+
+                today.set(cyear, cmonth, cday);
+                dDay.set(dateEndY, dateEndM, dateEndD);// D-day의 날짜를 입력
+
+                long day = dDay.getTimeInMillis() / ONE_DAY;
+                long tday = today.getTimeInMillis() / ONE_DAY;
+                long count = tday - day; // 오늘 날짜에서 dday 날짜를 빼주게 됨
+
+                return (int) count; // 날짜는 하루 + 시켜줘야함
+
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                return -1;
+            }
+        }
+
+        //D-day 값 계산 결과 출력
+        public int dDayResult_int(int dateEndY, int dateEndM, int dateEndD) {
+            int result = 0;
+
+            result = onCalculatorDate(dateEndY, dateEndM, dateEndD);
+
+            return result;
+        }
+
 
     }
 

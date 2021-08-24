@@ -17,10 +17,10 @@ public class FoodItems {
         this.foodRemainDate = foodRemainDate;
     }
 
-    public FoodItems(String foodName, String foodRemainDate, int foodTotalCount) {
+    public FoodItems(String foodName, int foodTotalCount, String foodRemainDate) {
         this.foodName = foodName;
-        this.foodRemainDate = foodRemainDate;
         this.foodTotalCount = foodTotalCount;
+        this.foodRemainDate = foodRemainDate;
     }
 
     public String getFoodName() {
