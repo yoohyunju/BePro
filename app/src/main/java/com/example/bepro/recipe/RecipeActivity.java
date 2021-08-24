@@ -1,4 +1,4 @@
-package com.example.bepro;
+package com.example.bepro.recipe;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +13,9 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.example.bepro.MainActivity;
+import com.example.bepro.R;
 
 public class RecipeActivity extends Fragment {
     WebView webView;

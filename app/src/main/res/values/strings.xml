@@ -1,8 +1,4 @@
 <resources>
     <string name="app_name">BePro</string>
-    <!--카카오 개발자에서 발급해준 네이티브 앱 키-->
     <string name="kakao_app_key">7aed6d50033386c4039da90c3d48a855</string>
-    <string name="naver_client_id">MDUjLCrrrlJEQ45AffDw</string>
-    <string name="naver_client_secret">K7JlSZjrnG</string>
-    <string name="naver_client_name">냉장고 안에 무엇이</string>
 </resources>

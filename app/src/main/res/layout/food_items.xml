@@ -40,10 +40,10 @@
                     android:textSize="15dp"/>
 
                 <TextView
-                    android:id="@+id/remainDate"
+                    android:id="@+id/foodRemainDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="지난기한"
+                    android:text="남은날짜"
                     android:textSize="15dp"/>
 
             </LinearLayout>
