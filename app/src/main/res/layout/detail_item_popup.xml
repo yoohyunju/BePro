@@ -6,16 +6,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#CC212121"
         android:gravity="center">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,8 +38,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="20dp"
-                        android:layout_marginTop="40dp"
-                        android:layout_marginLeft="30dp"
+                        android:layout_margin="30dp"
+                        android:textColor="@color/skyBlue"
                         android:text="품목 상세 정보">
                     </TextView>
 
@@ -73,10 +66,20 @@
                             android:textSize="15dp"
                             android:text="냉장고"/>
 
+                        <TextView
+                            android:id="@+id/detailItemFrigeName"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:gravity="center"
+                            android:text="냉장고명"
+                            android:textSize="15dp"/>
+
+                        <!--
                         <Spinner
                             android:layout_width="150dp"
                             android:layout_marginLeft="20dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content" /> -->
 
                     </LinearLayout>
 
@@ -91,12 +94,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="15dp"
-                            android:text="품목명"/>
+                            android:text="품목명" />
 
                         <EditText
+                            android:id="@+id/detailItemFoodName"
                             android:layout_width="150dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginLeft="20dp"
-                            android:layout_height="wrap_content"/>
+                            android:textSize="15dp"
+                            android:gravity="center"/>
 
                     </LinearLayout>
 
@@ -125,14 +131,57 @@
                                 android:text="개수" />
 
                             <EditText
+                                android:id="@+id/detailItemFoodNum"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="10dp"
-                                android:layout_marginRight="10dp"/>
+                                android:layout_marginRight="10dp"
+                                android:textSize="15dp"
+                                android:gravity="center"/>
 
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/itemDetailDatePicker"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_weight="2.2"
+                            android:layout_margin="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="15dp"
+                                android:layout_gravity="center"
+                                android:text="기한"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/popup_box2"
+                                android:layout_marginLeft="5dp">
+                                <TextView
+                                    android:id="@+id/itemDetailRemainDate"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1.5"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_marginRight="10dp"
+                                    android:text="14일"
+                                    android:textSize="15dp"
+                                    android:gravity="center"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/ic_baseline_calendar_today_24"/>
+
+
+                            </LinearLayout>
+
+                        <!--<LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -149,6 +198,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="10dp"
                                 android:layout_marginRight="10dp"/>
+                         -->
 
                         </LinearLayout>
 
@@ -165,7 +215,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_margin="5dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -173,11 +224,14 @@
                             android:textSize="15dp"
                             android:text="등록일"/>
 
-                        <EditText
+                        <TextView
+                            android:id="@+id/detailItemFoodDate"
                             android:layout_width="150dp"
-                            android:layout_marginLeft="20dp"
                             android:layout_height="wrap_content"
-                            android:text="2021월 07월 26일"/>
+                            android:layout_marginLeft="20dp"
+                            android:text="2021-01-01"
+                            android:textSize="15dp"
+                            android:gravity="center"/>
 
                     </LinearLayout>
 
@@ -186,6 +240,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
+                        android:layout_margin="5dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -194,11 +249,14 @@
                             android:textSize="15dp"
                             android:text="등록인"/>
 
-                        <EditText
+                        <TextView
+                            android:id="@+id/detailItemFoodRegistrant"
                             android:layout_width="150dp"
-                            android:layout_marginLeft="20dp"
                             android:layout_height="wrap_content"
-                            android:text="유현주"/>
+                            android:layout_marginLeft="20dp"
+                            android:text="test"
+                            android:textSize="15dp"
+                            android:gravity="center"/>
 
                     </LinearLayout>
 
@@ -216,23 +274,23 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="horizontal">
+
                         <Button
                             android:id="@+id/detailCancelBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
-                            android:backgroundTint="@color/black"
-                            android:text="취소">
-                        </Button>
+                            android:backgroundTint="@color/gray"
+                            android:text="취소"
+                            android:textColor="@color/black"/>
 
                         <Button
                             android:id="@+id/detailUpdateBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
-                            android:backgroundTint="@color/black"
-                            android:text="확인">
-                        </Button>
+                            android:backgroundTint="@color/skyBlue"
+                            android:text="확인"/>
 
                     </LinearLayout>
 
@@ -240,9 +298,11 @@
                         android:id="@+id/detailRecipeBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/black"
-                        android:text="추천 레시피">
-                    </Button>
+                        android:backgroundTint="@color/white"
+                        android:baselineAligned="false"
+                        android:text="추천 레시피"
+                        android:textColor="@color/skyBlue"
+                        android:layout_marginBottom="30dp"/>
 
                 </LinearLayout>
 
@@ -254,11 +314,6 @@
                 android:layout_weight="1"></LinearLayout>
 
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"></LinearLayout>
 
     </LinearLayout>
 

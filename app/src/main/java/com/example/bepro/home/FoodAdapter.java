@@ -41,8 +41,11 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
     public void onBindViewHolder(@NonNull @NotNull FoodAdapter.ViewHolder holder, int position) {
         FoodItems foodItem = items.get(position);
         //holder.setItem(foodItem);
+
+        //JSON data를 DTO에 저장 후 DTO에서 가져와 출력
         holder.tvFoodName.setText(foodItem.getFoodName());
         holder.tvFoodExp.setText(foodItem.getFoodExpiryDate());
+
         //holder.tvFoodRemain.setText(foodItem.getRemainDate());
 
     }
@@ -80,7 +83,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
 
     }
 
-
+    //아이템 뷰를 저장하는 뷰홀더 클래스
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView tvFoodName;
         TextView tvFoodExp;
@@ -89,14 +92,22 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
         public ViewHolder(@NonNull @NotNull View itemView, final OnFoodItemClickListener listener) { //뷰홀더 생성자로 뷰객체 전달
             super(itemView);
 
+            //뷰홀더가 만들어지는 시점에 클릭 이벤트 처리
             itemView.setOnClickListener(new View.OnClickListener() { //item 클릭 이벤트
                 @Override
                 public void onClick(View v) {
                     int pos = getAdapterPosition(); //item 위치 저장
+                    //ArrayList<FoodItems> items = new ArrayList<FoodItems>();
+                    /*
+                    notifyDataSetChanged()에 의해 리사이클러뷰가 아이템뷰를 갱신하는 과정에서,
+                    뷰홀더가 참조하는 아이템이 어댑터에서 삭제되면 getAdapterPosition() 메서드는 NO_POSITION 리턴
+                    if(pos != RecyclerView.NO_POSITION) {
+                        //FoodItems foodItems = items.get(pos);
+                    }
+                     */
 
                     if(listener != null){ //이벤트 존재 검사
                         listener.onItemClick(ViewHolder.this, v, pos); //아이템 클릭 시 리스너 메소드 호출
-
                     }
                 }
             });
