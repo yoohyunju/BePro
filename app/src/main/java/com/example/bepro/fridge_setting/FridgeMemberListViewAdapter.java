@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,9 +17,10 @@ import com.example.bepro.R;
 import com.example.bepro.fridge_setting.FridgeMember;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FridgeMemberListViewAdapter extends BaseAdapter {
-    private ArrayList<FridgeMember> listViewItemList = new ArrayList<FridgeMember>();
+    private List<FridgeMember> listViewItemList = new ArrayList<FridgeMember>();
 
     //이벤트 설정
     Animation leftAnim;
@@ -60,10 +62,12 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
         FridgeMember listViewItem = listViewItemList.get(position);
 
         // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
+        LinearLayout userProfile = (LinearLayout) convertView.findViewById(R.id.userProfile);
         ImageView iconImageView = (ImageView) convertView.findViewById(R.id.userImg);
         TextView titleTextView = (TextView) convertView.findViewById(R.id.userNickname);
-        LinearLayout userProfile = (LinearLayout) convertView.findViewById(R.id.userProfile);
+
         LinearLayout userSet = (LinearLayout) convertView.findViewById(R.id.userSet);
+        Button userOut = (Button)convertView.findViewById(R.id.userOut);
 
         // 아이템 내 각 위젯에 데이터 반영
         iconImageView.setImageDrawable(listViewItem.getUserImg());
@@ -101,7 +105,17 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
                 userSet.startAnimation(rightAnim);
             }
         });
+        //클릭했을 때 내보내기 이벤트 발생
+        userOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //닫는 과정 처리
+                userSet.setVisibility(View.INVISIBLE);
+                listViewItemList.remove(position);
+                notifyDataSetChanged();
 
+            }
+        });
 
 
 
@@ -116,6 +130,14 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
         item.setUserNickname(userNickname);
 
         listViewItemList.add(item);
+    }
+
+    public List<FridgeMember> getListViewItemList() {
+        return listViewItemList;
+    }
+
+    public void setListViewItemList(List<FridgeMember> listViewItemList) {
+        this.listViewItemList = listViewItemList;
     }
 
     //애니메이션 객체 설정
@@ -152,14 +174,6 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
         @Override
         //애니메이션이 끝났을 때 호출
         public void onAnimationEnd(Animation animation) {
-//                Log.i("test","리스너 설정을 변경합니다.");
-//                rightAnim.setAnimationListener(animationListener);
-//                //설정창이 열려있으면
-//                if (animation==rightAnim){
-//                    userSet.setVisibility(View.INVISIBLE);
-//                    Log.i("test",userSet+ "안 보이게 설정");
-//               }
-
         }
 
         @Override
@@ -167,8 +181,8 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
         public void onAnimationRepeat(Animation animation) {
 
         }
-
-
+        
     }
+
 }
 

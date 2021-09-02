@@ -85,6 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="내보내기"
+                android:id="@+id/userOut"
                 android:backgroundTint="@color/gray">
             </Button>
         </LinearLayout>

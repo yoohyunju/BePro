@@ -1,19 +1,42 @@
 package com.example.bepro.fridge_setting;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.bepro.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.List;
+
+
 public class FridgeMemberActivity extends AppCompatActivity {
+
+    //php에서 가져올...
+    public static RequestQueue requestQueue;
+    JSONArray FridgeMemberJSON;
+    List<FridgeMember> fridgeMemberList;
+    ParseJSON parseJSON;
+
+    //리스트뷰
+    ListView listView;
+    FridgeMemberListViewAdapter friMemberListViewAdapter;
     int listHeight=0;
     Animation LeftAnim;
     Animation RightAnim;
@@ -23,10 +46,22 @@ public class FridgeMemberActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fridge_setting);
 
+        parseJSON=new ParseJSON(getApplicationContext());
+        //테스트
+        test t = new test(getApplicationContext());
+        t.sendRequest();
+
+        Log.i("test","==========테스트 잘 돌아간다============");
+
+        ////////////RequestQueue 생성
+        if(requestQueue != null) {
+            requestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
+
 
         ////////////냉장고 회원 리스트
-        ListView listView = (ListView)findViewById(R.id.friMemberListView); //리스트뷰 참조
-        FridgeMemberListViewAdapter friMemberListViewAdapter = new FridgeMemberListViewAdapter(); //Adapter 생성
+        listView = (ListView)findViewById(R.id.friMemberListView); //리스트뷰 참조
+        friMemberListViewAdapter = new FridgeMemberListViewAdapter(); //Adapter 생성
 
         ////////////애니메이션 설정
         LeftAnim = AnimationUtils.loadAnimation(this,R.anim.translate_left); //anim 폴더의 애니메이션을 가져와서 준비
@@ -35,28 +70,80 @@ public class FridgeMemberActivity extends AppCompatActivity {
         friMemberListViewAdapter.setLeftAnim(LeftAnim);
         friMemberListViewAdapter.setRightAnim(RightAnim);
 
-        ////////////아이템 추가
-        friMemberListViewAdapter.addItem(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24),"다빈");
-        friMemberListViewAdapter.addItem(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24),"다빈");
-        friMemberListViewAdapter.addItem(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24),"다빈");
-        friMemberListViewAdapter.addItem(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24),"다빈");
-        friMemberListViewAdapter.addItem(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24),"다빈");
-        friMemberListViewAdapter.addItem(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24),"다빈");
-        friMemberListViewAdapter.addItem(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24),"다빈");
-        friMemberListViewAdapter.addItem(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24),"다빈");
+        ////////////요청
+        sendRequest();
+    }
 
-        ////////////고정된 리스트 설정 (리스트뷰 아이템의 크기를 측정하고 높이를 모두 합하여 ListView의 Height를 설정한다.)
-        for (int i=0;i<friMemberListViewAdapter.getCount();i++){
-            View listItem = friMemberListViewAdapter.getView(i,null,listView);
-            listItem.measure(0,0);
-            listHeight+=listItem.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = listHeight+(listView.getDividerHeight()+(friMemberListViewAdapter.getCount())-1);
-        listView.setLayoutParams(params);
+    public void sendRequest(){
+        String url="http://10.0.2.2/selectFriSet.php";
+        JsonArrayRequest request = new JsonArrayRequest( //지정된 URL에서 JSONObject의 응답 본문을 가져오기 위한 요청
+                Request.Method.POST,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.i("test", "결과는" + response);
+                        FridgeMemberJSON = response;
+                        try {
+                            fridgeMemberList=parseJSON.getListFridgeMember(response);
+                            friMemberListViewAdapter.setListViewItemList(fridgeMemberList);
+                            ////////////고정된 리스트 설정 (리스트뷰 아이템의 크기를 측정하고 높이를 모두 합하여 ListView의 Height를 설정한다.)
+                            for (int i=0;i<friMemberListViewAdapter.getCount();i++){
+                                View listItem = friMemberListViewAdapter.getView(i,null,listView);
+                                listItem.measure(0,0);
+                                listHeight+=listItem.getMeasuredHeight();
+                            }
+                            ViewGroup.LayoutParams params = listView.getLayoutParams();
+                            params.height = listHeight+(listView.getDividerHeight()+(friMemberListViewAdapter.getCount())-1);
+                            listView.setLayoutParams(params);
 
-        listView.setAdapter(friMemberListViewAdapter);
+                            listView.setAdapter(friMemberListViewAdapter);
 
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.i("test","json오류라능");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("test","에러"+error);
+                    }
+                }
+        );
+        request.setShouldCache(false); //이전 결과 있어도 새로 요청하여 응답을 보여준다.
+        request.setRetryPolicy(new com.android.volley.DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestQueue = Volley.newRequestQueue(this); // requestQueue 초기화 필수
+        requestQueue.add(request);
+        Log.i("test","요청을 보냈어요.");
 
     }
+
+//    public List<FridgeMember> parseJson(JSONArray jsonArray) throws JSONException {
+//        List<FridgeMember> list = new ArrayList<>();
+//        SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        try {
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                FridgeMember member = new FridgeMember();
+//                member.setUserIdx(Integer.parseInt(jsonObject.getString("userIdx")));
+//                member.setUserNickname(jsonObject.getString("userNickname"));
+//                member.setFriIdx(Integer.parseInt(jsonObject.getString("friIdx")));
+//                member.setFriSetIdx(Integer.parseInt(jsonObject.getString("friSetIdx")));
+//                member.setFriSetAuthority(jsonObject.getString("friSetAuthority"));
+//                member.setUserImg(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24));
+//                list.add(member);
+//
+//            }
+//        }catch (JSONException e){
+//            e.printStackTrace();
+//            Log.i("test","json error");
+//        }
+//        return list;
+//    }
 }
