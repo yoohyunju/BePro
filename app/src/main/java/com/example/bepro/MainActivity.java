@@ -14,15 +14,32 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+<<<<<<< Updated upstream
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+=======
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Adapter;
+>>>>>>> Stashed changes
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+<<<<<<< Updated upstream
+=======
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+>>>>>>> Stashed changes
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+<<<<<<< Updated upstream
+=======
+import com.bumptech.glide.Glide;
+>>>>>>> Stashed changes
 import com.example.bepro.home.FoodItems;
 import com.example.bepro.home.HomeActivity;
 import com.example.bepro.home.SelfAddItemAdapter;
@@ -35,6 +52,14 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+<<<<<<< Updated upstream
+=======
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+>>>>>>> Stashed changes
 
 
 public class MainActivity extends AppCompatActivity {
@@ -50,8 +75,17 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout mFridgeListOpenBtn, mAddFridgeBtn, mSelfAddBtn;
     private Dialog mAddItemDialog, mFridgeListDialog, mFridgeAddDialog, mSelfAddDialog;
     private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn, mSelfItemAddBtn;
+<<<<<<< Updated upstream
 
     public String image, email, type;
+=======
+    public String image, email, type, fridgeName, userIdx;
+    ArrayList<Integer> fridgeIdx = new ArrayList<Integer>();
+    TextView selected;
+    RecyclerView recyclerView;
+    LinearLayoutManager layoutManager;
+    FridgeAdapter adapter;
+>>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +112,33 @@ public class MainActivity extends AppCompatActivity {
         mMyPage.userEmail = email;
         mMyPage.userType = type;
 
+<<<<<<< Updated upstream
+=======
+        //DB에서 회원 데이터 받아오기
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    //false면 nick이 있다는 말
+                    mMyPage.userNick = jsonObject.getString("userNickname");
+                    mMyPage.userPassword = jsonObject.getString("userPassword");
+                    mMyPage.dbImage = jsonObject.getString("userImg");
+                    mMyPage.index = jsonObject.getInt("userIDX");
+                    userIdx = jsonObject.getString("userIDX");
+                    System.out.println(userIdx);
+                    FridgeIndex(userIdx);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        snsRequest snsRequest = new snsRequest(type, email, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(snsRequest);
+
+
+>>>>>>> Stashed changes
         //dialog 초기화
         mAddItemDialog = new Dialog(MainActivity.this);
         mAddItemDialog.setContentView(R.layout.add_item_popup); //품목 추가 팝업 xml 연결
@@ -96,6 +157,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showFridgeListDialog(); /*냉장고 리스트 팝업 함수 호출*/
+            }
+        });
+
+        //냉장고 리스트
+        recyclerView = mFridgeListDialog.findViewById(R.id.FridgeRc);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+
+        adapter = new FridgeAdapter();
+        adapter.addItem(new FridgeData("suhyun"));
+        adapter.addItem(new FridgeData("hey"));
+        adapter.addItem(new FridgeData("mo"));
+        recyclerView.setAdapter(adapter);
+
+        adapter.setOnFridgeClickListener(new OnFridgeClickListener() {
+            @Override
+            public void onFridgeClick(FridgeAdapter.ViewHolder holder, View view, int position) {
+                FridgeData name = adapter.getItem(position);
+                selected = findViewById(R.id.myFridge);
+                selected.setText(name.getName());
+                mFridgeListDialog.cancel();
             }
         });
 
@@ -223,7 +305,6 @@ public class MainActivity extends AppCompatActivity {
 
     //냉장고 리스트 팝업창
     public void showFridgeListDialog(){
-
         //팝업창 사이즈 조절
         WindowManager.LayoutParams params = mFridgeListDialog.getWindow().getAttributes();
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -231,10 +312,11 @@ public class MainActivity extends AppCompatActivity {
 
         mFridgeListDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mFridgeListDialog.setCanceledOnTouchOutside(false);
+        mFridgeListDialog.show();
 
-        mFridgeListDialog.show(); //Dialog 띄우기
 
-        mFridgeListCancelBtn = mFridgeListDialog.findViewById(R.id.fridgeListCancelBtn); //냉장고 리스트 취소 버튼
+        //냉장고 리스트 취소 버튼
+        mFridgeListCancelBtn = mFridgeListDialog.findViewById(R.id.fridgeListCancelBtn);
         mFridgeListCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -275,4 +357,55 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+<<<<<<< Updated upstream
+=======
+
+    //냉장고 세팅 인덱스 (fridge_setting)
+    public void FridgeIndex(final String userIDX) {
+        String URL = "http://192.168.0.17:81/fridge.php"; //local 경로
+
+        JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.POST, URL, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                fridgeIdx.clear();
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+
+                        int friIdx = jsonObject.getInt("friIdx");
+                        fridgeIdx.add(friIdx);
+                        System.out.println(fridgeIdx);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String TAG = "";
+                Log.e(TAG, "Error " + error.getMessage());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("userIDX", userIDX);
+                return params;
+            }
+        };
+        RequestQueue requestQueue= Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public void fridgeName(ArrayList<Integer> fridgeIdx){
+        int length = fridgeIdx.size();
+
+        for(int i = 0; i < length; i++){
+            String index = fridgeIdx.get(i).toString();
+
+            System.out.println(index);
+        }
+    }
+>>>>>>> Stashed changes
 }

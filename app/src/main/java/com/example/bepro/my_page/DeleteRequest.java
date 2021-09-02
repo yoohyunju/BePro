@@ -7,6 +7,10 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+<<<<<<< Updated upstream
+=======
+//계정 삭제
+>>>>>>> Stashed changes
 public class DeleteRequest extends StringRequest{
     final static private String URL = "http://192.168.0.17:81/delete.php";
     private Map<String, String> map;

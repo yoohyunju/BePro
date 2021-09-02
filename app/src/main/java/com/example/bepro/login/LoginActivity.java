@@ -55,10 +55,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
 
+<<<<<<< Updated upstream
         //카카오 로그인 세션
         sessionCallback = new SessionCallback();
         Session.getCurrentSession().addCallback(sessionCallback);
 
+=======
+>>>>>>> Stashed changes
         naver = (OAuthLoginButton) findViewById(R.id.naver);
         kakao = (Button) findViewById(R.id.kakao);
         email = (EditText) findViewById(R.id.loginId);
@@ -69,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         autologin = (CheckBox) findViewById(R.id.autologin);
         saveid = (CheckBox) findViewById(R.id.saveid);
 
+<<<<<<< Updated upstream
         //카카오 로그인 버튼
         kakao.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -77,6 +81,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+=======
+>>>>>>> Stashed changes
         //네이버 로그인 개발자 접속
         mOAuthLoginModule = OAuthLogin.getInstance();
         mOAuthLoginModule.init(
@@ -156,6 +162,21 @@ public class LoginActivity extends AppCompatActivity {
             pwd.setText(pwdSet);
         }
 
+<<<<<<< Updated upstream
+=======
+        //카카오 로그인 세션
+        sessionCallback = new SessionCallback();
+        Session.getCurrentSession().addCallback(sessionCallback);
+
+        //카카오 로그인 버튼
+        kakao.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, LoginActivity.this);
+            }
+        });
+
+>>>>>>> Stashed changes
         //카카오 자동 로그인 (단말 토큰_kakaologin)
         kakaologin = Session.getCurrentSession().checkAndImplicitOpen();
         if(kakaologin){
