@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bepro.MainActivity;
 import com.example.bepro.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,19 +42,23 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
     @Override
     // 뷰홀더가 재활용 될 시 호출, 데이터만 바꿔줌
     public void onBindViewHolder(@NonNull @NotNull ViewHolder viewHolder, final int position) {
-        //FoodItems foodItem = items.get(position);
+        FoodItems foodItem = items.get(position);
         //viewHolder.setItem(foodItem);
 
         //viewHolder.mFoodName.setText(items.get(position).getFoodName()); //식품명
-        //viewHolder.mFoodTotal.setText(items.get(position).getFoodTotalCount()); //개수
+        //viewHolder.mFoodTotal.setText(items.get(position).getFoodNumber()); //개수
         //viewHolder.mFoodRemainDate.setText(items.get(position).getFoodRemainDate()); //남은날짜
         //viewHolder.tvFoodExp.setText(foodItem.getFoodExpiryDate()); //유통기한
 
-        //삭제 버튼 이벤트 리스너 연결
+        //foodItem.setFoodName(viewHolder.mFoodName.getText().toString());
+        //items.get(position).setFoodNumber(viewHolder.mFoodTotal.getText());
+
+
+        //카드뷰 삭제 버튼 이벤트 리스너 연결
         viewHolder.selfItemDeleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: 선택한 아이템이 삭제되긴 하는데 문자가 이상한데로 가는건가?..
+                //TODO: 선택한 아이템이 삭제되긴 하는데..
                 setPosition(position); //클릭한 아이템 position set
                 removeItem(position); //아이템 삭제 함수 호출
                 Toast.makeText(v.getContext(), position + "번째 아이템 삭제", Toast.LENGTH_SHORT).show();
@@ -124,9 +130,9 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
             super(itemView);
 
             //뷰객체에 들어있는 텍스트뷰 참조
-            mFoodName = itemView.findViewById(R.id.editAddFoodName); //식품명
-            mFoodTotal = itemView.findViewById(R.id.editFoodTotalCount); //개수
-            mFoodRemainDate = itemView.findViewById(R.id.selfAddFoodRemainDate); //남은날짜
+            //mFoodName = itemView.findViewById(R.id.editAddFoodName); //식품명
+            //mFoodTotal = itemView.findViewById(R.id.editFoodTotalCount); //개수
+            //mFoodRemainDate = itemView.findViewById(R.id.selfAddFoodRemainDate); //남은날짜
 
             selfItemDeleteBtn = itemView.findViewById(R.id.selfItemDeleteBtn); //삭제버튼
 
@@ -154,14 +160,10 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
             //TODO: 직접등록이 아닌 자동등록의 경우 DB 데이터 가져와서 '-' 기준으로 split 후 년월일 구분해서 저장하기
 
             datePicker = itemView.findViewById(R.id.selfAddFoodDatePicker); //달력 다이얼로그 버튼
-            //edit_endDateBtn = (TextView) findViewById(R.id.tvFoodExpDate);
             dateResult = (TextView) itemView.findViewById(R.id.selfAddFoodRemainDate);
 
             //한국어 설정
             Locale.setDefault(Locale.KOREAN);
-
-            // 디데이 날짜 입력
-            //edit_endDateBtn.setText(currentYear + "년 " + (currentMonth + 1) + "월 " + currentDay + "일");
 
             //datePicker : 디데이 날짜 입력 버튼, 클릭시 DatePickerDialog 띄움
             datePicker.setOnClickListener(new View.OnClickListener() {
@@ -174,19 +176,15 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
         }
 
         public void setItem(FoodItems item){
-            //selfAddFoodName.setText(item.getFoodName());
-            //editFoodTotal.setText(item.getFoodExpiryDate());
+            //mFoodName.setText(item.getFoodName());
+            //mFoodTotal.setText(item.getFoodNumber());
             //tvFoodRemain.setText(item.getFoodRemainDate());
-
-
         }
 
         //DatePickerDialog 팝업, 종료일 저장, 기존에 입력한 값이 있으면 해당 데이터 설정후 띄움
         private DatePickerDialog.OnDateSetListener endDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                //edit_endDateBtn.setText(year + "년 " + (month + 1) + "월 " + day + "일");
-
                 dDayValue = dDayResult_int(dateEndY, dateEndM, dateEndD);
 
                 dateResult.setText(getDday(year, month, day));
@@ -210,12 +208,12 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
             String strFormat;
 
             if (result > 0) { //남은 기한
-                strFormat = "D-%d";
+                strFormat = "%d일";
             } else if (result == 0) { //당일
-                strFormat = "Today";
+                strFormat = "오늘";
             } else { //지난 기한
-                result *= -1;
-                strFormat = "D+%d";
+                //result *= -1;
+                strFormat = "%d일";
             }
 
             final String strCount = (String.format(strFormat, result));

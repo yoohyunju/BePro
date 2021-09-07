@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,8 +16,9 @@ import com.example.bepro.R;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> implements OnFoodItemClickListener {
+public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> implements OnFoodItemClickListener, Filterable {
     Context context;
     ArrayList<FoodItems> items = new ArrayList<FoodItems>();
     OnFoodItemClickListener listener;
@@ -46,7 +49,16 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
         holder.tvFoodName.setText(foodItem.getFoodName());
         holder.tvFoodExp.setText(foodItem.getFoodExpiryDate());
 
-        //holder.tvFoodRemain.setText(foodItem.getRemainDate());
+        long remainDate = Integer.parseInt(foodItem.getFoodRemainDate());
+
+        if(remainDate > 0){
+            holder.tvFoodRemain.setText(foodItem.getFoodRemainDate() + "일 남음");
+        }else if(remainDate == 0){
+            holder.tvFoodRemain.setText("오늘까지");
+        }else{
+            holder.tvFoodRemain.setText(foodItem.getFoodRemainDate() + "일 지남");
+        }
+
 
     }
 
@@ -71,6 +83,8 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
         items.set(position, item);
     }
 
+    public void removeItem(int position) { items.remove(position); }
+
     public void setOnItemClickListener(OnFoodItemClickListener listener){ //리스너 설정 메소드 추가
         this.listener = listener;
     }
@@ -82,6 +96,43 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
         }
 
     }
+
+    //Filterable implement (품목 검색 로직)
+    @Override
+    public Filter getFilter() {
+        return itemFilter;
+    }
+
+    private Filter itemFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<FoodItems> itemFilterList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) { //검색어가 없으면
+                itemFilterList.addAll(items); //모든 아이템 추가
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for(FoodItems foodItems : items) {
+                    if (foodItems.getFoodName().toLowerCase().contains(filterPattern)) { //검색 패턴을 가지고 있는 품목명 일 경우
+                        itemFilterList.add(foodItems);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = itemFilterList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            //품목 리스트 초기화 후 검색 결과 출력
+            items.clear();
+            items.addAll((List) results.values);
+            notifyDataSetChanged();
+
+        }
+    };
 
     //아이템 뷰를 저장하는 뷰홀더 클래스
     static class ViewHolder extends RecyclerView.ViewHolder{
@@ -121,7 +172,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
         public void setItem(FoodItems item){
             tvFoodName.setText(item.getFoodName());
             tvFoodExp.setText(item.getFoodExpiryDate());
-            //tvFoodRemain.setText(item.getRemainDate());
+            tvFoodRemain.setText(item.getFoodRemainDate());
         }
 
     }

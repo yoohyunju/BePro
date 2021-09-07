@@ -2,9 +2,12 @@ package com.example.bepro.home;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import androidx.appcompat.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +27,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,13 +52,17 @@ import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.bepro.R;
+import com.example.bepro.RecipeActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -61,9 +72,10 @@ public class HomeActivity extends Fragment {
     private Spinner mSpinner;
     private RecyclerView mHomeRecyclerView;
     private Dialog mDetailDialog;
-    private Button mDetailCancelBtn, mDetailUpdateBtn;
-    private TextView detailFrigeName, detailFoodExp, detailFoodDate, detailFoodRegistrant;
+    private Button mItemDetailCancelBtn, mItemUpdateBtn, mItemDetailRecipeBtn;
+    private TextView mItemDeleteBtn, detailFrigeName, detailFoodExp, detailFoodDate, detailFoodRegistrant;
     private EditText detailFoodName, detailFoodNum;
+    private SearchView mSearchView;
     FoodAdapter foodAdapter;
     ArrayList<FoodItems> foodItems = new ArrayList<>();
     String[] items = {"유통기한 짧은 순", "등록 오래된 순", "등록 최신순"};
@@ -86,7 +98,26 @@ public class HomeActivity extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup homeView = (ViewGroup) inflater.inflate(R.layout.home, container, false);
 
-        //mTextView = homeView.findViewById(R.id.textView);
+        //품목 검색창
+        mSearchView = homeView.findViewById(R.id.searchView);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) { //문자열 입력 완료 시 문자열 반환
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) { //문자열이 변할 때 마다 문자열 반환
+                if(newText.isEmpty()){
+                    foodItemSetting();
+                }else {
+                    foodAdapter.getFilter().filter(newText.toString());
+                }
+                return false;
+            }
+        });
+
+        //품목 정렬 스피너
         mSpinner = homeView.findViewById(R.id.spinner);
 
         ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(
@@ -140,16 +171,16 @@ public class HomeActivity extends Fragment {
         detailFrigeName = mDetailDialog.findViewById(R.id.detailItemFrigeName); //냉장고명
         detailFoodName = mDetailDialog.findViewById(R.id.detailItemFoodName); //품목명
         detailFoodNum = mDetailDialog.findViewById(R.id.detailItemFoodNum); //품목 개수
-        //detailFoodExp = mDetailDialog.findViewById(R.id.itemDetailRemainDate); //품목 기한
+        detailFoodExp = mDetailDialog.findViewById(R.id.itemDetailRemainDate); //품목 기한
         detailFoodDate = mDetailDialog.findViewById(R.id.detailItemFoodDate); //등록일
         detailFoodRegistrant = mDetailDialog.findViewById(R.id.detailItemFoodRegistrant); //등록인
 
-        //foodItemSetting(); //PHP 연결후 JSON data 가져와서 DTO 셋팅하는 함수
+        foodItemSetting(); //PHP 연결후 JSON data 가져와서 DTO 셋팅하는 함수
 
         return homeView;
     }
 
-    //품목 정보 팝업창
+    //품목 상세 정보 팝업창
     public void showDetailDialog(FoodItems item) {
         //팝업창 사이즈 조절
         WindowManager.LayoutParams params = mDetailDialog.getWindow().getAttributes();
@@ -181,8 +212,8 @@ public class HomeActivity extends Fragment {
         });
 
         //품목 정보 취소 버튼
-        mDetailCancelBtn = mDetailDialog.findViewById(R.id.detailCancelBtn);
-        mDetailCancelBtn.setOnClickListener(new View.OnClickListener() {
+        mItemDetailCancelBtn = mDetailDialog.findViewById(R.id.itemDetailCancelBtn);
+        mItemDetailCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDetailDialog.dismiss(); //다이얼로그 닫기
@@ -190,44 +221,60 @@ public class HomeActivity extends Fragment {
         });
 
         //품목 정보 확인(수정) 버튼
-        mDetailUpdateBtn = mDetailDialog.findViewById(R.id.detailUpdateBtn);
-        mDetailUpdateBtn.setOnClickListener(new View.OnClickListener() {
+        mItemUpdateBtn = mDetailDialog.findViewById(R.id.itemUpdateBtn);
+        mItemUpdateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String foodIdx = String.valueOf(item.getFoodIdx());
                 String foodName = detailFoodName.getText().toString();
                 String foodNum = detailFoodNum.getText().toString();
-                //String foodExp = detailFoodExp.getText().toString();
-                //foodItemUpdate(item, foodIdx, foodName, foodNum);
+                //String foodExp = detailFoodExp.getText().toString(); //TODO: 구현
+                foodItemUpdate(foodIdx, foodName, foodNum);
+                foodItemSetting(); //수정 후 목록 재설정
                 mDetailDialog.dismiss(); //다이얼로그 닫기
-
-                //foodItemSetting(); //수정 후 목록 재설정
             }
         });
-        
-        //String remainDate = item.getFoodExpiryDate() - today; TODO: 유통기한 계산 로직직
 
-        //JSO data를 각 오브젝트에 셋팅
+        //품목 삭제 버튼
+        mItemDeleteBtn = mDetailDialog.findViewById(R.id.itemDeleteBtn);
+        mItemDeleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String foodIdx = String.valueOf(item.getFoodIdx());
+                foodItemDelete(foodIdx);
+                foodAdapter.removeItem(item.getFoodIdx()-1); //아이템 인덱스는 0부터 시작하므로 -1 해줌
+                foodAdapter.notifyDataSetChanged();
+
+                foodItemSetting(); //수정 후 목록 재설정
+                mDetailDialog.dismiss(); //다이얼로그 닫기
+            }
+        });
+
+        //추천 레시피 버튼
+        mItemDetailRecipeBtn = mDetailDialog.findViewById(R.id.itemDetailRecipeBtn);
+        mItemDetailRecipeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDetailDialog.dismiss(); //다이얼로그 닫기
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction(); //트랜잭션 시작
+                RecipeActivity recipeFragment = new RecipeActivity();
+                transaction.replace(R.id.frameLayout, recipeFragment).commitAllowingStateLoss();
+            }
+        });
+
+        //JSON data를 각 오브젝트에 셋팅
         detailFrigeName.setText(String.valueOf(item.getFriIdx()));
         detailFoodName.setText(item.getFoodName());
         detailFoodNum.setText(String.valueOf(item.getFoodNumber()));
-        //detailFoodExp.setText(item.getFoodExpiryDate());
+        detailFoodExp.setText(item.getFoodRemainDate() + "일");
         detailFoodDate.setText(item.getFoodDate());
         detailFoodRegistrant.setText(item.getFoodRegistrant());
 
+
     }
 
-    /*
-    public String getDate(){
-        SimpleDateFormat mFormat = new SimpleDateFormat("yyyymmdd");
-        long mNowTime = System.currentTimeMillis(); //현재 시간 가져옴
-        Date mDate = new Date(mNowTime);
-
-        return mFormat.format(mDate);
-    }
-     */
-
-    /*품목 data 설정 //main에 push하기 위한 임시 주석
+    //품목 data 설정 //main에 push하기 위한 임시 주석
     public void foodItemSetting(){
         String URL = "http://10.0.2.2/beProTest/selectFood.php"; //local 경로
 
@@ -244,19 +291,19 @@ public class HomeActivity extends Fragment {
                         JSONObject jsonObject = response.getJSONObject(i);
 
                         //JSON data key 값 참조한 value 값을 변수에 담음
-                        int friIdx = Integer.parseInt(jsonObject.getString("friIdx"));
-                        int foodIdx = Integer.parseInt(jsonObject.getString("foodIdx"));
-                        String foodName = jsonObject.getString("foodName");
-                        int foodNum = Integer.parseInt(jsonObject.getString("foodNum"));
-                        String foodRegistrant = jsonObject.getString("foodRegistrant");
-                        String foodExp = jsonObject.getString("foodExp");
-                        String foodDate = jsonObject.getString("foodDate");
+                        //TODO: DB에 null 값 있으면 앱이 종료되는 오류 발생, null 체크 추가하기
+                        int friIdx = Integer.parseInt(jsonObject.getString("friIdx")); //냉장고 인덱스
+                        int foodIdx = Integer.parseInt(jsonObject.getString("foodIdx")); //품목 인덱스
+                        String foodName = jsonObject.getString("foodName"); //품목 이름
+                        int foodNum = Integer.parseInt(jsonObject.getString("foodNum")); //품목 개수
+                        String foodRegistrant = jsonObject.getString("foodRegistrant"); //등록인
+                        String foodExp = jsonObject.getString("foodExp"); //유통기한
+                        String foodDate = jsonObject.getString("foodDate"); //등록일
+                        String foodRemainDate = getRemainDate(foodExp); //남은 기한
 
-                        //TODO: foodRemainDate 추가
-
-                        foodItems.add(new FoodItems(friIdx, foodIdx, foodName, foodNum, foodRegistrant, foodExp, foodDate));
+                        foodItems.add(new FoodItems(friIdx, foodIdx, foodName, foodNum, foodRegistrant, foodExp, foodDate, foodRemainDate));
                     }
-                }catch (JSONException e){
+                }catch (JSONException | ParseException e){
                     e.printStackTrace();
                     Toast.makeText(getContext(),"품목 출력 실패", Toast.LENGTH_SHORT).show();
                 }
@@ -271,21 +318,19 @@ public class HomeActivity extends Fragment {
         });
 
         //실제 요청 작업을 수행해주는 요청큐 객체 생성
-        RequestQueue requestQueue= Volley.newRequestQueue(getContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         //요청큐에 요청 객체 생성
         requestQueue.add(jsonArrayRequest);
 
     }
 
     //품목 data 수정
-    public void foodItemUpdate(FoodItems item, String foodIdx, String foodName, String foodNum){
+    public void foodItemUpdate(String foodIdx, String foodName, String foodNum){
         String URL = "http://10.0.2.2/beProTest/updateFood.php"; //local 경로
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //foodItems.clear();
-                foodAdapter.notifyDataSetChanged();
 
             }
         }, new Response.ErrorListener(){
@@ -314,13 +359,71 @@ public class HomeActivity extends Fragment {
 
     }
 
-     */
+    //품목 data 삭제
+    public void foodItemDelete(String foodIdx){
+        String URL = "http://10.0.2.2/beProTest/deleteFood.php"; //local 경로
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+
+            }
+        }, new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String TAG = "";
+                Log.e(TAG, "onErrorResponse 오류 메시지: " + String.valueOf(error));
+                Toast.makeText(getContext(), "ERROR", Toast.LENGTH_SHORT).show();
+            }
+        }){
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> requestedParams = new HashMap<>();
+                requestedParams.put("foodIdx", foodIdx);
+
+                return requestedParams;
+            }
+
+        };
+
+        //실제 요청 작업을 수행해주는 요청큐 객체 생성
+        RequestQueue requestQueue= Volley.newRequestQueue(getContext());
+        //요청큐에 요청 객체 생성
+        requestQueue.add(stringRequest);
+
+    }
+
+    //유통기한 남은 날짜 계산 함수
+    public String getRemainDate(String foodExpDate) throws ParseException {
+
+        //TODO: 지난 날짜일 경우 지남이라고 표시되기
+        String remainDate = "";
+
+        Calendar getToday = Calendar.getInstance();
+        getToday.setTime(new Date()); //현재 날짜
+        //Log.d("now date: ", String.valueOf(new Date()));
+
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(foodExpDate);
+        Calendar expDate = Calendar.getInstance();
+        expDate.setTime(date); //품목 유통기한
+
+        long diffDays = (expDate.getTimeInMillis() - getToday.getTimeInMillis()) / ONE_DAY;
+
+        if(diffDays > 0){
+            remainDate = String.valueOf(diffDays + 1);
+            return remainDate;
+        }else if (diffDays == 0){
+            return remainDate = String.valueOf(diffDays);
+        }else {
+            return remainDate = String.valueOf(diffDays);
+        }
+
+    }
+
     //DatePickerDialog 팝업, 종료일 저장, 기존에 입력한 값이 있으면 해당 데이터 설정후 띄움
     private DatePickerDialog.OnDateSetListener endDateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            //edit_endDateBtn.setText(year + "년 " + (month + 1) + "월 " + day + "일");
-
             dDayValue = dDayResult_int(dateEndY, dateEndM, dateEndD);
 
             dateResult.setText(getDday(year, month, day));
@@ -349,8 +452,8 @@ public class HomeActivity extends Fragment {
         } else if (result == 0) { //당일
             strFormat = "오늘";
         } else { //지난 기한
-            result *= -1;
-            strFormat = "지남";
+            //result *= -1;
+            strFormat = "%d일";
         }
 
         final String strCount = (String.format(strFormat, result));
@@ -396,4 +499,21 @@ public class HomeActivity extends Fragment {
         return result;
     }
 
+    /*TextWatcher implement (검색어를 실시간으로 계속 얻는 인터페이스)
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        foodAdapter.getFilter().filter(s.toString());
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
+
+     */
 }

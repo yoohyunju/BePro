@@ -9,12 +9,12 @@ public class FoodItems {
     private int foodNumber; //식품 개수
     private String foodRegistrant; //등록인
     private String foodExpiryDate; //식품 유통기한
-    private String foodDate; //등록일 TODO: Date 형이 나을지 String이 나을지..
-    private String foodRemainDate; //유통기한 남은 날짜 TODO: 추후 삭제하기
+    private String foodDate; //등록일
+    private String foodRemainDate; //유통기한 남은 날짜
 
-    public FoodItems(String foodName, String foodExpiryDate) {
+    public FoodItems(String foodName, int foodNumber) {
         this.foodName = foodName;
-        this.foodExpiryDate = foodExpiryDate;
+        this.foodNumber = foodNumber;
     }
 
     public FoodItems(String foodName, String foodExpiryDate, String foodRemainDate) {
@@ -29,7 +29,7 @@ public class FoodItems {
         this.foodRemainDate = foodRemainDate;
     }
 
-    public FoodItems(int friIdx, int foodIdx, String foodName, int foodNumber, String foodRegistrant, String foodExpiryDate, String foodDate) {
+    public FoodItems(int friIdx, int foodIdx, String foodName, int foodNumber, String foodRegistrant, String foodExpiryDate, String foodDate, String foodRemainDate) {
         this.friIdx = friIdx;
         this.foodIdx = foodIdx;
         this.foodName = foodName;
@@ -37,6 +37,7 @@ public class FoodItems {
         this.foodRegistrant = foodRegistrant;
         this.foodExpiryDate = foodExpiryDate;
         this.foodDate = foodDate;
+        this.foodRemainDate = foodRemainDate;
     }
 
     public int getFriIdx() {
