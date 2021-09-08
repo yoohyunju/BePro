@@ -108,6 +108,7 @@
                         android:text="냉장고 탈퇴"
                         android:gravity="center"
                         android:backgroundTint="@color/gray"
+                        android:id="@+id/fridgeQuit"
                         >
                     </Button>
                     <LinearLayout
@@ -134,6 +135,7 @@
                         android:text="냉장고 삭제"
                         android:gravity="center"
                         android:backgroundTint="@color/gray"
+                        android:id="@+id/fridgeDelete"
                         >
                     </Button>
                     <LinearLayout
