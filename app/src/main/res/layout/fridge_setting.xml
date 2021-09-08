@@ -71,8 +71,9 @@
                         android:layout_height="match_parent"
                         android:layout_marginRight="10px"
                         android:layout_weight="6"
-                        android:text="냉장고 멤버 (4명)"
+                        android:text="냉장고 멤버 (0명)"
                         android:gravity="center_vertical"
+                        android:id="@+id/fridgeListCount"
                         ></TextView>
 
                     <Button

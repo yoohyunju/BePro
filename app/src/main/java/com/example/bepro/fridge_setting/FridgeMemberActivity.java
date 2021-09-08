@@ -8,6 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -41,6 +42,10 @@ public class FridgeMemberActivity extends AppCompatActivity {
     int listHeight=0;
     Animation LeftAnim;
     Animation RightAnim;
+    TextView fridgeListCount;
+
+    //alertDialog
+    Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class FridgeMemberActivity extends AppCompatActivity {
 
         parseJSON=new ParseJSON(getApplicationContext());
         sendRequestImp = new SendRequestImp(getApplicationContext());
+        dialog = new Dialog(getApplicationContext());
 
         ////////////RequestQueue 생성
         if(requestQueue != null) {
@@ -57,7 +63,9 @@ public class FridgeMemberActivity extends AppCompatActivity {
 
         ////////////냉장고 회원 리스트
         listView = (ListView)findViewById(R.id.friMemberListView); //리스트뷰 참조
-        friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp); //Adapter 생성
+        fridgeListCount = (TextView)findViewById(R.id.fridgeListCount);
+        friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp,dialog,fridgeListCount); //Adapter 생성
+
 
         ////////////애니메이션 설정
         LeftAnim = AnimationUtils.loadAnimation(this,R.anim.translate_left); //anim 폴더의 애니메이션을 가져와서 준비
@@ -114,6 +122,7 @@ public class FridgeMemberActivity extends AppCompatActivity {
                             params.height = listHeight+(listView.getDividerHeight()+(friMemberListViewAdapter.getCount())-1);
                             listView.setLayoutParams(params);
 
+                            fridgeListCount.setText("냉장고 멤버 ("+friMemberListViewAdapter.getCount()+"명)");
                             listView.setAdapter(friMemberListViewAdapter);
                         } catch (JSONException e) {
                             e.printStackTrace();

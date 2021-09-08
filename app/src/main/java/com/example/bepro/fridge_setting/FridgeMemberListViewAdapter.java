@@ -26,14 +26,20 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
 
     //쿼리문
     SendRequestImp sendRequestImp;
-    FridgeMemberListViewAdapter(SendRequestImp sendRequestImp){
+    //alertDialog
+    Dialog dialog ;
+    FridgeMemberListViewAdapter(SendRequestImp sendRequestImp, Dialog dialog, TextView fridgeListCount){
         this.sendRequestImp=sendRequestImp;
+        this.dialog=dialog;
+        this.fridgeListCount = fridgeListCount;
     }
 
     //이벤트 설정
     Animation leftAnim;
     Animation rightAnim;
     SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
+
+    TextView fridgeListCount;
 
     // Adapter에 사용되는 데이터의 개수를 리턴.
     @Override
@@ -137,12 +143,17 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
         userOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.onCreateDialog();
+//                dialog.showDialog("회원을 내보내시겠습니까?",listViewItem.getUserNickname()+"회원을 정말로 내보내시겠습니까?","내보냈습니다.");
                 //닫는 과정 처리
-                userSet.setVisibility(View.INVISIBLE);
-                listViewItemList.remove(position);
-                notifyDataSetChanged();
-                Log.i("test","값은"+listViewItem.getUserIdx()+"과"+listViewItem.getFriIdx());
-                sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
+//                userSet.setVisibility(View.INVISIBLE);
+                //UI 다시 그리기
+//                listViewItemList.remove(position);
+//                notifyDataSetChanged();
+//                fridgeListCount.setText("냉장고 멤버 ("+getCount()+"명)");
+//                Log.i("test","값은"+listViewItem.getUserIdx()+"과"+listViewItem.getFriIdx());
+                //DB 삭제 쿼리
+//                sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
             }
         });
         //클릭했을 때 권한 위임 이벤트 발생
