@@ -6,10 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -33,6 +33,7 @@ public class FridgeMemberActivity extends AppCompatActivity {
     JSONArray FridgeMemberJSON;
     List<FridgeMember> fridgeMemberList;
     ParseJSON parseJSON;
+    SendRequestImp sendRequestImp;
 
     //리스트뷰
     ListView listView;
@@ -47,21 +48,16 @@ public class FridgeMemberActivity extends AppCompatActivity {
         setContentView(R.layout.fridge_setting);
 
         parseJSON=new ParseJSON(getApplicationContext());
-        //테스트
-        test t = new test(getApplicationContext());
-        t.sendRequest();
-
-        Log.i("test","==========테스트 잘 돌아간다============");
+        sendRequestImp = new SendRequestImp(getApplicationContext());
 
         ////////////RequestQueue 생성
         if(requestQueue != null) {
             requestQueue = Volley.newRequestQueue(getApplicationContext());
         }
 
-
         ////////////냉장고 회원 리스트
         listView = (ListView)findViewById(R.id.friMemberListView); //리스트뷰 참조
-        friMemberListViewAdapter = new FridgeMemberListViewAdapter(); //Adapter 생성
+        friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp); //Adapter 생성
 
         ////////////애니메이션 설정
         LeftAnim = AnimationUtils.loadAnimation(this,R.anim.translate_left); //anim 폴더의 애니메이션을 가져와서 준비
@@ -70,8 +66,28 @@ public class FridgeMemberActivity extends AppCompatActivity {
         friMemberListViewAdapter.setLeftAnim(LeftAnim);
         friMemberListViewAdapter.setRightAnim(RightAnim);
 
-        ////////////요청
+
+        ////////////데이터 요청
         sendRequest();
+
+        ////////////냉장고 탈퇴
+        Button fridgeQuit = (Button)findViewById(R.id.fridgeQuit);
+        fridgeQuit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendRequestImp.deleteFriUser(1,1); //변경 필요 : 현재 회원.
+            }
+        });
+
+        ////////////냉장고 삭제
+        Button fridgeDelete = (Button)findViewById(R.id.fridgeDelete);
+        fridgeDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendRequestImp.deleteFri(1); //변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
+            }
+        });
+
     }
 
     public void sendRequest(){
@@ -99,7 +115,6 @@ public class FridgeMemberActivity extends AppCompatActivity {
                             listView.setLayoutParams(params);
 
                             listView.setAdapter(friMemberListViewAdapter);
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.i("test","json오류라능");
@@ -124,26 +139,4 @@ public class FridgeMemberActivity extends AppCompatActivity {
 
     }
 
-//    public List<FridgeMember> parseJson(JSONArray jsonArray) throws JSONException {
-//        List<FridgeMember> list = new ArrayList<>();
-//        SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        try {
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                FridgeMember member = new FridgeMember();
-//                member.setUserIdx(Integer.parseInt(jsonObject.getString("userIdx")));
-//                member.setUserNickname(jsonObject.getString("userNickname"));
-//                member.setFriIdx(Integer.parseInt(jsonObject.getString("friIdx")));
-//                member.setFriSetIdx(Integer.parseInt(jsonObject.getString("friSetIdx")));
-//                member.setFriSetAuthority(jsonObject.getString("friSetAuthority"));
-//                member.setUserImg(ContextCompat.getDrawable(this,R.drawable.ic_baseline_person_outline_24));
-//                list.add(member);
-//
-//            }
-//        }catch (JSONException e){
-//            e.printStackTrace();
-//            Log.i("test","json error");
-//        }
-//        return list;
-//    }
 }

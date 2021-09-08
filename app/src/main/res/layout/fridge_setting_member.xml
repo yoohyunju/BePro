@@ -73,7 +73,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="주인 위임"
-                android:backgroundTint="@color/gray">
+                android:backgroundTint="@color/gray"
+                android:id="@+id/userAdmin">
             </Button>
         </LinearLayout>
         <LinearLayout

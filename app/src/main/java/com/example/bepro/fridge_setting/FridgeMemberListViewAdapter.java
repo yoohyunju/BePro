@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.bepro.R;
@@ -21,6 +23,12 @@ import java.util.List;
 
 public class FridgeMemberListViewAdapter extends BaseAdapter {
     private List<FridgeMember> listViewItemList = new ArrayList<FridgeMember>();
+
+    //쿼리문
+    SendRequestImp sendRequestImp;
+    FridgeMemberListViewAdapter(SendRequestImp sendRequestImp){
+        this.sendRequestImp=sendRequestImp;
+    }
 
     //이벤트 설정
     Animation leftAnim;
@@ -65,14 +73,18 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
         LinearLayout userProfile = (LinearLayout) convertView.findViewById(R.id.userProfile);
         ImageView iconImageView = (ImageView) convertView.findViewById(R.id.userImg);
         TextView titleTextView = (TextView) convertView.findViewById(R.id.userNickname);
+        Switch userAuthority = (Switch) convertView.findViewById(R.id.userAuthority);
 
         LinearLayout userSet = (LinearLayout) convertView.findViewById(R.id.userSet);
         Button userOut = (Button)convertView.findViewById(R.id.userOut);
+        Button userAdmin = (Button)convertView.findViewById(R.id.userAdmin);
 
         // 아이템 내 각 위젯에 데이터 반영
         iconImageView.setImageDrawable(listViewItem.getUserImg());
         titleTextView.setText(listViewItem.getUserNickname());
-
+        if(listViewItem.getFriSetAuthority().equals("member")){
+            userAuthority.setChecked(true);
+        }
 
         /////////////////이벤트 설정
         //클릭했을 때 슬라이딩 이벤트 발생 (회원 정보)
@@ -105,6 +117,22 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
                 userSet.startAnimation(rightAnim);
             }
         });
+        //클릭했을 때 권한 변경 이벤트 발생
+        userAuthority.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    Log.i("test","스위치 이벤트 발생, member로 변경");
+                    sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"member");
+                    listViewItem.setFriSetAuthority("member");
+                }
+                else{
+                    Log.i("test","스위치 이벤트 발생, guest로 변경");
+                    sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"guest");
+                    listViewItem.setFriSetAuthority("guest");
+                }
+            }
+        });
         //클릭했을 때 내보내기 이벤트 발생
         userOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,12 +141,21 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
                 userSet.setVisibility(View.INVISIBLE);
                 listViewItemList.remove(position);
                 notifyDataSetChanged();
-
+                Log.i("test","값은"+listViewItem.getUserIdx()+"과"+listViewItem.getFriIdx());
+                sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
             }
         });
+        //클릭했을 때 권한 위임 이벤트 발생
+        userAdmin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //닫는 과정 처리
+                userSet.setVisibility(View.INVISIBLE);
 
-
-
+                //현재 주인인 나의 권한을 다운하는 것 추가해야 함
+                sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"admin");
+            }
+        });
         return convertView;
     }
 
