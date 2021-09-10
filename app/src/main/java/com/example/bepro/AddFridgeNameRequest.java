@@ -1,4 +1,4 @@
-package com.example.bepro.login;
+package com.example.bepro;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -7,17 +7,16 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-//아이디 - 비번 존재하는지
-public class LoginRequest extends StringRequest {
-    final static private String URL = "http://3.37.119.236:80/login/login.php";
+public class AddFridgeNameRequest extends StringRequest {
+    final static private String URL = "http://192.168.0.17:81/addFridge.php";
     private Map<String, String> map;
 
-    public LoginRequest(String userEmail, String userPassword, Response.Listener<String> listener){
+    public AddFridgeNameRequest(String fridgeName, String userIdx, Response.Listener<String> listener){
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();
-        map.put("userEmail", userEmail);
-        map.put("userPassword", userPassword);
+        map.put("fridgeName", fridgeName);
+        map.put("userIdx", userIdx);
 
         //데이터 전송 확인, Logcat
         /*for(String key:map.keySet()){
@@ -27,7 +26,7 @@ public class LoginRequest extends StringRequest {
     }
 
     @Override
-    protected Map<String, String> getParams() throws AuthFailureError{
+    protected Map<String, String> getParams() throws AuthFailureError {
         return map;
     }
 }

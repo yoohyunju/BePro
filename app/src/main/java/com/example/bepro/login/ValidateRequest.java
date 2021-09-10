@@ -9,13 +9,14 @@ import java.util.Map;
 
 //이메일 존재하는지
 public class ValidateRequest  extends StringRequest {
-    final static private String URL = "http://192.168.0.17:81/validate.php";
+    final static private String URL = "http://3.37.119.236:80/login/validate.php";
     private Map<String, String> map;
 
-    public ValidateRequest(String UserEmail, Response.Listener<String> listener){
+    public ValidateRequest(String userType, String UserEmail, Response.Listener<String> listener){
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();
+        map.put("userType", userType);
         map.put("userEmail", UserEmail);
     }
 

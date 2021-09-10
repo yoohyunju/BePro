@@ -9,7 +9,7 @@ import java.util.Map;
 
 //SNS 타입 - EMAIL 존재하는지
 public class snsRequest extends StringRequest {
-    final static private String URL = "http://192.168.0.17:81/sns.php";
+    final static private String URL = "http://3.37.119.236:80/login/sns.php";
     private Map<String, String> map;
 
     public snsRequest(String snsName, String UserEmail, Response.Listener<String> listener){

@@ -1,8 +1,6 @@
 package com.example.bepro;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -14,32 +12,21 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-<<<<<<< Updated upstream
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
-=======
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Adapter;
->>>>>>> Stashed changes
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
-<<<<<<< Updated upstream
-=======
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
->>>>>>> Stashed changes
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-<<<<<<< Updated upstream
-=======
-import com.bumptech.glide.Glide;
->>>>>>> Stashed changes
 import com.example.bepro.home.FoodItems;
 import com.example.bepro.home.HomeActivity;
 import com.example.bepro.home.SelfAddItemAdapter;
@@ -51,15 +38,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-<<<<<<< Updated upstream
-=======
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
->>>>>>> Stashed changes
+
+import javax.xml.transform.ErrorListener;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -74,18 +59,14 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayout mFridgeListOpenBtn, mAddFridgeBtn, mSelfAddBtn;
     private Dialog mAddItemDialog, mFridgeListDialog, mFridgeAddDialog, mSelfAddDialog;
-    private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn, mSelfItemAddBtn;
-<<<<<<< Updated upstream
-
-    public String image, email, type;
-=======
+    private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeNameAddBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn, mSelfItemAddBtn;
     public String image, email, type, fridgeName, userIdx;
     ArrayList<Integer> fridgeIdx = new ArrayList<Integer>();
     TextView selected;
+    EditText addFridge;
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     FridgeAdapter adapter;
->>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +93,6 @@ public class MainActivity extends AppCompatActivity {
         mMyPage.userEmail = email;
         mMyPage.userType = type;
 
-<<<<<<< Updated upstream
-=======
         //DB에서 회원 데이터 받아오기
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
@@ -138,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
         queue.add(snsRequest);
 
 
->>>>>>> Stashed changes
         //dialog 초기화
         mAddItemDialog = new Dialog(MainActivity.this);
         mAddItemDialog.setContentView(R.layout.add_item_popup); //품목 추가 팝업 xml 연결
@@ -166,14 +144,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         adapter = new FridgeAdapter();
-        adapter.addItem(new FridgeData("suhyun"));
-        adapter.addItem(new FridgeData("hey"));
-        adapter.addItem(new FridgeData("mo"));
-        recyclerView.setAdapter(adapter);
 
         adapter.setOnFridgeClickListener(new OnFridgeClickListener() {
             @Override
             public void onFridgeClick(FridgeAdapter.ViewHolder holder, View view, int position) {
+                //선택에 따라 품목 부분 가져오기
                 FridgeData name = adapter.getItem(position);
                 selected = findViewById(R.id.myFridge);
                 selected.setText(name.getName());
@@ -337,6 +312,9 @@ public class MainActivity extends AppCompatActivity {
 
     //냉장고 추가하기 팝업창
     public void showFridgeAddDialog(){
+        addFridge = mFridgeAddDialog.findViewById(R.id.fridgeName);
+        addFridge.setText(null);
+
         //팝업창 사이즈 조절
         WindowManager.LayoutParams params = mFridgeAddDialog.getWindow().getAttributes();
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -344,25 +322,54 @@ public class MainActivity extends AppCompatActivity {
 
         mFridgeAddDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mFridgeAddDialog.setCanceledOnTouchOutside(false);
-
         mFridgeAddDialog.show();
 
+        //냉장고 추가하기 확인 버튼
+        mFridgeNameAddBtn = mFridgeAddDialog.findViewById(R.id.fridgeNameAddBtn);
+        mFridgeNameAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String addFridgeName = addFridge.getText().toString();
+                adapter.addItem(new FridgeData(addFridgeName));
+                recyclerView.setAdapter(adapter);
+                mFridgeAddDialog.dismiss();
+                showFridgeListDialog(); //이전 다이얼로그 재시작
+
+                //추가된 냉장고 db에 넣기
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                AddFridgeNameRequest addFridgeNameRequest = new AddFridgeNameRequest(addFridgeName, userIdx, responseListener);
+                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                queue.add(addFridgeNameRequest);
+            }
+        });
+
+        //냉장고 추가하기 취소 버튼
         mFridgeAddCancelBtn = mFridgeAddDialog.findViewById(R.id.fridgeAddCancelBtn);
         mFridgeAddCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mFridgeAddDialog.dismiss();
                 showFridgeListDialog(); //이전 다이얼로그 재시작
-
             }
         });
     }
-<<<<<<< Updated upstream
-=======
+
+    //public void JsonArrayRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONArray> listener, ErrorListener errorListener) {
+    //   super(method, url, jsonRequest.toString(), listener, errorListener);
+    //}
 
     //냉장고 세팅 인덱스 (fridge_setting)
-    public void FridgeIndex(final String userIDX) {
-        String URL = "http://192.168.0.17:81/fridge.php"; //local 경로
+    public void FridgeIndex(final String userIDX) throws JSONException {
+        String URL = "http://192.168.0.17:81/fridge.php/?userIDX="+userIDX; //local 경로
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.POST, URL, null, new Response.Listener<JSONArray>() {
             @Override
@@ -376,6 +383,7 @@ public class MainActivity extends AppCompatActivity {
                         fridgeIdx.add(friIdx);
                         System.out.println(fridgeIdx);
                     }
+                    fridgeName(fridgeIdx);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -386,26 +394,37 @@ public class MainActivity extends AppCompatActivity {
                 String TAG = "";
                 Log.e(TAG, "Error " + error.getMessage());
             }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("userIDX", userIDX);
-                return params;
-            }
-        };
+        });
+        System.out.println("여기");
+
         RequestQueue requestQueue= Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
     }
 
+    //냉장고 리스트 이름 가져오기
     public void fridgeName(ArrayList<Integer> fridgeIdx){
         int length = fridgeIdx.size();
 
         for(int i = 0; i < length; i++){
             String index = fridgeIdx.get(i).toString();
 
-            System.out.println(index);
+            Response.Listener<String> responseListener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        fridgeName = jsonObject.getString("friName");
+                        System.out.println(fridgeName);
+                        adapter.addItem(new FridgeData(fridgeName));
+                        recyclerView.setAdapter(adapter);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            fridgeNameRequest fridgeName = new fridgeNameRequest(index, responseListener);
+            RequestQueue queue = Volley.newRequestQueue(this);
+            queue.add(fridgeName);
         }
     }
->>>>>>> Stashed changes
 }

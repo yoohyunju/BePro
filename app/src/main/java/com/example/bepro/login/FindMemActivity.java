@@ -109,7 +109,7 @@ public class FindMemActivity extends AppCompatActivity {
                         }
                     }
                 };
-                ValidateRequest validateRequest = new ValidateRequest(userEmail, responseListener);
+                ValidateRequest validateRequest = new ValidateRequest("normal", userEmail, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(FindMemActivity.this);
                 queue.add(validateRequest);
             }

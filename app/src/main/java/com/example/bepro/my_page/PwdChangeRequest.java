@@ -7,12 +7,9 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-<<<<<<< Updated upstream
-=======
 //비번 변경
->>>>>>> Stashed changes
 public class PwdChangeRequest extends StringRequest{
-    final static private String URL = "http://192.168.0.17:81/newPass.php";
+    final static private String URL = "http://3.37.119.236:80/login/newPass.php";
     private Map<String, String> map;
 
     public PwdChangeRequest(String userType, String userEmail, String newPass, Response.Listener<String> listener){

@@ -42,11 +42,7 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
-<<<<<<< Updated upstream
-            android:windowSoftInputMode="adjustPan|adjustUnspecified" /> <!-- 앱 실행 시 키보드 조절 -->
-=======
             android:windowSoftInputMode="adjustPan|adjustUnspecified" />
->>>>>>> Stashed changes
         <activity
             android:name=".login.CreateMemActivity"
             android:parentActivityName=".login.LoginActivity" />

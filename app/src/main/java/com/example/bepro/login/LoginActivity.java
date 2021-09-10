@@ -55,13 +55,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
 
-<<<<<<< Updated upstream
-        //카카오 로그인 세션
-        sessionCallback = new SessionCallback();
-        Session.getCurrentSession().addCallback(sessionCallback);
-
-=======
->>>>>>> Stashed changes
         naver = (OAuthLoginButton) findViewById(R.id.naver);
         kakao = (Button) findViewById(R.id.kakao);
         email = (EditText) findViewById(R.id.loginId);
@@ -72,17 +65,6 @@ public class LoginActivity extends AppCompatActivity {
         autologin = (CheckBox) findViewById(R.id.autologin);
         saveid = (CheckBox) findViewById(R.id.saveid);
 
-<<<<<<< Updated upstream
-        //카카오 로그인 버튼
-        kakao.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, LoginActivity.this);
-            }
-        });
-
-=======
->>>>>>> Stashed changes
         //네이버 로그인 개발자 접속
         mOAuthLoginModule = OAuthLogin.getInstance();
         mOAuthLoginModule.init(
@@ -97,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         userNICK = userData.getString("nickname", "") + "의 네이버";
         userEMAIL = userData.getString("email", "");
         userImage = userData.getString("profile_image", "");
+        System.out.println(userNICK + userEMAIL + userImage);
 
         //네이버 로그인
         if (mOAuthLoginModule.getAccessToken(LoginActivity.this) != null) {
@@ -162,8 +145,6 @@ public class LoginActivity extends AppCompatActivity {
             pwd.setText(pwdSet);
         }
 
-<<<<<<< Updated upstream
-=======
         //카카오 로그인 세션
         sessionCallback = new SessionCallback();
         Session.getCurrentSession().addCallback(sessionCallback);
@@ -176,12 +157,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
->>>>>>> Stashed changes
         //카카오 자동 로그인 (단말 토큰_kakaologin)
         kakaologin = Session.getCurrentSession().checkAndImplicitOpen();
         if(kakaologin){
             Toast.makeText(getApplicationContext(), "카카오톡 자동 로그인", Toast.LENGTH_SHORT).show();
-            Session.getCurrentSession().checkAndImplicitOpen();
         }
 
         loginSetting();
@@ -303,25 +282,13 @@ public class LoginActivity extends AppCompatActivity {
                 //로그인에 실패했을 때, 인터넷 연결이 불안정할 때때
                @Override
                 public void onFailure(ErrorResult errorResult) {
-                    int result = errorResult.getErrorCode();
 
-                    if(result == ApiErrorCode.CLIENT_ERROR_CODE) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                        dialog = builder.setMessage("네트워크 연결이 불안정합니다. 다시 시도해주세요.").setNegativeButton("확인", null).create();
-                        dialog.show();
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                        dialog = builder.setMessage("로그인 도중 오류가 발생했습니다.").setNegativeButton("확인", null).create();
-                        dialog.show();
-                    }
                 }
 
                 //로그인 도중 세션이 닫혔을 때
                 @Override
                 public void onSessionClosed(ErrorResult errorResult) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                    dialog = builder.setMessage("세션이 닫혔습니다. 다시 시도해 주세요.").setNegativeButton("확인", null).create();
-                    dialog.show();
+
                 }
 
                 //로그인에 성공했을 때, MeV2Response에 로그인한 유저의 정보를 담고 있음.

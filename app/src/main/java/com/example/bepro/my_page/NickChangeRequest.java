@@ -9,7 +9,7 @@ import java.util.Map;
 
 //별명 변경
 public class NickChangeRequest extends StringRequest {
-    final static private String URL = "http://192.168.0.17:81/newNick.php";
+    final static private String URL = "http://3.37.119.236:80/login/newNick.php";
     private Map<String, String> map;
 
     public NickChangeRequest(String userNick, String newNick, Response.Listener<String> listener){

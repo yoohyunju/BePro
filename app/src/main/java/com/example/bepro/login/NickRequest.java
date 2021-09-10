@@ -9,7 +9,7 @@ import java.util.Map;
 
 //닉네임 존재하는지
 public class NickRequest extends StringRequest {
-    final static private String URL = "http://192.168.0.17:81/nick.php";
+    final static private String URL = "http://3.37.119.236:80/login/nick.php";
     private Map<String, String> map;
 
     public NickRequest(String userNick, Response.Listener<String> listener){
