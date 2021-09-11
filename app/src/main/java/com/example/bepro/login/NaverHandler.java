@@ -90,12 +90,14 @@ public class NaverHandler extends OAuthLoginHandler {
                 JSONObject object = new JSONObject(result);
                 if(object.getString("resultcode").equals("00")) {
                         JSONObject jsonObject = new JSONObject(object.getString("response"));
+                        //로그인에 공유될 정보
                         SharedPreferences.Editor editor = activity.userData.edit();
                         editor.putString("email", jsonObject.getString("email"));
                         editor.putString("nickname", jsonObject.getString("nickname"));
                         editor.putString("profile_image", jsonObject.getString("profile_image"));
                         editor.apply();
 
+                        //메인으로 네이버 로그인 정보 intent
                         Intent intent = new Intent(activity, MainActivity.class);
                         intent.putExtra("userImage", jsonObject.getString("profile_image"));
                         intent.putExtra("userEmail", jsonObject.getString("email"));

@@ -9,15 +9,14 @@ import java.util.Map;
 
 //계정 삭제
 public class DeleteRequest extends StringRequest{
-    final static private String URL = "http://3.37.119.236:80/delete.php";
+    final static private String URL = "http://3.37.119.236:80/login/delete.php";
     private Map<String, String> map;
 
-    public DeleteRequest(String userType, String userEmail, Response.Listener<String> listener){
+    public DeleteRequest(String userIDX, Response.Listener<String> listener){
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();
-        map.put("userType", userType);
-        map.put("userEmail", userEmail);
+        map.put("userIDX", userIDX);
 
         //데이터 전송 확인, Logcat
     /*for(String key:map.keySet()){

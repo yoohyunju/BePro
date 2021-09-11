@@ -44,8 +44,8 @@ public class LoginActivity extends AppCompatActivity {
     String id, password, idSet, pwdSet; //아이디 저장, 자동로그인
     private SessionCallback sessionCallback; //카카오 로그인 세션
     private AlertDialog dialog; //알림
-    boolean kakaologin, naverlogin; //카카오 자동로그인 체크, 네이버 로그인 성공 체크
-    String userNICK, userEMAIL, userType, userPWD, userImage; //DB 데이터 전송
+    boolean kakaologin; //카카오 자동 로그인
+    String userNICK, userEMAIL, userType, userPWD, userImage; //UserData
     OAuthLogin mOAuthLoginModule; //네이버 로그인 토큰 관리
     SharedPreferences userData; //네이버 로그인 데이터 저장공간
     public String nick; //별명 넘기기 (main으로)
@@ -79,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
         userNICK = userData.getString("nickname", "") + "의 네이버";
         userEMAIL = userData.getString("email", "");
         userImage = userData.getString("profile_image", "");
-        System.out.println(userNICK + userEMAIL + userImage);
 
         //네이버 로그인
         if (mOAuthLoginModule.getAccessToken(LoginActivity.this) != null) {
@@ -118,6 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
+        //단말 파일 세팅
         PrefsHelper.init(getApplicationContext());
 
         //단말 파일 자동 로그인
@@ -256,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    //결과값 가져오기
+    //카카오 결과값 가져오기
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
@@ -330,6 +330,7 @@ public class LoginActivity extends AppCompatActivity {
                         queue.add(registerRequest);
                         Toast.makeText(getApplicationContext(), "카카오톡 로그인 완료", Toast.LENGTH_SHORT).show();
                     }
+                    //메인으로 카카오 로그인 정보 intent
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.putExtra("userImage", result.getProfileImagePath());
                     intent.putExtra("userType", "kakao");

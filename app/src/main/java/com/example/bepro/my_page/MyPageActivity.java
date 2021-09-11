@@ -32,46 +32,35 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+
 import com.bumptech.glide.Glide;
-import com.example.bepro.BuildConfig;
+
 import com.example.bepro.MainActivity;
+import com.example.bepro.UserData;
 import com.example.bepro.login.NickRequest;
 import com.example.bepro.login.PrefsHelper;
 import com.example.bepro.R;
 import com.example.bepro.login.LoginActivity;
-import com.example.bepro.login.RegisterRequest;
-import com.example.bepro.login.snsRequest;
+
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.nhn.android.naverlogin.OAuthLogin;
 
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.text.BreakIterator;
-import java.util.Objects;
-import android.provider.ContactsContract;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
+import java.net.URL;
 
 public class MyPageActivity extends Fragment implements View.OnClickListener {
     LinearLayout mPwcLayout, mEditLayout, mLogoutLayout, mDeleteLayout;
@@ -82,17 +71,17 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
     Spinner mSpinner;
     EditText pwcpw, editPw, editNickname;
     ImageView image;
-    public TextView id, nick;
-    TextView memEMAIL;
+    TextView id, nick, memEMAIL;
     private ArrayAdapter<String> adapter;
     ViewGroup rootView;
     OAuthLogin mOAuthLoginModule; //네이버 로그인 토큰 관리
-    public String imageUrl, userEmail, userNick, userType, userPassword, newPassword, newNick, dbImage;
-    public int index;
+    String newPassword, newNick;
     Dialog dialog;
     boolean success = false;
-    private static final int RESULT_CODE = 0;
+    private static final int RESULT_CODE = 0; //이미지 수정
 
+    public UserData user = new UserData();
+    MainActivity main = new MainActivity();
     // @NonNull : null 허용하지 않음
     // @Nullable : null 허용
     //onCreateView(): fragment가 자신의 UI를 처음으로 그릴 때 호출됨
@@ -125,16 +114,15 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
         //계정 정보 아이디, 별명
         id = rootView.findViewById(R.id.Id);
         nick = rootView.findViewById(R.id.Nick);
-        id.setText(userEmail);
-        nick.setText(userNick);
+
+        id.setText(user.getEmail());
+        nick.setText(user.getNickname());
 
         image = rootView.findViewById(R.id.userImage);
-        System.out.println("디비 이미지" + dbImage);
-        System.out.println("이미지" + imageUrl);
 
-        if(dbImage != "null") Glide.with(getContext()).load(dbImage).into(image);
-        else if(imageUrl == null) image.setImageResource(R.drawable.ic_baseline_person_outline_24);
-        else new DownloadFilesTask().execute(imageUrl);
+        if(user.getDbImage() != "null") Glide.with(getContext()).load(user.getDbImage()).into(image);
+        else if(user.getImage() == null) image.setImageResource(R.drawable.ic_baseline_person_outline_24);
+        else new DownloadFilesTask().execute(user.getImage());
 
         //계정 정보 프로필 수정
         image.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +152,7 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
 
         //회원 정보 수정 이메일
         memEMAIL = rootView.findViewById(R.id.memEMAIL);
-        memEMAIL.setText(userEmail);
+        memEMAIL.setText(user.getEmail());
 
         pwcpw = rootView.findViewById(R.id.pwcPw);
         editPw = rootView.findViewById(R.id.editPw);
@@ -172,6 +160,8 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
         mSwitch = rootView.findViewById(R.id.swNs);
         mSpinner = rootView.findViewById(R.id.spDay);
         autologin = rootView.findViewById(R.id.autologin);
+
+        //푸시 알림 여부
         mSwitch.setChecked(true);
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -189,7 +179,7 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                System.out.println(items[position] + "푸시 알림");
             }
 
             @Override
@@ -326,11 +316,11 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
             case R.id.editBtn:
                 //계정 정보 수정 버튼
                 mPwcLayout.setVisibility(View.VISIBLE);
-                if(userPassword.equals(userType)) pwcpw.setText(userPassword);
+                if(user.getPassword().equals(user.getType())) pwcpw.setText(user.getPassword());
                 break;
             case R.id.pwcOkBtn:
                 //비밀번호 확인 버튼
-                boolean pwdCheck = pwcpw.getText().toString().equals(userPassword);
+                boolean pwdCheck = pwcpw.getText().toString().equals(user.getPassword());
                 if (pwdCheck) {
                     mPwcLayout.setVisibility(View.GONE);
                     mEditLayout.setVisibility(View.VISIBLE);
@@ -351,7 +341,7 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
                 //수정 완료 버튼
                 editNickname.setText(null);
                 editPw.setText(null);
-                userNick = newNick;
+                user.setNickname(newNick);
                 mEditLayout.setVisibility(View.GONE);
                 break;
             case R.id.newNickCh:
@@ -365,14 +355,12 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
                 newPassword = editPw.getText().toString();
                 Response.Listener<String> newNickR = new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {
-
-                    }
+                    public void onResponse(String response) { }
                 };
-                PwdChangeRequest pw = new PwdChangeRequest(userType, userEmail ,newPassword, newNickR);
+                PwdChangeRequest pw = new PwdChangeRequest(user.getType(), user.getEmail() ,newPassword, newNickR);
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 queue.add(pw);
-                userPassword = newPassword;
+                user.setPassword(newPassword);
                 Toast.makeText(getActivity(), "비밀번호가 변경되었습니다.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.logoutBtn:
@@ -382,7 +370,7 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
             case R.id.lgyBtn:
                 //로그아웃 (예)
                 mLogoutLayout.setVisibility(View.GONE);
-                if(userType.equals("kakao")){
+                if(user.getType().equals("kakao")){
                     //카카오톡 단말 토큰 삭제 (테스트용) -> 로그아웃 구현 시 사용
                     UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
                         @Override
@@ -390,7 +378,7 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
                             Toast.makeText(getActivity(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
                         }
                     });
-                }else if(userType.equals("naver")){
+                }else if(user.getType().equals("naver")){
                     System.out.println("네이버 로그아웃");
                     //네이버 토큰 삭제(테스트용) -> 로그아웃 구현 시 사용
                     mOAuthLoginModule.logout(getActivity());
@@ -415,7 +403,7 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
                 //계정삭제 (예)
                 mDeleteLayout.setVisibility(View.GONE);
 
-                if(userType.equals("kakao")){
+                if(user.getType().equals("kakao")){
                     //카카오톡 단말 토큰 삭제 (테스트용) -> 로그아웃 구현 시 사용
                     UserManagement.getInstance()
                             .requestLogout(new LogoutResponseCallback() {
@@ -424,7 +412,7 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
                                     System.out.println("카카오 로그아웃");
                                 }
                             });
-                }else if(userType.equals("naver")){
+                }else if(user.getType().equals("naver")){
                     System.out.println("네이버 로그아웃");
                     //네이버 토큰 삭제(테스트용) -> 로그아웃 구현 시 사용
                     mOAuthLoginModule.logout(getActivity());
@@ -449,14 +437,11 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
                         }
                     }
                 };
-
-                DeleteRequest deleteRequest = new DeleteRequest(userType, userEmail, responseListener);
+                DeleteRequest deleteRequest = new DeleteRequest(user.getIndex(), responseListener);
                 RequestQueue delete = Volley.newRequestQueue(getActivity());
                 delete.add(deleteRequest);
-
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                startActivity(intent);
                 break;
+
             case R.id.dlnBtn:
                 //계정 삭제 (아니오)
                 mDeleteLayout.setVisibility(View.GONE);
@@ -469,27 +454,15 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
         Uri uri = data.getData();
         Glide.with(getContext()).load(uri).into(image);
-        imageUrl = uri.toString();
-        System.out.println(imageUrl + userNick);
+        user.setImage(uri.toString());
+        user.setDbImage(uri.toString());
+
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    success = jsonObject.getBoolean("success");
-                    if(success){
-                        System.out.println("성공");
-                        System.out.println(imageUrl + userNick);
-                    }else{
-                        System.out.println("실패");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            public void onResponse(String response) { }
         };
-        System.out.println("테스트" + imageUrl);
-        ImageChangeRequest imageChangeRequest = new ImageChangeRequest(imageUrl, userNick, responseListener);
+
+        ImageChangeRequest imageChangeRequest = new ImageChangeRequest(user.getImage(), user.getNickname(), responseListener);
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(imageChangeRequest);
     }
@@ -510,16 +483,9 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
                     }else{
                         Response.Listener<String> newNickR = new Response.Listener<String>() {
                             @Override
-                            public void onResponse(String response) {
-                                try{
-
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                            }
+                            public void onResponse(String response) { }
                         };
-                        System.out.println(newNick + userNick);
-                        NickChangeRequest nick = new NickChangeRequest(userNick ,newNick, newNickR);
+                        NickChangeRequest nick = new NickChangeRequest(user.getNickname() ,newNick, newNickR);
                         RequestQueue queue = Volley.newRequestQueue(getActivity());
                         queue.add(nick);
 
@@ -532,36 +498,6 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
         };
         NickRequest snsRequest = new NickRequest(nickname, responseListener);
         RequestQueue queue = Volley.newRequestQueue(getActivity());
-        queue.add(snsRequest);
-    }
-
-    //회원 정보 가져오기 리스너
-    public void getUser(){
-        Response.Listener<String> responseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    //false면 nick이 있다는 말
-                    userNick = jsonObject.getString("userNickname");
-                    nick.setText(userNick);
-                    userPassword = jsonObject.getString("userPassword");
-                    dbImage = jsonObject.getString("userImg");
-                    index = jsonObject.getInt("userIDX");
-
-                    System.out.println(dbImage + imageUrl + index);
-                    if(dbImage != "null") Glide.with(getContext()).load(dbImage).into(image);
-                    else if(imageUrl == null) image.setImageResource(R.drawable.ic_baseline_person_outline_24);
-                    else new DownloadFilesTask().execute(imageUrl);
-
-                    if(userPassword.equals(userType)) pwcpw.setText(userPassword);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        snsRequest snsRequest = new snsRequest(userType, userEmail, responseListener);
-        RequestQueue queue = Volley.newRequestQueue(getContext());
         queue.add(snsRequest);
     }
 }

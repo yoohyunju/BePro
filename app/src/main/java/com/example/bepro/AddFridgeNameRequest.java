@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddFridgeNameRequest extends StringRequest {
-    final static private String URL = "http://192.168.0.17:81/addFridge.php";
+    final static private String URL = "http://3.37.119.236:80/fridge/addFridge.php";
     private Map<String, String> map;
 
     public AddFridgeNameRequest(String fridgeName, String userIdx, Response.Listener<String> listener){

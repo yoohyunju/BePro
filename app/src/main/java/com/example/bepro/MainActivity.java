@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     FridgeAdapter adapter;
+    UserData user = new UserData(); //user 객체
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +83,11 @@ public class MainActivity extends AppCompatActivity {
         email = intent.getStringExtra("userEmail");
         type = intent.getStringExtra("userType");
 
-        //fragment 객체 생성
-        mHome = new HomeActivity();
-        mRecipe = new RecipeActivity();
-        mMyPage = new MyPageActivity();
-        mNotice = new NoticeActivity();
-
-        //마이페이지에 받아온 데이터 넣기
-        mMyPage.imageUrl = image;
-        mMyPage.userEmail = email;
-        mMyPage.userType = type;
+        if(image != null)
+            //SNS 로그인
+            user.setImage(image);
+        user.setEmail(email);
+        user.setType(type);
 
         //DB에서 회원 데이터 받아오기
         Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -100,13 +96,12 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     //false면 nick이 있다는 말
-                    mMyPage.userNick = jsonObject.getString("userNickname");
-                    mMyPage.userPassword = jsonObject.getString("userPassword");
-                    mMyPage.dbImage = jsonObject.getString("userImg");
-                    mMyPage.index = jsonObject.getInt("userIDX");
+                    user.setNickname(jsonObject.getString(("userNickname")));
+                    user.setPassword(jsonObject.getString("userPassword"));
+                    user.setDbImage(jsonObject.getString("userImg"));
+                    user.setIndex(jsonObject.getString("userIDX"));
                     userIdx = jsonObject.getString("userIDX");
-                    System.out.println(userIdx);
-                    FridgeIndex(userIdx);
+                    FridgeIndex(user.getIndex());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -116,6 +111,11 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(snsRequest);
 
+        //fragment 객체 생성
+        mHome = new HomeActivity();
+        mRecipe = new RecipeActivity();
+        mMyPage = new MyPageActivity();
+        mNotice = new NoticeActivity();
 
         //dialog 초기화
         mAddItemDialog = new Dialog(MainActivity.this);
@@ -183,6 +183,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case R.id.myPage:
+                    //객체 데이터 보내기
+                    mMyPage.user = user;
                     transaction.replace(R.id.frameLayout, mMyPage).commitAllowingStateLoss();
                     break;
 
@@ -363,13 +365,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //public void JsonArrayRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONArray> listener, ErrorListener errorListener) {
-    //   super(method, url, jsonRequest.toString(), listener, errorListener);
-    //}
-
     //냉장고 세팅 인덱스 (fridge_setting)
     public void FridgeIndex(final String userIDX) throws JSONException {
-        String URL = "http://192.168.0.17:81/fridge.php/?userIDX="+userIDX; //local 경로
+        String URL = "http://3.37.119.236:80/fridge/fridge.php/?userIDX="+userIDX; //local 경로
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.POST, URL, null, new Response.Listener<JSONArray>() {
             @Override
@@ -395,8 +393,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "Error " + error.getMessage());
             }
         });
-        System.out.println("여기");
-
         RequestQueue requestQueue= Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
     }
