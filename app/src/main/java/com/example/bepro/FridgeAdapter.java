@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 public class FridgeAdapter extends RecyclerView.Adapter<FridgeAdapter.ViewHolder> implements OnFridgeClickListener {
     ArrayList<FridgeData> items = new ArrayList<FridgeData>();
+    ArrayList<Integer> fridgeIndex = new ArrayList<Integer>();
+
     OnFridgeClickListener listener;
 
     @NonNull
@@ -48,6 +50,14 @@ public class FridgeAdapter extends RecyclerView.Adapter<FridgeAdapter.ViewHolder
     public void setItem(int position, FridgeData item){
         items.set(position, item);
     }
+
+    public void addFridgeIDX (int fridgeIDX) {fridgeIndex.add(fridgeIDX);}
+
+    public ArrayList<Integer> getFridgeIDX() { return fridgeIndex; }
+
+    public void indexClear() { fridgeIndex.clear(); }
+
+    public void NameClear() { items.clear(); }
 
     public void setOnFridgeClickListener(OnFridgeClickListener listener){
         this.listener = listener;

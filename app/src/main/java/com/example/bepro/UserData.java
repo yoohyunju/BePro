@@ -1,5 +1,7 @@
 package com.example.bepro;
 
+import java.util.ArrayList;
+
 public class UserData {
     private String password;
     private String type;
@@ -11,7 +13,14 @@ public class UserData {
     private String update;
     private String authority;
     private String index;
-    //private int index;
+    ArrayList<Integer> myFridge = new ArrayList<>();
+
+    //내가 만든 냉장고
+    public void MyFridge(int mine) { myFridge.add(mine);}
+
+    public ArrayList<Integer> MyFridge() { return myFridge; }
+
+    public void MyFridgeClear() { myFridge.clear();}
 
     public String getPassword() {
         return password;

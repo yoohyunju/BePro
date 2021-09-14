@@ -44,8 +44,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import javax.xml.transform.ErrorListener;
-
 
 public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager; //앱 fragment에서 작업을 추가, 삭제, 교체하고 백 스택에 추가하는 클래스
@@ -66,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
     EditText addFridge;
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
-    FridgeAdapter adapter;
+    FridgeAdapter fridgeAdapter;
     UserData user = new UserData(); //user 객체
+    FridgeSettingData settingData = new FridgeSettingData();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,27 +88,7 @@ public class MainActivity extends AppCompatActivity {
         user.setEmail(email);
         user.setType(type);
 
-        //DB에서 회원 데이터 받아오기
-        Response.Listener<String> responseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    //false면 nick이 있다는 말
-                    user.setNickname(jsonObject.getString(("userNickname")));
-                    user.setPassword(jsonObject.getString("userPassword"));
-                    user.setDbImage(jsonObject.getString("userImg"));
-                    user.setIndex(jsonObject.getString("userIDX"));
-                    userIdx = jsonObject.getString("userIDX");
-                    FridgeIndex(user.getIndex());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        snsRequest snsRequest = new snsRequest(type, email, responseListener);
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(snsRequest);
+        getUser();
 
         //fragment 객체 생성
         mHome = new HomeActivity();
@@ -143,15 +122,44 @@ public class MainActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new FridgeAdapter();
+        fridgeAdapter = new FridgeAdapter();
 
-        adapter.setOnFridgeClickListener(new OnFridgeClickListener() {
+        fridgeAdapter.setOnFridgeClickListener(new OnFridgeClickListener() {
             @Override
             public void onFridgeClick(FridgeAdapter.ViewHolder holder, View view, int position) {
                 //선택에 따라 품목 부분 가져오기
-                FridgeData name = adapter.getItem(position);
+                FridgeData name = fridgeAdapter.getItem(position);
                 selected = findViewById(R.id.myFridge);
                 selected.setText(name.getName());
+                //fridgeSetting 을 모두 객체로 저장
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try{
+                            JSONObject jsonObject = new JSONObject(response);
+                            settingData.setFridgeIndex(jsonObject.getInt("friIDX"));
+                            settingData.setAuthority(jsonObject.getString("friSetAuth"));
+                            settingData.setCategory(jsonObject.getInt("FriSetCategory"));
+                            settingData.setPush(jsonObject.getInt("friSetPush"));
+                            settingData.setSort(jsonObject.getInt("friSetSort"));
+                            settingData.setView(jsonObject.getInt("FriSetView"));
+
+                            System.out.println(
+                                    settingData.getFridgeIndex()
+                                    + settingData.getAuthority()
+                                    + settingData.getCategory()
+                                    + settingData.getPush()
+                                    + settingData.getSort()
+                                    + settingData.getView());
+                        }catch (Exception e){
+
+                        }
+                    }
+                };
+                GetFridgeSettingRequest getFridgeSetting = new GetFridgeSettingRequest(name.getName(), responseListener);
+                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                queue.add(getFridgeSetting);
+
                 mFridgeListDialog.cancel();
             }
         });
@@ -168,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
             transaction = fragmentManager.beginTransaction();
-
             switch (item.getItemId()) {
                 case R.id.home:
                     transaction.replace(R.id.frameLayout, mHome).commitAllowingStateLoss();
@@ -185,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.myPage:
                     //객체 데이터 보내기
                     mMyPage.user = user;
+                    mMyPage.fridgeAdapter = fridgeAdapter;
                     transaction.replace(R.id.frameLayout, mMyPage).commitAllowingStateLoss();
                     break;
 
@@ -332,19 +340,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String addFridgeName = addFridge.getText().toString();
-                adapter.addItem(new FridgeData(addFridgeName));
-                recyclerView.setAdapter(adapter);
+                fridgeAdapter.addItem(new FridgeData(addFridgeName));
+                recyclerView.setAdapter(fridgeAdapter);
                 mFridgeAddDialog.dismiss();
                 showFridgeListDialog(); //이전 다이얼로그 재시작
 
-                //추가된 냉장고 db에 넣기
+                //추가된 냉장고 db에 넣기, 나머지 DB 부분 처리
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        try {
+                        try{
+                            FridgeIndex(userIdx);
+                        }catch (Exception e){
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
                     }
                 };
@@ -366,9 +374,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //냉장고 세팅 인덱스 (fridge_setting)
-    public void FridgeIndex(final String userIDX) throws JSONException {
+    public void FridgeIndex(final String userIDX) {
         String URL = "http://3.37.119.236:80/fridge/fridge.php/?userIDX="+userIDX; //local 경로
-
+        fridgeAdapter.indexClear();
+        user.MyFridgeClear();
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.POST, URL, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -378,10 +387,15 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject jsonObject = response.getJSONObject(i);
 
                         int friIdx = jsonObject.getInt("friIdx");
-                        fridgeIdx.add(friIdx);
-                        System.out.println(fridgeIdx);
+                        String authority = jsonObject.getString("friAuth");
+
+                        if (authority.equals("owner")){
+                            //나의 냉장고 (권한 위임 후 객체 데이터 삭제)
+                            user.MyFridge(friIdx);
+                        }
+                        fridgeAdapter.addFridgeIDX(friIdx);
                     }
-                    fridgeName(fridgeIdx);
+                    fridgeName(fridgeAdapter.getFridgeIDX());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -403,7 +417,7 @@ public class MainActivity extends AppCompatActivity {
 
         for(int i = 0; i < length; i++){
             String index = fridgeIdx.get(i).toString();
-
+            fridgeAdapter.NameClear();
             Response.Listener<String> responseListener = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -411,8 +425,8 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject(response);
                         fridgeName = jsonObject.getString("friName");
                         System.out.println(fridgeName);
-                        adapter.addItem(new FridgeData(fridgeName));
-                        recyclerView.setAdapter(adapter);
+                        fridgeAdapter.addItem(new FridgeData(fridgeName));
+                        recyclerView.setAdapter(fridgeAdapter);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -422,5 +436,29 @@ public class MainActivity extends AppCompatActivity {
             RequestQueue queue = Volley.newRequestQueue(this);
             queue.add(fridgeName);
         }
+    }
+
+    public void getUser(){
+        //DB에서 회원 데이터 받아오기
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    //false면 nick이 있다는 말
+                    user.setNickname(jsonObject.getString(("userNickname")));
+                    user.setPassword(jsonObject.getString("userPassword"));
+                    user.setDbImage(jsonObject.getString("userImg"));
+                    user.setIndex(jsonObject.getString("userIDX"));
+                    userIdx = jsonObject.getString("userIDX");
+                    FridgeIndex(user.getIndex());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        snsRequest snsRequest = new snsRequest(type, email, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(snsRequest);
     }
 }

@@ -44,6 +44,7 @@ import com.android.volley.toolbox.Volley;
 
 import com.bumptech.glide.Glide;
 
+import com.example.bepro.FridgeAdapter;
 import com.example.bepro.MainActivity;
 import com.example.bepro.UserData;
 import com.example.bepro.login.NickRequest;
@@ -63,8 +64,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MyPageActivity extends Fragment implements View.OnClickListener {
-    LinearLayout mPwcLayout, mEditLayout, mLogoutLayout, mDeleteLayout;
-    Button mEditBtn, mLogoutBtn, mDeleteBtn, mPwcOkBtn, pwcCancel, newPwCh, newNickCh, mEditOkBtn, mLgyBtn, mLgnBtn, mDlyBtn, mDlnBtn;
+    LinearLayout mPwcLayout, mEditLayout, mLogoutLayout, mDeleteLayout, FridgeChLayout;
+    Button mEditBtn, mLogoutBtn, mDeleteBtn, mPwcOkBtn, pwcCancel, newPwCh, newNickCh, mEditOkBtn, mLgyBtn, mLgnBtn, mDlyBtn, mDlnBtn, friOk, friNo;
     CheckBox autologin;
     String[] items = {"1일전", "2일전", "3일전"};
     Switch mSwitch;
@@ -81,7 +82,7 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
     private static final int RESULT_CODE = 0; //이미지 수정
 
     public UserData user = new UserData();
-    MainActivity main = new MainActivity();
+    public FridgeAdapter fridgeAdapter;
     // @NonNull : null 허용하지 않음
     // @Nullable : null 허용
     //onCreateView(): fragment가 자신의 UI를 처음으로 그릴 때 호출됨
@@ -243,6 +244,7 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
             mEditLayout = rootView.findViewById(R.id.editLayout);
             mLogoutLayout = rootView.findViewById(R.id.logoutLayout);
             mDeleteLayout = rootView.findViewById(R.id.deleteLayout);
+            FridgeChLayout = rootView.findViewById(R.id.FridgeChLayout);
             mEditBtn = rootView.findViewById(R.id.editBtn);
             mLogoutBtn = rootView.findViewById(R.id.logoutBtn);
             mDeleteBtn = rootView.findViewById(R.id.deleteBtn);
@@ -255,6 +257,9 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
             mLgnBtn = rootView.findViewById(R.id.lgnBtn);
             mDlyBtn = rootView.findViewById(R.id.dlyBtn);
             mDlnBtn = rootView.findViewById(R.id.dlnBtn);
+            friOk = rootView.findViewById(R.id.friOk);
+            friNo = rootView.findViewById(R.id.friNo);
+
 
             bSuc = true;
         } catch (NullPointerException e) {
@@ -297,6 +302,8 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
             mLgnBtn.setOnClickListener(this);
             mDlyBtn.setOnClickListener(this);
             mDlnBtn.setOnClickListener(this);
+            friNo.setOnClickListener(this);
+            friOk.setOnClickListener(this);
 
             bSuc = true;
         } catch (NullPointerException e) {
@@ -397,7 +404,21 @@ public class MyPageActivity extends Fragment implements View.OnClickListener {
                 break;
             case R.id.deleteBtn:
                 //계정삭제
+                if(user.MyFridge().isEmpty()){
+                    mDeleteLayout.setVisibility(View.VISIBLE);
+                }else{
+                    //나의 냉장고 처리 부분
+                    System.out.println("나의 냉장고 처리가 필요함." + user.MyFridge());
+                    FridgeChLayout.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.friOk:
+                FridgeChLayout.setVisibility(View.GONE);
                 mDeleteLayout.setVisibility(View.VISIBLE);
+                break;
+            case R.id.friNo:
+                //권한 체크 페이지로 이동 (수정)
+                FridgeChLayout.setVisibility(View.GONE);
                 break;
             case R.id.dlyBtn:
                 //계정삭제 (예)

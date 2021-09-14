@@ -742,6 +742,89 @@
 
         </LinearLayout>
 
+        <!-- 계정삭제 확인 팝업 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#CC212121"
+            android:visibility="gone"
+            android:gravity="center"
+            android:id="@+id/FridgeChLayout">
+            <!-- 상단 여백 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4">
+            </LinearLayout>
+            <!-- 팝업 내용 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="8"
+                    android:background="@drawable/popup_box"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="5"
+                        android:text="회원님의 냉장고를 함께 삭제합니다."
+                        android:textSize="20sp"
+                        android:gravity="center">
+                    </TextView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="5"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="예"
+                            android:backgroundTint="#979797"
+                            android:id="@+id/friOk">
+                        </Button>
+                        <LinearLayout
+                            android:layout_width="10dp"
+                            android:layout_height="match_parent">
+                        </LinearLayout>
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#979797"
+                            android:text="권한 위임"
+                            android:id="@+id/friNo">
+                        </Button>
+                    </LinearLayout>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+                </LinearLayout>
+            </LinearLayout>
+            <!-- 하단 여백 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4">
+            </LinearLayout>
+
+        </LinearLayout>
+
     </FrameLayout>
 
 </LinearLayout>
