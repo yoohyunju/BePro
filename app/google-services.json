@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "715166409601",
+    "project_id": "bepro-e3057",
+    "storage_bucket": "bepro-e3057.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715166409601:android:b4cdef739889c7d561fe80",
+        "android_client_info": {
+          "package_name": "com.example.bepro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "715166409601-bg1ljvh0h56f41546bpalq0ie22kplo7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bepro",
+            "certificate_hash": "97306834c6d02198aa478a9af7efdc7959083074"
+          }
+        },
+        {
+          "client_id": "715166409601-89eot0bm32s06tpqbksf73cf616580ov.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbRsAxZHE0UPlvVWPSCJT7YT_a0Umek0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "715166409601-89eot0bm32s06tpqbksf73cf616580ov.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

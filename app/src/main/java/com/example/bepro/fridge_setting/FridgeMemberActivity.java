@@ -1,5 +1,6 @@
 package com.example.bepro.fridge_setting;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,12 +50,13 @@ public class FridgeMemberActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Context c = FridgeMemberActivity.this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fridge_setting);
 
         parseJSON=new ParseJSON(getApplicationContext());
         sendRequestImp = new SendRequestImp(getApplicationContext());
-        dialog = new Dialog(getApplicationContext());
+        dialog = new Dialog(FridgeMemberActivity.this);
 
         ////////////RequestQueue 생성
         if(requestQueue != null) {
@@ -83,7 +85,8 @@ public class FridgeMemberActivity extends AppCompatActivity {
         fridgeQuit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequestImp.deleteFriUser(1,1); //변경 필요 : 현재 회원.
+                dialog.showDialog("냉장고를 탈퇴하시겠습니까?","정말로 냉장고를 탈퇴하시겠습니까?","냉장고를 탈퇴하였습니다.");
+                //sendRequestImp.deleteFriUser(1,1); //변경 필요 : 현재 회원.
             }
         });
 
@@ -92,7 +95,8 @@ public class FridgeMemberActivity extends AppCompatActivity {
         fridgeDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequestImp.deleteFri(1); //변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
+                dialog.showDialog("냉장고를 삭제하시겠습니까?","정말로 냉장고를 삭제하시겠습니까?\n30일 후 완전히 삭제가 됩니다.","냉장고를 삭제하였습니다.");
+                //sendRequestImp.deleteFri(1); //변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
             }
         });
 
