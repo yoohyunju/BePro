@@ -11,6 +11,7 @@ public class FoodItems {
     private String foodExpiryDate; //식품 유통기한
     private String foodDate; //등록일
     private String foodRemainDate; //유통기한 남은 날짜
+    private String foodMemo; //메모
 
     public FoodItems(String foodName, int foodNumber) {
         this.foodName = foodName;
@@ -29,7 +30,7 @@ public class FoodItems {
         this.foodRemainDate = foodRemainDate;
     }
 
-    public FoodItems(int friIdx, int foodIdx, String foodName, int foodNumber, String foodRegistrant, String foodExpiryDate, String foodDate, String foodRemainDate) {
+    public FoodItems(int friIdx, int foodIdx, String foodName, int foodNumber, String foodRegistrant, String foodExpiryDate, String foodDate, String foodRemainDate, String foodMemo) {
         this.friIdx = friIdx;
         this.foodIdx = foodIdx;
         this.foodName = foodName;
@@ -38,6 +39,7 @@ public class FoodItems {
         this.foodExpiryDate = foodExpiryDate;
         this.foodDate = foodDate;
         this.foodRemainDate = foodRemainDate;
+        this.foodMemo = foodMemo;
     }
 
     public int getFriIdx() {
@@ -102,5 +104,13 @@ public class FoodItems {
 
     public void setFoodDate(String foodDate) {
         this.foodDate = foodDate;
+    }
+
+    public String getFoodMemo() {
+        return foodMemo;
+    }
+
+    public void setFoodMemo(String foodMemo) {
+        this.foodMemo = foodMemo;
     }
 }

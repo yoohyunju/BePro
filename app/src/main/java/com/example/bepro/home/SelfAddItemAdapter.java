@@ -123,7 +123,7 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
         int currentYear, currentMonth, currentDay;
         private final int ONE_DAY = 24 * 60 * 60 * 1000; //Millisecond 형태의 하루(24 시간), 86400000 = 24시간 * 60분 * 60초 * 1000(=1초)
 
-        TextView dateResult;
+        TextView dateResult, foodExpDate;
         LinearLayout datePicker;
 
         public ViewHolder(@NonNull @NotNull View itemView, final OnSelfAddItemClickListener listener) { //뷰홀더 생성자로 뷰객체 전달
@@ -160,7 +160,8 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
             //TODO: 직접등록이 아닌 자동등록의 경우 DB 데이터 가져와서 '-' 기준으로 split 후 년월일 구분해서 저장하기
 
             datePicker = itemView.findViewById(R.id.selfAddFoodDatePicker); //달력 다이얼로그 버튼
-            dateResult = (TextView) itemView.findViewById(R.id.selfAddFoodRemainDate);
+            dateResult = itemView.findViewById(R.id.selfAddFoodRemainDate);
+            foodExpDate = itemView.findViewById(R.id.selfAddFoodExpDate);
 
             //한국어 설정
             Locale.setDefault(Locale.KOREAN);
@@ -185,9 +186,25 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
         private DatePickerDialog.OnDateSetListener endDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
+                String formatMonth, formatDay;
                 dDayValue = dDayResult_int(dateEndY, dateEndM, dateEndD);
 
                 dateResult.setText(getDday(year, month, day));
+
+                int correctMonth = month + 1; //timezone 때문인지 모르겠으나,, 한달 오차가 나서 +1로 보정해줌
+
+                if(month < 10){ //한 자리수 달이면 0붙여줌
+                    formatMonth = "0" + correctMonth;
+                }else{
+                    formatMonth = String.valueOf(correctMonth);
+                }
+
+                if(day < 10){ //한 자리수 일이면 0붙여줌
+                    formatDay = "0" + day;
+                }else {
+                    formatDay = String.valueOf(day);
+                }
+                foodExpDate.setText(year + "-" + formatMonth + "-" + formatDay);
 
             }
         };

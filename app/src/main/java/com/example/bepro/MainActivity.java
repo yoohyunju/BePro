@@ -69,12 +69,10 @@ public class MainActivity extends AppCompatActivity {
     private Dialog mAddItemDialog, mFridgeListDialog, mFridgeAddDialog, mSelfAddDialog;
     private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn, mSelfAddConfirmBtn, mSelfItemAddBtn;
     private CardView mSelfAddCardView;
-    FoodAdapter foodAdapter;
     ArrayList<FoodItems> foodItems = new ArrayList<>();
 
     //JSON DATA 받아올 변수
-    String foodName;
-    String foodNum;
+    String foodName, foodNum, foodExp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,29 +243,43 @@ public class MainActivity extends AppCompatActivity {
 
                         EditText mFoodName = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editAddFoodName);
                         EditText mFoodTotal = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editFoodTotalCount);
+                        TextView mFoodExpDate = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.selfAddFoodExpDate);
 
                         //TODO: 나머지 항목들도 추가
                         foodName = mFoodName.getText().toString(); //사용자 입력 식품명
                         foodNum = mFoodTotal.getText().toString(); //사용자 입력 개수
+                        foodExp = mFoodExpDate.getText().toString(); //사용자 입력 남은 날짜
 
-                        if(foodName.isEmpty() != true && foodNum.isEmpty() != true){ //카드뷰에 입력 데이터가 있을 시
+                        System.out.println(foodExp);
 
-                            //TODO: UI에 즉시 추가하면 이전 DB 데이터 사라짐
+                        if(foodName.isEmpty() != true && foodNum.isEmpty() != true && foodExp.isEmpty() != true){ //카드뷰에 입력 데이터가 있을 시
+
+                            //TODO: UI에 즉시 추가하면 이전 DB 데이터 사라짐 -> Home 리사이클러 뷰 가져와서 해결하기
+
+                            HomeActivity home = new HomeActivity();
+
+                            //RecyclerView mHomeRecyclerView = findViewById(R.id.homeRecyclerView);
+                            //foodAdapter = new FoodAdapter(getApplicationContext(), foodItems);
+                            //mHomeRecyclerView.setAdapter(foodAdapter);
+
+                            //홈 리사이클러 뷰
                             /*
-                            RecyclerView mHomeRecyclerView = findViewById(R.id.homeRecyclerView);
-                            foodAdapter = new FoodAdapter(getApplicationContext(), foodItems);
-                            mHomeRecyclerView.setAdapter(foodAdapter);
-                            foodAdapter.addItem(new FoodItems(foodName, Integer.parseInt(foodNum)));
-                            */
+                            home.mHomeRecyclerView = findViewById(R.id.homeRecyclerView);
+                            home.foodAdapter = new FoodAdapter(getApplicationContext(), foodItems); //어댑터 생성자 호출
+                            home.mHomeRecyclerView.setAdapter(home.foodAdapter);
 
-                            selfFoodItemInsert(foodName, foodNum); //품목 직접 입력 기능 함수 호출
+                            //TODO: EXP 임시 데이터 수정 필요
+                            home.foodAdapter.addItem(new FoodItems(foodName, Integer.parseInt(foodNum), "1"));
+                            home.foodAdapter.notifyDataSetChanged();
+
+                             */
+                            selfFoodItemInsert(foodName, foodNum, foodExp); //품목 직접 입력 기능 함수 호출
 
                             if(i == adapter.getItemCount() - 1){ //마지막 값 까지 추가되면 팝업창 닫기
                                 mSelfAddDialog.dismiss();
                                 mAddItemDialog.dismiss();
 
-                                HomeActivity home = new HomeActivity();
-                                home.foodItemSetting(); //DB 품목 리스트 재설정
+                                //home.foodItemSetting(); //DB 품목 리스트 재설정 TODO: null 존재시 앱 종료
                             }
                         }else{
                             Toast.makeText(MainActivity.this, "빈 항목이 있습니다.", Toast.LENGTH_SHORT).show();
@@ -337,8 +349,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //품목 data 추가
-    public void selfFoodItemInsert(String foodName, String foodNum){
-        String URL = "http://10.0.2.2/beProTest/insertFood.php"; //local 경로
+    public void selfFoodItemInsert(String foodName, String foodNum, String foodExp){
+        String URL = "http://3.37.119.236:80/food/insertFood.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -349,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 String TAG = "";
-                Log.e(TAG, "onErrorResponse 오류 메시지: " + String.valueOf(error));
+                Log.e(TAG, "foodItemInsert() onErrorResponse 오류 메시지: " + String.valueOf(error));
                 Toast.makeText(MainActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
             }
         }){
@@ -357,6 +369,7 @@ public class MainActivity extends AppCompatActivity {
                 HashMap<String, String> requestedParams = new HashMap<>();
                 requestedParams.put("foodName", foodName);
                 requestedParams.put("foodNum", foodNum);
+                requestedParams.put("foodExp", foodExp);
 
                 return requestedParams;
             }

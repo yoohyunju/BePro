@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import androidx.appcompat.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +63,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -70,15 +73,21 @@ import java.util.Map;
 public class HomeActivity extends Fragment {
 
     private Spinner mSpinner;
-    private RecyclerView mHomeRecyclerView;
+    public RecyclerView mHomeRecyclerView;
     private Dialog mDetailDialog;
     private Button mItemDetailCancelBtn, mItemUpdateBtn, mItemDetailRecipeBtn;
-    private TextView mItemDeleteBtn, detailFrigeName, detailFoodExp, detailFoodDate, detailFoodRegistrant;
-    private EditText detailFoodName, detailFoodNum;
+    private TextView mItemDeleteBtn, detailFrigeName, detailFoodRemainDate, detailFoodExp, detailFoodDate, detailFoodRegistrant;
+    private EditText detailFoodName, detailFoodNum, detailFoodMemo;
     private SearchView mSearchView;
-    FoodAdapter foodAdapter;
+
+    public FoodAdapter foodAdapter;
     ArrayList<FoodItems> foodItems = new ArrayList<>();
     String[] items = {"유통기한 짧은 순", "등록 오래된 순", "등록 최신순"};
+    String updateFoodIdx, updateFoodName, updateFoodNum, updateFoodMemo, updateFoodExp;
+    String formatMonth, formatDay;
+
+    int friIdx, foodIdx, foodNum;
+    String foodName, foodRegistrant, foodExp, foodDate, foodRemainDate,foodMemo;
 
     //달력 관련 변수 정의
     private LinearLayout datePickerBtn;
@@ -98,6 +107,25 @@ public class HomeActivity extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup homeView = (ViewGroup) inflater.inflate(R.layout.home, container, false);
 
+        //홈 리사이클러 뷰 TODO: main으로 옮기기
+        mHomeRecyclerView = homeView.findViewById(R.id.homeRecyclerView);
+
+        //리사이클러 뷰에 레이아웃 매니저 설정
+        LinearLayoutManager layoutManager = new LinearLayoutManager(homeView.getContext(), LinearLayoutManager.VERTICAL, false);
+        mHomeRecyclerView.setLayoutManager(layoutManager);
+
+        //어댑터 생성자 호출
+        foodAdapter = new FoodAdapter(getContext(), foodItems);
+        mHomeRecyclerView.setAdapter(foodAdapter);
+
+        //TODO: 다른 페이지 갔다가 오면 또 정렬이 안됨,,,
+        try {
+            foodItemSetting(); //PHP 연결후 JSON data 가져와서 품목 DTO 셋팅하는 함수
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         //품목 검색창
         mSearchView = homeView.findViewById(R.id.searchView);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -107,9 +135,9 @@ public class HomeActivity extends Fragment {
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) { //문자열이 변할 때 마다 문자열 반환
+            public boolean onQueryTextChange(String newText) { //문자열이 변할 때 마다 문자열 반환 (실시간 검색)
                 if(newText.isEmpty()){
-                    foodItemSetting();
+                    foodItemSetting(); //검색창 비어있을 경우 전체 품목 출력
                 }else {
                     foodAdapter.getFilter().filter(newText.toString());
                 }
@@ -126,33 +154,11 @@ public class HomeActivity extends Fragment {
 
         mSpinner.setAdapter(mAdapter);
 
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //mTextView.setText(items[position]);
+        itemSortFunc(); //품목 정렬 함수
 
-                /*TODO 스피너 정렬기준 선택 시 품목 정렬*/
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                //mTextView.setText("");
-            }
-        });
-
-        //홈 리사이클러 뷰
-        mHomeRecyclerView = homeView.findViewById(R.id.homeRecyclerView);
-
-        //리사이클러 뷰에 레이아웃 매니저 설정
-        LinearLayoutManager layoutManager = new LinearLayoutManager(homeView.getContext(), LinearLayoutManager.VERTICAL, false);
-        mHomeRecyclerView.setLayoutManager(layoutManager);
-
-        foodAdapter = new FoodAdapter(getContext(), foodItems); //어댑터 생성자 호출
-        mHomeRecyclerView.setAdapter(foodAdapter);
-
-        //foodAdapter.addItem(new FoodItems("사과", "2021-07-23까지", "유통기한: 7일 남음"));
-        //foodAdapter.addItem(new FoodItems("양배추", "2021-07-14까지", "유통기한: 2일 지남"));
-        //foodAdapter.addItem(new FoodItems("우유", "2021-07-25까지", "유통기한: 9일 남음"));
+        //foodAdapter.addItem(new FoodItems("banana", "2021-07-23", "7"));
+        //foodAdapter.addItem(new FoodItems("apple", "2021-07-14", "2"));
+        //foodAdapter.addItem(new FoodItems("egg", "2021-07-25", "10"));
 
         //품목 클릭 이벤트 리스너
         foodAdapter.setOnItemClickListener(new OnFoodItemClickListener() {
@@ -171,17 +177,73 @@ public class HomeActivity extends Fragment {
         detailFrigeName = mDetailDialog.findViewById(R.id.detailItemFrigeName); //냉장고명
         detailFoodName = mDetailDialog.findViewById(R.id.detailItemFoodName); //품목명
         detailFoodNum = mDetailDialog.findViewById(R.id.detailItemFoodNum); //품목 개수
-        detailFoodExp = mDetailDialog.findViewById(R.id.itemDetailRemainDate); //품목 기한
+        detailFoodRemainDate = mDetailDialog.findViewById(R.id.itemDetailRemainDate); //품목 남은 기한
+        detailFoodExp = mDetailDialog.findViewById(R.id.detailFoodExpDate); //품목 유통기한
         detailFoodDate = mDetailDialog.findViewById(R.id.detailItemFoodDate); //등록일
         detailFoodRegistrant = mDetailDialog.findViewById(R.id.detailItemFoodRegistrant); //등록인
-
-        foodItemSetting(); //PHP 연결후 JSON data 가져와서 DTO 셋팅하는 함수
+        detailFoodMemo = mDetailDialog.findViewById(R.id.detailItemFoodMemo);
 
         return homeView;
     }
 
+    public void itemSortFunc(){
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                switch (position){
+                    case 0: //유통기한 짧은 순
+                        Comparator<FoodItems> shortExp = new Comparator<FoodItems>() {
+                            @Override
+                            public int compare(FoodItems item1, FoodItems item2) {
+                                return item1.getFoodExpiryDate().compareTo(item2.getFoodExpiryDate());
+                            }
+                        };
+
+                        Collections.sort(foodItems, shortExp);
+                        foodAdapter.notifyDataSetChanged();
+                        System.out.println("스피너에서 notifyDataSetChanged 실행");
+
+                        break;
+
+                    case 1: //등록 오래된 순
+                        Comparator<FoodItems> oldResister = new Comparator<FoodItems>() {
+                            @Override
+                            public int compare(FoodItems item1, FoodItems item2) {
+                                return item1.getFoodDate().compareTo(item2.getFoodDate());
+                            }
+                        };
+
+                        Collections.sort(foodItems, oldResister);
+                        foodAdapter.notifyDataSetChanged();
+
+                        break;
+
+                    case 2: //등록 최신순
+                        Comparator<FoodItems> newResister = new Comparator<FoodItems>() {
+                            @Override
+                            public int compare(FoodItems item1, FoodItems item2) {
+                                return item2.getFoodDate().compareTo(item1.getFoodDate());
+                            }
+                        };
+
+                        Collections.sort(foodItems, newResister);
+                        foodAdapter.notifyDataSetChanged();
+
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //mTextView.setText("");
+            }
+        });
+    }
+
     //품목 상세 정보 팝업창
     public void showDetailDialog(FoodItems item) {
+
         //팝업창 사이즈 조절
         WindowManager.LayoutParams params = mDetailDialog.getWindow().getAttributes();
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -202,6 +264,15 @@ public class HomeActivity extends Fragment {
 
         //한국어 설정
         Locale.setDefault(Locale.KOREAN);
+
+        //JSON data를 각 오브젝트에 셋팅
+        detailFrigeName.setText(String.valueOf(item.getFriIdx()));
+        detailFoodName.setText(item.getFoodName());
+        detailFoodNum.setText(String.valueOf(item.getFoodNumber()));
+        detailFoodRemainDate.setText(item.getFoodRemainDate() + "일");
+        detailFoodDate.setText(item.getFoodDate());
+        detailFoodRegistrant.setText(item.getFoodRegistrant());
+        detailFoodMemo.setText(item.getFoodMemo());
 
         //datePicker : 디데이 날짜 입력 버튼, 클릭시 DatePickerDialog 띄움
         datePicker.setOnClickListener(new View.OnClickListener() {
@@ -225,12 +296,15 @@ public class HomeActivity extends Fragment {
         mItemUpdateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String foodIdx = String.valueOf(item.getFoodIdx());
-                String foodName = detailFoodName.getText().toString();
-                String foodNum = detailFoodNum.getText().toString();
-                //String foodExp = detailFoodExp.getText().toString(); //TODO: 구현
-                foodItemUpdate(foodIdx, foodName, foodNum);
+                updateFoodIdx = String.valueOf(item.getFoodIdx());
+                updateFoodName = detailFoodName.getText().toString();
+                updateFoodNum = detailFoodNum.getText().toString();
+                updateFoodMemo = detailFoodMemo.getText().toString();
+                updateFoodExp = detailFoodExp.getText().toString();
+
+                foodItemUpdate(updateFoodIdx, updateFoodName, updateFoodNum, updateFoodMemo, updateFoodExp);
                 foodItemSetting(); //수정 후 목록 재설정
+                //foodAdapter.notifyDataSetChanged();
                 mDetailDialog.dismiss(); //다이얼로그 닫기
             }
         });
@@ -245,7 +319,6 @@ public class HomeActivity extends Fragment {
                 foodAdapter.removeItem(item.getFoodIdx()-1); //아이템 인덱스는 0부터 시작하므로 -1 해줌
                 foodAdapter.notifyDataSetChanged();
 
-                foodItemSetting(); //수정 후 목록 재설정
                 mDetailDialog.dismiss(); //다이얼로그 닫기
             }
         });
@@ -263,28 +336,22 @@ public class HomeActivity extends Fragment {
             }
         });
 
-        //JSON data를 각 오브젝트에 셋팅
-        detailFrigeName.setText(String.valueOf(item.getFriIdx()));
-        detailFoodName.setText(item.getFoodName());
-        detailFoodNum.setText(String.valueOf(item.getFoodNumber()));
-        detailFoodExp.setText(item.getFoodRemainDate() + "일");
-        detailFoodDate.setText(item.getFoodDate());
-        detailFoodRegistrant.setText(item.getFoodRegistrant());
-
-
+        //TODO: 해당 아이템에 바로 수정 반영되기 (현재는 전체 아이템에 동일 data 적용됨)
+        //detailFoodMemo.setText(foodMemo);
     }
 
-    //품목 data 설정 //main에 push하기 위한 임시 주석
+    //품목 data 설정
     public void foodItemSetting(){
-        String URL = "http://10.0.2.2/beProTest/selectFood.php"; //local 경로
+        String URL = "http://3.37.119.236:80/food/selectFood.php";
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.POST, URL, null, new Response.Listener<JSONArray>() {
             //volley 라이브러리의 GET 방식은 버튼 누를때마다 새로운 갱신 데이터를 불러들이지 않아 POST 방식 사용
 
             @Override
             public void onResponse(JSONArray response) {
-                foodItems.clear();
-                foodAdapter.notifyDataSetChanged();
+                foodItems.clear(); //반복 추가 되지 않도록 매번 clear 해야함
+                //foodAdapter.notifyDataSetChanged();
+                //System.out.println("셋팅 함수에서 notifyDataSetChanged 시작");
 
                 try {
                     for (int i = 0; i < response.length(); i++) {
@@ -292,17 +359,26 @@ public class HomeActivity extends Fragment {
 
                         //JSON data key 값 참조한 value 값을 변수에 담음
                         //TODO: DB에 null 값 있으면 앱이 종료되는 오류 발생, null 체크 추가하기
-                        int friIdx = Integer.parseInt(jsonObject.getString("friIdx")); //냉장고 인덱스
-                        int foodIdx = Integer.parseInt(jsonObject.getString("foodIdx")); //품목 인덱스
-                        String foodName = jsonObject.getString("foodName"); //품목 이름
-                        int foodNum = Integer.parseInt(jsonObject.getString("foodNum")); //품목 개수
-                        String foodRegistrant = jsonObject.getString("foodRegistrant"); //등록인
-                        String foodExp = jsonObject.getString("foodExp"); //유통기한
-                        String foodDate = jsonObject.getString("foodDate"); //등록일
-                        String foodRemainDate = getRemainDate(foodExp); //남은 기한
+                        friIdx = Integer.parseInt(jsonObject.getString("friIdx")); //냉장고 인덱스
+                        foodIdx = Integer.parseInt(jsonObject.getString("foodIdx")); //품목 인덱스
+                        foodName = jsonObject.getString("foodName"); //품목 이름
+                        foodNum = Integer.parseInt(jsonObject.getString("foodNum")); //품목 개수
+                        foodRegistrant = jsonObject.getString("foodRegistrant"); //등록인
+                        foodExp = jsonObject.getString("foodExp"); //유통기한
+                        foodDate = jsonObject.getString("foodDate"); //등록일
+                        foodRemainDate = getRemainDate(foodExp); //남은 기한
+                        foodMemo = jsonObject.getString("foodMemo");
 
-                        foodItems.add(new FoodItems(friIdx, foodIdx, foodName, foodNum, foodRegistrant, foodExp, foodDate, foodRemainDate));
+                        if(foodMemo == null){ //foodMemo가 null이면
+                            detailFoodMemo.setText(" ");
+                        }
+
+                        //ArrayList에 Data add
+                        foodItems.add(new FoodItems(friIdx, foodIdx, foodName, foodNum, foodRegistrant, foodExp, foodDate, foodRemainDate, foodMemo));
                     }
+                    foodAdapter.notifyDataSetChanged();
+                    System.out.println("셋팅 함수에서 notifyDataSetChanged 실행");
+
                 }catch (JSONException | ParseException e){
                     e.printStackTrace();
                     Toast.makeText(getContext(),"품목 출력 실패", Toast.LENGTH_SHORT).show();
@@ -312,7 +388,7 @@ public class HomeActivity extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 String TAG = "";
-                Log.e(TAG, "onErrorResponse 오류 메시지: " + String.valueOf(error));
+                Log.e(TAG, "foodItemSetting() onErrorResponse 오류 메시지: " + String.valueOf(error));
                 Toast.makeText(getContext(), "ERROR", Toast.LENGTH_SHORT).show();
             }
         });
@@ -325,8 +401,8 @@ public class HomeActivity extends Fragment {
     }
 
     //품목 data 수정
-    public void foodItemUpdate(String foodIdx, String foodName, String foodNum){
-        String URL = "http://10.0.2.2/beProTest/updateFood.php"; //local 경로
+    public void foodItemUpdate(String foodIdx, String foodName, String foodNum, String foodMemo, String foodExp){
+        String URL = "http://3.37.119.236:80/food/updateFood.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -337,7 +413,7 @@ public class HomeActivity extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 String TAG = "";
-                Log.e(TAG, "onErrorResponse 오류 메시지: " + String.valueOf(error));
+                Log.e(TAG, "foodItemUpdate() onErrorResponse 오류 메시지: " + String.valueOf(error));
                 Toast.makeText(getContext(), "ERROR", Toast.LENGTH_SHORT).show();
             }
         }){
@@ -346,6 +422,8 @@ public class HomeActivity extends Fragment {
                 requestedParams.put("foodIdx", foodIdx);
                 requestedParams.put("foodName", foodName);
                 requestedParams.put("foodNum", foodNum);
+                requestedParams.put("foodMemo", foodMemo);
+                requestedParams.put("foodExp", foodExp);
 
                 return requestedParams;
             }
@@ -361,7 +439,7 @@ public class HomeActivity extends Fragment {
 
     //품목 data 삭제
     public void foodItemDelete(String foodIdx){
-        String URL = "http://10.0.2.2/beProTest/deleteFood.php"; //local 경로
+        String URL = "http://3.37.119.236:80/food/deleteFood.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -373,7 +451,7 @@ public class HomeActivity extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 String TAG = "";
-                Log.e(TAG, "onErrorResponse 오류 메시지: " + String.valueOf(error));
+                Log.e(TAG, "foodItemDelete() onErrorResponse 오류 메시지: " + String.valueOf(error));
                 Toast.makeText(getContext(), "ERROR", Toast.LENGTH_SHORT).show();
             }
         }){
@@ -427,9 +505,25 @@ public class HomeActivity extends Fragment {
             dDayValue = dDayResult_int(dateEndY, dateEndM, dateEndD);
 
             dateResult.setText(getDday(year, month, day));
-            //TODO: 지난 날짜 선택 불가하게 수정
 
-        }
+            int correctMonth = month + 1; //timezone 때문인지 모르겠으나,, 한달 오차가 나서 +1로 보정해줌
+
+            if(month < 10){ //한 자리수 달이면 0붙여줌
+                formatMonth = "0" + correctMonth;
+            }else{
+                formatMonth = String.valueOf(correctMonth);
+            }
+
+            if(day < 10){ //한 자리수 일이면 0붙여줌
+                formatDay = "0" + day;
+            }else {
+                formatDay = String.valueOf(day);
+            }
+            detailFoodExp.setText(year + "-" + formatMonth + "-" + formatDay);
+
+            //TODO: 10월 달 입력 시 DB에 제대로 추가 안되는 버그
+
+       }
     };
 
     //D-day 반환 함수
@@ -499,21 +593,5 @@ public class HomeActivity extends Fragment {
         return result;
     }
 
-    /*TextWatcher implement (검색어를 실시간으로 계속 얻는 인터페이스)
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        foodAdapter.getFilter().filter(s.toString());
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-
-    }
-
-     */
 }
