@@ -44,7 +44,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-
 public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager; //앱 fragment에서 작업을 추가, 삭제, 교체하고 백 스택에 추가하는 클래스
     private FragmentTransaction transaction; //fragment 변경을 위한 트랜잭션(작업단위)
@@ -340,10 +339,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String addFridgeName = addFridge.getText().toString();
-                fridgeAdapter.addItem(new FridgeData(addFridgeName));
-                recyclerView.setAdapter(fridgeAdapter);
-                mFridgeAddDialog.dismiss();
-                showFridgeListDialog(); //이전 다이얼로그 재시작
+                //fridgeAdapter.addItem(new FridgeData(addFridgeName));
+                //recyclerView.setAdapter(fridgeAdapter);
+                //mFridgeAddDialog.dismiss();
+                //showFridgeListDialog(); //이전 다이얼로그 재시작
 
                 //추가된 냉장고 db에 넣기, 나머지 DB 부분 처리
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -351,6 +350,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         try{
                             FridgeIndex(userIdx);
+                            mFridgeAddDialog.dismiss();
+                            showFridgeListDialog(); //이전 다이얼로그 재시작
                         }catch (Exception e){
 
                         }
