@@ -67,7 +67,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.add_item_popup);
         mContext = this;
 
         //m_ivImage = findViewById(R.id.iv_image);
@@ -214,7 +214,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         String lang = "";
         for (String Language : mLanguageList) {
             checkFile(new File(mDataPath + "tessdata/"), Language);
-            lang += Language + "+";
+            lang += Language + "kor+eng";
         }
         m_Tess = new TessBaseAPI();
         m_Tess.init(mDataPath, lang);

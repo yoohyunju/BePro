@@ -48,6 +48,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
 
     // Tess-Two OCR
-    implementation 'com.rmtheis:tess-two:9.0.0'
+    implementation 'com.rmtheis:tess-two:9.1.0'
 
 }
