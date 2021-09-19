@@ -96,14 +96,14 @@ public class FridgeMemberActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.showDialog("냉장고를 삭제하시겠습니까?","정말로 냉장고를 삭제하시겠습니까?\n30일 후 완전히 삭제가 됩니다.","냉장고를 삭제하였습니다.");
-                //sendRequestImp.deleteFri(1); //변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
+                //sendRequestImp.deleteFri(4); //변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
             }
         });
 
     }
 
     public void sendRequest(){
-        String url="http://10.0.2.2/selectFriSet.php";
+        String url="http://3.37.119.236:80/fridgeSet/selectFriSet.php?friIdx=4";
         JsonArrayRequest request = new JsonArrayRequest( //지정된 URL에서 JSONObject의 응답 본문을 가져오기 위한 요청
                 Request.Method.POST,
                 url,

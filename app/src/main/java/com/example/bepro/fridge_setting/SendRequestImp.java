@@ -50,7 +50,7 @@ public class SendRequestImp implements SendRequest{
 
     @Override
     public void getFriSetAll(){
-        url="http://10.0.2.2/selectFriSet.php";
+        url="http://3.37.119.236:80/fridgeSet/selectFriSet.php?friIdx=4";
         request = new JsonArrayRequest( //지정된 URL에서 JSONObject의 응답 본문을 가져오기 위한 요청
                 Request.Method.POST,
                 url,
@@ -73,7 +73,7 @@ public class SendRequestImp implements SendRequest{
 
     @Override
     public void deleteFriUser(long userIdx, long friIdx) {
-        url = "http://10.0.2.2/deleteFriSetUser.php?userIdx="+userIdx+"&friIdx="+friIdx;
+        url = "http://3.37.119.236:80/fridgeSet/deleteFriSetUser.php?userIdx="+userIdx+"&friIdx="+friIdx;
         request = new StringRequest(
                 Request.Method.GET,
                 url,
@@ -99,7 +99,7 @@ public class SendRequestImp implements SendRequest{
 
     @Override
     public void deleteFri(long friIdx) {
-        url = "http://10.0.2.2/deleteFri.php?friIdx="+friIdx;
+        url = "http://3.37.119.236:80/fridgeSet/deleteFri.php?friIdx="+friIdx;
         request = new StringRequest(
                 Request.Method.GET,
                 url,
@@ -125,7 +125,7 @@ public class SendRequestImp implements SendRequest{
 
     @Override
     public void setFriAuthority(long friSetIdx,String friSetAuthority) {
-        url = "http://10.0.2.2/updateFriSet.php?friSetIdx="+friSetIdx+"&friSetAuthority="+friSetAuthority;
+        url = "http://3.37.119.236:80/fridgeSet/updateFriSet.php?friSetIdx="+friSetIdx+"&friSetAuthority="+friSetAuthority;
         request = new StringRequest(
                 Request.Method.GET,
                 url,

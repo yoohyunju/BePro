@@ -147,14 +147,16 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if(dialog.showDialog("회원을 내보내시겠습니까?",listViewItem.getUserNickname()+" 님을 정말로 내보내시겠습니까?","내보냈습니다.")) {//닫는 과정 처리
-                    userSet.setVisibility(View.INVISIBLE);
+                    Log.i("test","값은"+listViewItem.getUserIdx()+"과"+listViewItem.getFriIdx());
+
+                    //DB 삭제 쿼리
+                    //sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
+
                     //UI 다시 그리기
+                    userSet.setVisibility(View.INVISIBLE);
                     listViewItemList.remove(position);
                     notifyDataSetChanged();
                     fridgeListCount.setText("냉장고 멤버 (" + getCount() + "명)");
-                    //                Log.i("test","값은"+listViewItem.getUserIdx()+"과"+listViewItem.getFriIdx());
-                    //DB 삭제 쿼리
-                    //                sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
                 }
             }
         });
