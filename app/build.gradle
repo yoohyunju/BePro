@@ -1,10 +1,17 @@
 
 plugins {
     id 'com.android.application'
-    id 'com.google.gms.google-services'
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\dhtng\\AndroidStudioProjects\\mykeys.jks')
+            storePassword '123456'
+            keyAlias 'bepro'
+            keyPassword '123456'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -39,6 +46,15 @@ dependencies {
     implementation 'com.google.android.material:material:1.5.0-alpha01'// bottomNavigationView 경로
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.google.firebase:firebase-database:19.2.1'//Volley http 라이브러리
+    implementation 'com.android.volley:volley:1.1.1' //서버 통신 관련 라이브러리
+
+    implementation 'com.sun.mail:android-mail:1.5.5'
+    implementation 'com.sun.mail:android-activation:1.5.5'
+    implementation 'com.kakao.sdk:usermgmt:1.27.0' //카카오톡 sdk
+
+    implementation 'com.naver.nid:naveridlogin-android-sdk:4.2.6'
+
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

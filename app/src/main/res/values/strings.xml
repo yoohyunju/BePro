@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BePro</string>
+    <string name="kakao_app_key">7aed6d50033386c4039da90c3d48a855</string>
 </resources>

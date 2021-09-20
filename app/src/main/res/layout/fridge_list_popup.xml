@@ -84,6 +84,7 @@
                                 android:background="@drawable/ic_baseline_add_24"
                                 android:textSize="15dp"/>
                             <TextView
+                                android:id="@+id/fridge"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="냉장고 추가하기"
@@ -96,6 +97,7 @@
                         android:background="@color/gray"/>
 
                         <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/FridgeRc"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
                     </LinearLayout>

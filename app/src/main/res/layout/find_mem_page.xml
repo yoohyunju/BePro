@@ -8,43 +8,38 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5"
-            android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"></LinearLayout>
             <EditText
-                android:id="@+id/loginPwd"
+                android:id="@+id/inputEmail"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_margin="10dp"
                 android:ems="10"
-                android:inputType="textPassword"
+                android:inputType="text"
                 android:hint="이메일을 입력하세요"
                 android:textColorHint="#B2CCFF"
                 android:textColor="#4374D9"
                 android:textStyle="bold"
                 android:backgroundTint="#6799FF"></EditText>
             <Button
-                android:id="@+id/login"
-                android:layout_width="300dp"
+                android:id="@+id/sendEmail"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:layout_margin="30dp"
                 android:layout_gravity="center"
                 android:background="@drawable/login_start_btn"
-                android:text="SEND EMAIL"
+                android:text="이메일 보내기"
                 android:textColor="#4374D9"
                 android:textSize="17dp"
                 android:textStyle="bold"></Button>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="5"></LinearLayout>
-        </LinearLayout>
+                android:layout_weight="7"></LinearLayout>
     </LinearLayout>
 </LinearLayout>

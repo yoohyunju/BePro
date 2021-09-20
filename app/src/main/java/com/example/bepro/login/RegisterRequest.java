@@ -1,0 +1,36 @@
+package com.example.bepro.login;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+
+import java.util.HashMap;
+import java.util.Map;
+
+//회원 가입
+public class RegisterRequest extends StringRequest {
+    //onResponse에 못들어갈 경우 IPv4 주소로 URL 변경하기, 서버 주소로 변경(수정)
+    final static private String URL = "http://3.37.119.236:80/login/register.php";
+    private Map<String, String> map;
+
+    public RegisterRequest(String userNick, String userEmail, String userPassword, String userType, Response.Listener<String> listener){
+        super(Method.POST, URL, listener, null);
+
+        map = new HashMap<>();
+        map.put("userNick", userNick);
+        map.put("userEmail", userEmail);
+        map.put("userPassword", userPassword);
+        map.put("userType", userType);
+
+        //데이터 전송 확인, Logcat
+        for(String key:map.keySet()){
+            String value = map.get(key).toString();
+            System.out.println(key+": " + map);
+        }
+    }
+
+    @Override
+    protected Map<String, String> getParams() throws AuthFailureError{
+        return map;
+    }
+}
