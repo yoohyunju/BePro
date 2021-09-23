@@ -14,11 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BePro"
-        android:usesCleartextTraffic="true"
-        >
-
-
         android:usesCleartextTraffic="true">
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.bepro.fileprovider"
