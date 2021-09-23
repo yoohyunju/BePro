@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/skyBlue">
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="나의 냉장고"
-                    android:textColor="@color/black"
+                    android:textColor="@color/skyBlue"
                     android:textSize="25dp"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -43,6 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="8"/>
             <LinearLayout
+                android:id="@+id/fridgeSettingBtn"
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"

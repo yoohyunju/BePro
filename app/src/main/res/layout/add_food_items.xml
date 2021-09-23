@@ -43,48 +43,6 @@
                         android:background="@null" />
                 </LinearLayout>
 
-                <!--
-                <ViewSwitcher
-                    android:id="@+id/viewSwitcher"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="9.5">
-                    <LinearLayout
-                        android:id="@+id/selfAddFoodNameView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center">
-                        <TextView
-                            android:id="@+id/selfAddFoodName"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="9.5"
-                            android:gravity="center"
-                            android:text="식품명"
-                            android:textSize="20dp" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/editAddFoodNameView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center">
-
-                        <EditText
-                            android:id="@+id/editAddFoodName"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="9.5"
-                            android:gravity="center"
-                            android:hint="식품명"
-                            android:textSize="20dp"
-                            android:background="@android:color/transparent"
-                            android:focusableInTouchMode="false" />
-                    </LinearLayout>
-
-                </ViewSwitcher>
-                -->
-
-
                 <TextView
                     android:id="@+id/selfItemDeleteBtn"
                     android:layout_width="0dp"

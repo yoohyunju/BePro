@@ -14,44 +14,175 @@
             android:layout_height="0dp"
             android:layout_weight="3"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"></LinearLayout>
-            <!--아이콘 찾아서 추가하기-->
-            <EditText
-                android:id="@+id/loginId"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:ems="10"
-                android:inputType="text"
-                android:hint="아이디를 입력하세요"
-                android:textColorHint="#B2CCFF"
-                android:textColor="#4374D9"
-                android:textStyle="bold"
-                android:backgroundTint="#6799FF">
-            </EditText>
+                android:layout_weight="3"></LinearLayout>
 
-            <EditText
-                android:id="@+id/loginPwd"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Login"
+                    android:textColor="@color/skyBlue"
+                    android:textSize="50dp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:ems="10"
-                android:inputType="textPassword"
-                android:hint="비밀번호를 입력하세요"
-                android:textColorHint="#B2CCFF"
-                android:textColor="#4374D9"
-                android:textStyle="bold"
-                android:backgroundTint="#6799FF"></EditText>
+                android:layout_weight="2"></LinearLayout>
+
+            <!--로그인 폼-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="4"
+                    android:layout_gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_baseline_perm_identity_24"/>
+
+                        <EditText
+                            android:id="@+id/loginId"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="10dp"
+                            android:layout_gravity="center"
+                            android:ems="10"
+                            android:inputType="text"
+                            android:hint="아이디 입력"
+                            android:textColorHint="#B2CCFF"
+                            android:textColor="#4374D9"
+                            android:textStyle="bold"
+                            android:backgroundTint="#6799FF">
+                        </EditText>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_baseline_lock_open_24"/>
+
+                        <EditText
+                            android:id="@+id/loginPwd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="10dp"
+                            android:layout_gravity="center"
+                            android:ems="10"
+                            android:inputType="textPassword"
+                            android:hint="비밀번호 입력"
+                            android:textColorHint="#B2CCFF"
+                            android:textColor="#4374D9"
+                            android:textStyle="bold"
+                            android:backgroundTint="#6799FF"></EditText>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"></LinearLayout>
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"></LinearLayout>
         </LinearLayout>
+
+        <!--로그인 버튼-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/login"
+                android:layout_width="300dp"
+                android:layout_height="150dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:background="@drawable/login_start_btn"
+                android:text="로그인"
+                android:textColor="@color/white"
+                android:textSize="17dp"
+                android:textStyle="bold"></Button>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/createMembtn"
+                    android:layout_width="150dp"
+                    android:layout_height="55dp"
+                    android:layout_marginLeft="55dp"
+                    android:text="회원가입"
+                    android:textColor="#6799FF"
+                    android:background="#00FF0000"></Button>
+
+                <Button
+                    android:id="@+id/findMembtn"
+                    android:layout_width="150dp"
+                    android:layout_height="55dp"
+                    android:text="비밀번호 찾기"
+                    android:textColor="#6799FF"
+                    android:background="#00FF0000"></Button>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"></LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/darkGray"
+            android:textSize="15dp"
+            android:text="SNS 간편 로그인"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,59 +194,23 @@
                 android:id="@+id/kakaobtn"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="130dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginLeft="150dp"
+                android:layout_marginTop="20dp"
                 android:padding="0dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/facebook" />
+                android:src="@drawable/naverlogo" />
 
             <ImageButton
                 android:id="@+id/googlebtn"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="70dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="20dp"
                 android:padding="0dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/kakao" />
+                android:src="@drawable/kakaocircle" />
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
-            android:orientation="vertical">
-            <Button
-                android:id="@+id/login"
-                android:layout_width="300dp"
-                android:layout_height="150dp"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:background="@drawable/login_start_btn"
-                android:text="Log in"
-                android:textColor="#4374D9"
-                android:textSize="17dp"
-                android:textStyle="bold"></Button>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-                <Button
-                    android:id="@+id/createMembtn"
-                    android:layout_width="150dp"
-                    android:layout_height="55dp"
-                    android:layout_marginLeft="55dp"
-                    android:text="Create Account?"
-                    android:textColor="#6799FF"
-                    android:background="#00FF0000"></Button>
-                <Button
-                    android:id="@+id/findMembtn"
-                    android:layout_width="150dp"
-                    android:layout_height="55dp"
-                    android:text="Forget ID OR PW?"
-                    android:textColor="#6799FF"
-                    android:background="#00FF0000"></Button>
-            </LinearLayout>
 
-        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>

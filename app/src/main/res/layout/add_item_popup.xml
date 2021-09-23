@@ -47,6 +47,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="20dp"
+                            android:textColor="@color/skyBlue"
                             android:text="품목 등록창"/>
 
                     </LinearLayout>
@@ -131,7 +132,8 @@
                         android:id="@+id/addCancelBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/black"
+                        android:backgroundTint="@color/gray"
+                        android:textColor="@color/black"
                         android:text="취소"/>
                 </LinearLayout>
 
