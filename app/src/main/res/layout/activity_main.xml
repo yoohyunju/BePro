@@ -44,6 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="8"/>
             <LinearLayout
+                android:id="@+id/fridgeSettingBtn"
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"

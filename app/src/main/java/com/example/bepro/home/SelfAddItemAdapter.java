@@ -52,7 +52,7 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
         viewHolder.selfItemDeleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: 선택한 아이템이 삭제되긴 하는데 문자가 이상한데로 가는건가?..
+                //TODO: 다른 카드뷰가 삭제되는 문제 수정
                 setPosition(position); //클릭한 아이템 position set
                 removeItem(position); //아이템 삭제 함수 호출
                 Toast.makeText(v.getContext(), position + "번째 아이템 삭제", Toast.LENGTH_SHORT).show();
@@ -107,8 +107,8 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
 
     //커스텀 뷰홀더
     static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView selfItemDeleteBtn, mFoodRemainDate;
-        LinearLayout tvSelfAddFoodName, editAddFoodName, editFoodTotalCountView;
+        TextView selfItemDeleteBtn, mFoodRemainDate, dateResult, foodExpDate;
+        LinearLayout datePicker, tvSelfAddFoodName, editAddFoodName, editFoodTotalCountView;
         EditText mFoodName, mFoodTotal;
 
         Calendar calendar;
@@ -117,16 +117,13 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
         int currentYear, currentMonth, currentDay;
         private final int ONE_DAY = 24 * 60 * 60 * 1000; //Millisecond 형태의 하루(24 시간), 86400000 = 24시간 * 60분 * 60초 * 1000(=1초)
 
-        TextView dateResult;
-        LinearLayout datePicker;
-
         public ViewHolder(@NonNull @NotNull View itemView, final OnSelfAddItemClickListener listener) { //뷰홀더 생성자로 뷰객체 전달
             super(itemView);
 
             //뷰객체에 들어있는 텍스트뷰 참조
-            mFoodName = itemView.findViewById(R.id.editAddFoodName); //식품명
-            mFoodTotal = itemView.findViewById(R.id.editFoodTotalCount); //개수
-            mFoodRemainDate = itemView.findViewById(R.id.selfAddFoodRemainDate); //남은날짜
+            //mFoodName = itemView.findViewById(R.id.editAddFoodName); //식품명
+            //mFoodTotal = itemView.findViewById(R.id.editFoodTotalCount); //개수
+            //mFoodRemainDate = itemView.findViewById(R.id.selfAddFoodRemainDate); //남은날짜
 
             selfItemDeleteBtn = itemView.findViewById(R.id.selfItemDeleteBtn); //삭제버튼
 
@@ -154,14 +151,11 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
             //TODO: 직접등록이 아닌 자동등록의 경우 DB 데이터 가져와서 '-' 기준으로 split 후 년월일 구분해서 저장하기
 
             datePicker = itemView.findViewById(R.id.selfAddFoodDatePicker); //달력 다이얼로그 버튼
-            //edit_endDateBtn = (TextView) findViewById(R.id.tvFoodExpDate);
-            dateResult = (TextView) itemView.findViewById(R.id.selfAddFoodRemainDate);
+            dateResult = itemView.findViewById(R.id.selfAddFoodRemainDate);
+            foodExpDate = itemView.findViewById(R.id.selfAddFoodExpDate);
 
             //한국어 설정
             Locale.setDefault(Locale.KOREAN);
-
-            // 디데이 날짜 입력
-            //edit_endDateBtn.setText(currentYear + "년 " + (currentMonth + 1) + "월 " + currentDay + "일");
 
             //datePicker : 디데이 날짜 입력 버튼, 클릭시 DatePickerDialog 띄움
             datePicker.setOnClickListener(new View.OnClickListener() {
@@ -185,11 +179,26 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
         private DatePickerDialog.OnDateSetListener endDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                //edit_endDateBtn.setText(year + "년 " + (month + 1) + "월 " + day + "일");
+                String formatMonth, formatDay;
 
                 dDayValue = dDayResult_int(dateEndY, dateEndM, dateEndD);
 
                 dateResult.setText(getDday(year, month, day));
+
+                int correctMonth = month + 1; //timezone 때문인지 모르겠으나,, 한달 오차가 나서 +1로 보정해줌
+
+                if(month < 10){ //한 자리수 달이면 0붙여줌
+                    formatMonth = "0" + correctMonth;
+                }else{
+                    formatMonth = String.valueOf(correctMonth);
+                }
+
+                if(day < 10){ //한 자리수 일이면 0붙여줌
+                    formatDay = "0" + day;
+                }else {
+                    formatDay = String.valueOf(day);
+                }
+                foodExpDate.setText(year + "-" + formatMonth + "-" + formatDay);
 
             }
         };
@@ -210,12 +219,12 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
             String strFormat;
 
             if (result > 0) { //남은 기한
-                strFormat = "D-%d";
+                strFormat = "%d일";
             } else if (result == 0) { //당일
-                strFormat = "Today";
+                strFormat = "오늘";
             } else { //지난 기한
-                result *= -1;
-                strFormat = "D+%d";
+                //result *= -1;
+                strFormat = "%d일";
             }
 
             final String strCount = (String.format(strFormat, result));

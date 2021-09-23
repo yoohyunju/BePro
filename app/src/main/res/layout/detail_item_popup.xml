@@ -90,6 +90,11 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"/>
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -98,11 +103,29 @@
 
                         <EditText
                             android:id="@+id/detailItemFoodName"
-                            android:layout_width="150dp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
                             android:textSize="15dp"
                             android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/itemDeleteBtn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:textSize="13dp"
+                            android:text="삭제"
+                            android:gravity="center"
+                            android:background="@drawable/popup_box"
+                            android:backgroundTint="@color/gray"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.6"/>
 
                     </LinearLayout>
 
@@ -146,7 +169,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:layout_weight="2.2"
+                            android:layout_weight="2.4"
                             android:layout_margin="5dp">
 
                             <TextView
@@ -165,10 +188,10 @@
                                     android:id="@+id/itemDetailRemainDate"
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="1.5"
+                                    android:layout_weight="2.3"
                                     android:layout_marginLeft="10dp"
                                     android:layout_marginRight="10dp"
-                                    android:text="14일"
+                                    android:text="00일"
                                     android:textSize="15dp"
                                     android:gravity="center"/>
 
@@ -181,32 +204,12 @@
 
                             </LinearLayout>
 
-                        <!--<LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:layout_weight="2">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="15dp"
-                                android:text="기한"/>
-
-                            <EditText
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="10dp"
-                                android:layout_marginRight="10dp"/>
-                         -->
-
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.9"/>
-
 
                     </LinearLayout>
 
@@ -260,6 +263,36 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="메모"
+                            android:textSize="15dp"/>
+
+                        <EditText
+                            android:id="@+id/detailItemFoodMemo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="15dp"
+                            android:hint="     메모를 입력하세요.     "
+                            android:textSize="15dp"/>
+
+                        <!--2021-09-10 형식의 날짜 데이터 저장을 위한 TextView-->
+                        <TextView
+                            android:id="@+id/detailFoodExpDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="0.1dp"
+                            android:visibility="invisible"/>
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -276,7 +309,7 @@
                         android:orientation="horizontal">
 
                         <Button
-                            android:id="@+id/detailCancelBtn"
+                            android:id="@+id/itemDetailCancelBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
@@ -285,7 +318,7 @@
                             android:textColor="@color/black"/>
 
                         <Button
-                            android:id="@+id/detailUpdateBtn"
+                            android:id="@+id/itemUpdateBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
@@ -295,7 +328,7 @@
                     </LinearLayout>
 
                     <Button
-                        android:id="@+id/detailRecipeBtn"
+                        android:id="@+id/itemDetailRecipeBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/white"

@@ -53,7 +53,7 @@ import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.bepro.R;
-import com.example.bepro.RecipeActivity;
+import com.example.bepro.recipe.RecipeActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -83,11 +83,11 @@ public class HomeActivity extends Fragment {
     public FoodAdapter foodAdapter;
     ArrayList<FoodItems> foodItems = new ArrayList<>();
     String[] items = {"유통기한 짧은 순", "등록 오래된 순", "등록 최신순"};
-    String updateFoodIdx, updateFoodName, updateFoodNum, updateFoodMemo, updateFoodExp;
+    String updateFoodIdx, updateFoodName, updateFoodNum, updateFoodMemo, updateFoodExp, updateFoodRemainDate;
     String formatMonth, formatDay;
 
     int friIdx, foodIdx, foodNum;
-    String foodName, foodRegistrant, foodExp, foodDate, foodRemainDate,foodMemo;
+    String foodName, foodRegistrant, foodExp, foodDate, foodRemainDate,foodMemo, selfAddFoodName, selfAddFoodNum, selfAddFoodExp;
 
     //달력 관련 변수 정의
     private LinearLayout datePickerBtn;
@@ -181,7 +181,7 @@ public class HomeActivity extends Fragment {
         detailFoodExp = mDetailDialog.findViewById(R.id.detailFoodExpDate); //품목 유통기한
         detailFoodDate = mDetailDialog.findViewById(R.id.detailItemFoodDate); //등록일
         detailFoodRegistrant = mDetailDialog.findViewById(R.id.detailItemFoodRegistrant); //등록인
-        detailFoodMemo = mDetailDialog.findViewById(R.id.detailItemFoodMemo);
+        detailFoodMemo = mDetailDialog.findViewById(R.id.detailItemFoodMemo); //메모
 
         return homeView;
     }
@@ -239,6 +239,26 @@ public class HomeActivity extends Fragment {
                 //mTextView.setText("");
             }
         });
+    }
+
+    //품목 직접 추가 시 UI에 즉시 품목 추가 함수
+    public void selfAddItemFunc() {
+        //bundle로 data 가져오기
+        Bundle bundle = this.getArguments();
+
+        if (bundle != null){
+            bundle = getArguments();
+            selfAddFoodName = bundle.getString("foodName");
+            selfAddFoodNum = bundle.getString("foodNum");
+            selfAddFoodExp = bundle.getString("foodExp");
+
+            System.out.println("직접 입력 식품명: " + selfAddFoodName);
+            System.out.println("직접 입력 남은기한: " + selfAddFoodExp);
+
+            //TODO: NPE 해결
+            //foodItems.add(new FoodItems(selfAddFoodName, "2021-09-13", selfAddFoodExp));
+            //foodAdapter.notifyDataSetChanged();
+        }
     }
 
     //품목 상세 정보 팝업창
@@ -301,9 +321,22 @@ public class HomeActivity extends Fragment {
                 updateFoodNum = detailFoodNum.getText().toString();
                 updateFoodMemo = detailFoodMemo.getText().toString();
                 updateFoodExp = detailFoodExp.getText().toString();
+                updateFoodRemainDate = detailFoodRemainDate.getText().toString();
 
                 foodItemUpdate(updateFoodIdx, updateFoodName, updateFoodNum, updateFoodMemo, updateFoodExp);
+
+                TextView homeFoodName = mHomeRecyclerView.findViewById(R.id.foodName);
+                TextView homeFoodExpDate = mHomeRecyclerView.findViewById(R.id.foodExpiryDate);
+                TextView homeFoodRemainDate = mHomeRecyclerView.findViewById(R.id.foodRemainDate);
+
+                //수정 사항 UI 즉시 반영
+                homeFoodName.setText(updateFoodName);
+                homeFoodExpDate.setText(updateFoodExp);
+                homeFoodRemainDate.setText(updateFoodRemainDate);
+
                 foodItemSetting(); //수정 후 목록 재설정
+                itemSortFunc(); // 품목 재정렬
+
                 //foodAdapter.notifyDataSetChanged();
                 mDetailDialog.dismiss(); //다이얼로그 닫기
             }
@@ -336,8 +369,6 @@ public class HomeActivity extends Fragment {
             }
         });
 
-        //TODO: 해당 아이템에 바로 수정 반영되기 (현재는 전체 아이템에 동일 data 적용됨)
-        //detailFoodMemo.setText(foodMemo);
     }
 
     //품목 data 설정
@@ -367,7 +398,7 @@ public class HomeActivity extends Fragment {
                         foodExp = jsonObject.getString("foodExp"); //유통기한
                         foodDate = jsonObject.getString("foodDate"); //등록일
                         foodRemainDate = getRemainDate(foodExp); //남은 기한
-                        foodMemo = jsonObject.getString("foodMemo");
+                        foodMemo = jsonObject.getString("foodMemo"); //메모
 
                         if(foodMemo == null){ //foodMemo가 null이면
                             detailFoodMemo.setText(" ");
