@@ -33,6 +33,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.bepro.fridge_setting.FridgeMemberActivity;
 import com.example.bepro.home.FoodItems;
 import com.example.bepro.home.HomeActivity;
+import com.example.bepro.my_page.MyPageActivity;
 import com.example.bepro.notice.NoticeActivity;
 import com.example.bepro.recipe.RecipeActivity;
 import com.example.bepro.home.SelfAddItemAdapter;
