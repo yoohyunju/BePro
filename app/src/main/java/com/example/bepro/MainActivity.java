@@ -28,11 +28,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.bepro.fridge_setting.FridgeMemberActivity;
 import com.example.bepro.home.FoodItems;
 import com.example.bepro.home.HomeActivity;
+import com.example.bepro.login.snsRequest;
 import com.example.bepro.my_page.MyPageActivity;
 import com.example.bepro.notice.NoticeActivity;
 import com.example.bepro.recipe.RecipeActivity;
@@ -41,6 +43,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     //JSON DATA 받아올 변수
     String foodName, foodNum, foodExp;
 
-    /*
+
     //TODO: 프로젝트 병합 후 주석 해제
     public String image, email, type, fridgeName, userIdx;
     ArrayList<Integer> fridgeIdx = new ArrayList<Integer>();
@@ -78,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     FridgeAdapter fridgeAdapter;
     UserData user = new UserData(); //user 객체
     FridgeSettingData settingData = new FridgeSettingData();
-     */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         mNavView = findViewById(R.id.navigation);
         mNavView.setOnItemSelectedListener(new ItemSelectedListener()); //BottomNavigationView에 이벤트 리스너 연결
 
-        /* TODO: 프로젝트 병합 후 주석 해제
+        // TODO: 프로젝트 병합 후 주석 해제
         //로그인 데이터 받아오기
         Intent intent = getIntent();
         image = intent.getStringExtra("userImage");
@@ -102,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         user.setType(type);
 
         getUser();
-         */
 
         //fragment 객체 생성
         mHome = new HomeActivity();
@@ -131,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /* TODO: 프로젝트 병합 후 주석 해제
+        // TODO: 프로젝트 병합 후 주석 해제
         //냉장고 리스트
         recyclerView = mFridgeListDialog.findViewById(R.id.FridgeRc);
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -178,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                 mFridgeListDialog.cancel();
             }
         });
-         */
+
 
         //냉장고 설정 버튼
         mFridgeSettingBtn = findViewById(R.id.fridgeSettingBtn);
@@ -217,11 +221,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case R.id.myPage:
-                    /* TODO: 프로젝트 병합 후 주석 해제
+                    // TODO: 프로젝트 병합 후 주석 해제
                     //객체 데이터 보내기
                     mMyPage.user = user;
                     mMyPage.fridgeAdapter = fridgeAdapter;
-                     */
+
                     transaction.replace(R.id.frameLayout, mMyPage).commitAllowingStateLoss();
                     break;
 
@@ -425,11 +429,11 @@ public class MainActivity extends AppCompatActivity {
 
     //냉장고 추가하기 팝업창
     public void showFridgeAddDialog(){
-        /* TODO: 프로젝트 병합 후 주석 해제
+        // TODO: 프로젝트 병합 후 주석 해제
         addFridge = mFridgeAddDialog.findViewById(R.id.fridgeName);
         addFridge.setText(null);
 
-         */
+
 
         //팝업창 사이즈 조절
         WindowManager.LayoutParams params = mFridgeAddDialog.getWindow().getAttributes();
@@ -440,15 +444,15 @@ public class MainActivity extends AppCompatActivity {
 
         mFridgeAddDialog.show();
 
-        /* TODO: 프로젝트 병합 후 주석 해제
+        // TODO: 프로젝트 병합 후 주석 해제
         //냉장고 추가하기 확인 버튼
         mFridgeNameAddBtn = mFridgeAddDialog.findViewById(R.id.fridgeNameAddBtn);
         mFridgeNameAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String addFridgeName = addFridge.getText().toString();
-                //fridgeAdapter.addItem(new FridgeData(addFridgeName));
-                //recyclerView.setAdapter(fridgeAdapter);
+                fridgeAdapter.addItem(new FridgeData(addFridgeName));
+                recyclerView.setAdapter(fridgeAdapter);
                 //mFridgeAddDialog.dismiss();
                 //showFridgeListDialog(); //이전 다이얼로그 재시작
 
@@ -471,8 +475,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-         */
-
         //냉장고 추가하기 취소 버튼
         mFridgeAddCancelBtn = mFridgeAddDialog.findViewById(R.id.fridgeAddCancelBtn);
         mFridgeAddCancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -485,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /* TODO: 프로젝트 병합 후 주석 해제
+    // TODO: 프로젝트 병합 후 주석 해제
     //냉장고 세팅 인덱스 (fridge_setting)
     public void FridgeIndex(final String userIDX) {
         String URL = "http://3.37.119.236:80/fridge/fridge.php/?userIDX="+userIDX; //local 경로
@@ -574,7 +576,7 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(snsRequest);
     }
-    */
+
 
     //품목 data 추가
     public void selfFoodItemInsert(String foodName, String foodNum, String foodExp){
