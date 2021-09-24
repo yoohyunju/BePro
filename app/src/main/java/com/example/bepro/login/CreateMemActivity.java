@@ -7,6 +7,7 @@ import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -32,6 +33,7 @@ import javax.mail.SendFailedException;
 public class CreateMemActivity extends AppCompatActivity {
     EditText nick, pwd, checkpwd, email, code;
     Button check, register, codecheck, nickCheck;
+    LinearLayout codeLayout;
 
     String GmailCode; //사용자가 입력한 인증코드
     static int value; //이메일 전송
@@ -55,9 +57,8 @@ public class CreateMemActivity extends AppCompatActivity {
         email = findViewById(R.id.memEmail);
         check = findViewById(R.id.EmailCheck);
         codecheck = findViewById(R.id.codeCheck);
-        codecheck.setVisibility(View.GONE);
         code = findViewById(R.id.code);
-        code.setVisibility(View.GONE);
+        codeLayout = findViewById(R.id.codeLayout);
         pwd = findViewById(R.id.memPwd);
         checkpwd = findViewById(R.id.checkPwd);
         register = findViewById(R.id.createMembtn);
@@ -144,8 +145,7 @@ public class CreateMemActivity extends AppCompatActivity {
                                     }
 
                                     Toast.makeText(getApplicationContext(), "인증번호가 전송되었습니다.", Toast.LENGTH_SHORT).show();
-                                    code.setVisibility(View.VISIBLE);
-                                    codecheck.setVisibility(View.VISIBLE);
+                                    codeLayout.setVisibility(View.VISIBLE);
                                     mainHandler = new MainHandler();
                                 }else{
                                     AlertDialog.Builder builder = new AlertDialog.Builder(CreateMemActivity.this);

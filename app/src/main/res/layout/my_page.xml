@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+android:layout_width="match_parent"
+android:layout_height="match_parent">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -18,7 +18,8 @@
                 <!-- 계정 정보 -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="5"
                     android:orientation="vertical">
                     <TextView
                         android:layout_width="match_parent"
@@ -27,8 +28,9 @@
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
-                        android:text="계정 정보"
-                        android:textSize="20sp"
+                        android:text="My Page"
+                        android:textSize="25sp"
+                        android:textColor="@color/skyBlue"
                         android:id="@+id/acInfo">
 
                     </TextView>
@@ -65,7 +67,7 @@
                                 <TextView
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="2"
+                                    android:layout_weight="3"
                                     android:text="아이디"
                                     android:gravity="center">
 
@@ -74,8 +76,9 @@
                                     android:id="@+id/Id"
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="8"
+                                    android:layout_weight="7"
                                     android:textSize="13dp"
+                                    android:textColor="@color/black"
                                     android:gravity="center">
                                 </TextView>
                             </LinearLayout>
@@ -87,7 +90,7 @@
                                 <TextView
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="2"
+                                    android:layout_weight="3"
                                     android:text="별    명"
                                     android:gravity="center">
 
@@ -96,9 +99,10 @@
                                     android:id="@+id/Nick"
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="8"
+                                    android:layout_weight="7"
                                     android:textSize="13dp"
-                                    android:gravity="center">>
+                                    android:textColor="@color/black"
+                                    android:gravity="center">
                                 </TextView>
                             </LinearLayout>
 
@@ -108,7 +112,6 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="2">
-
                             <Button
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -116,9 +119,8 @@
                                 android:layout_gravity="center"
                                 android:layout_marginLeft="10dp"
                                 android:layout_marginRight="10dp"
-                                android:backgroundTint="#979797"
+                                android:backgroundTint="@color/skyBlue"
                                 android:id="@+id/editBtn">
-
                             </Button>
                         </LinearLayout>
 
@@ -127,7 +129,8 @@
                 <!-- 알림 설정 -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
                     android:orientation="vertical">
                     <TextView
                         android:layout_width="match_parent"
@@ -137,6 +140,7 @@
                         android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
                         android:text="알림 설정"
+                        android:textColor="@color/skyBlue"
                         android:textSize="20sp">
 
                     </TextView>
@@ -169,13 +173,15 @@
                 <!-- 서비스 이용 약관 -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp">
+                    android:layout_height="0dp"
+                    android:layout_weight="1.5">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginLeft="20dp"
                         android:text="서비스 이용 약관"
+                        android:textColor="@color/skyBlue"
                         android:textSize="20sp">
 
                     </TextView>
@@ -183,13 +189,15 @@
                 <!-- 개인정보 취급 방침 -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp">
+                    android:layout_height="0dp"
+                    android:layout_weight="1.5">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginLeft="20dp"
                         android:text="개인정보 취급 방침"
+                        android:textColor="@color/skyBlue"
                         android:textSize="20sp">
 
                     </TextView>
@@ -197,26 +205,28 @@
                 <!-- 평가/공유/문의하기 -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
                     android:orientation="horizontal">
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="5"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:layout_weight="3"
                             android:background="@drawable/ic_baseline_thumb_up_24"
                             android:layout_margin="20dp">
-
                         </TextView>
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="2"
                             android:gravity="center"
+                            android:textColor="@color/black"
                             android:text="평가하기"
                             android:textSize="18sp">
 
@@ -225,10 +235,11 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="5"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:layout_weight="3"
                             android:background="@drawable/ic_baseline_share_24"
@@ -241,18 +252,19 @@
                             android:layout_weight="2"
                             android:gravity="center"
                             android:text="공유하기"
+                            android:textColor="@color/black"
                             android:textSize="18sp">
                         </TextView>
                     </LinearLayout>
 
-
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="5"
-                        android:orientation="vertical">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:layout_weight="3"
                             android:background="@drawable/ic_baseline_email_24"
@@ -265,15 +277,20 @@
                             android:layout_weight="2"
                             android:gravity="center"
                             android:text="문의하기"
+                            android:textColor="@color/black"
                             android:textSize="18sp">
                         </TextView>
                     </LinearLayout>
-
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5"/>
                 <!-- LOGOUT, DELETE-->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
                     android:gravity="center">
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -283,28 +300,30 @@
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="#979797"
-                            android:text="로그아웃"
-                            android:id="@+id/logoutBtn">
-
-                        </Button>
-                        <LinearLayout
-                            android:layout_width="10dp"
-                            android:layout_height="match_parent">
-
-                        </LinearLayout>
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="#979797"
+                            android:layout_marginRight="20dp"
+                            android:backgroundTint="@color/gray"
+                            android:textColor="@color/black"
                             android:text="계정삭제"
                             android:id="@+id/deleteBtn">
+                        </Button>
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:backgroundTint="@color/darkGray"
+                            android:textColor="@color/black"
+                            android:text="로그아웃"
+                            android:id="@+id/logoutBtn">
                         </Button>
                     </LinearLayout>
 
                 </LinearLayout>
-
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5"/>
             </LinearLayout>
+
         </ScrollView>
 
         <!-- 비밀번호 확인 팝업 -->
@@ -826,5 +845,4 @@
         </LinearLayout>
 
     </FrameLayout>
-
 </LinearLayout>

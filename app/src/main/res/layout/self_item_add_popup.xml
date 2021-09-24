@@ -119,7 +119,7 @@
                         android:id="@+id/selfItemAddBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/gray"
+                        android:backgroundTint="@color/whiteBlue"
                         android:layout_margin="5dp"
                         android:text="품목 추가하기"
                         android:textColor="@color/black"/>

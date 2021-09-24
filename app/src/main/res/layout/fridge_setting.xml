@@ -9,18 +9,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10dp"
+        android:orientation="vertical"
         android:focusable="true"
         android:focusableInTouchMode="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"/>
+
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="9"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                //냉장고 이름
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:text="냉장고 설정"
+                    android:textColor="@color/skyBlue"
+                    android:textSize="30dp"/>
+
+                <!--냉장고 이름-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -50,21 +68,22 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="2"
+                            android:layout_marginRight="10dp"
                             android:text="변경"
-                            android:backgroundTint="@color/gray">
+                            android:backgroundTint="@color/gray"
+                            android:textColor="@color/black">
                         </Button>
                     </LinearLayout>
 
                 </LinearLayout>
 
-
-                //냉장고 멤버
+                <!--냉장고 멤버-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:orientation="horizontal"
-                    android:layout_weight="3"
-                    >
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="3">
 
                     <TextView
                         android:layout_width="0dp"
@@ -73,15 +92,15 @@
                         android:layout_weight="6"
                         android:text="냉장고 멤버 (0명)"
                         android:gravity="center_vertical"
-                        android:id="@+id/fridgeListCount"
-                        ></TextView>
+                        android:id="@+id/fridgeListCount"></TextView>
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="멤버 추가"
                         android:layout_marginRight="5dp"
-                        android:backgroundTint="@color/gray">
+                        android:background="@drawable/popup_box"
+                        android:textColor="@color/black">
                     </Button>
                 </LinearLayout>
 
@@ -91,8 +110,7 @@
                     android:layout_height="wrap_content">
                 </ListView>
 
-
-                //냉장고 탈퇴
+                <!--냉장고 탈퇴-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -108,9 +126,9 @@
                         android:layout_weight="4"
                         android:text="냉장고 탈퇴"
                         android:gravity="center"
+                        android:textColor="@color/black"
                         android:backgroundTint="@color/gray"
-                        android:id="@+id/fridgeQuit"
-                        >
+                        android:id="@+id/fridgeQuit">
                     </Button>
                     <LinearLayout
                         android:layout_width="0dp"
@@ -119,7 +137,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                //냉장고 삭제
+                <!--냉장고 삭제-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -135,9 +153,9 @@
                         android:layout_weight="4"
                         android:text="냉장고 삭제"
                         android:gravity="center"
-                        android:backgroundTint="@color/gray"
-                        android:id="@+id/fridgeDelete"
-                        >
+                        android:textColor="@color/black"
+                        android:backgroundTint="@color/whiteBlue"
+                        android:id="@+id/fridgeDelete">
                     </Button>
                     <LinearLayout
                         android:layout_width="0dp"

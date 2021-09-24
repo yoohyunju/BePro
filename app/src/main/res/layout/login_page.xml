@@ -14,125 +14,252 @@
             android:layout_height="0dp"
             android:layout_weight="5"
             android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"></LinearLayout>
-            <!--아이콘 찾아서 추가하기-->
-            <EditText
-                android:id="@+id/loginId"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:ems="10"
-                android:inputType="text"
-                android:hint="이메일을 입력하세요"
-                android:textColorHint="#B2CCFF"
-                android:textColor="#4374D9"
-                android:textStyle="bold"
-                android:backgroundTint="#6799FF">
-            </EditText>
 
-            <EditText
-                android:id="@+id/loginPwd"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:ems="10"
-                android:inputType="textPassword"
-                android:hint="비밀번호를 입력하세요"
-                android:textColorHint="#B2CCFF"
-                android:textColor="#4374D9"
-                android:textStyle="bold"
-                android:backgroundTint="#6799FF"></EditText>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="3"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Login"
+                    android:textColor="@color/skyBlue"
+                    android:textSize="50dp"/>
+            </LinearLayout>
+
+            <!--로그인 폼 상단 여백-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <!--로그인 폼-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
                 android:orientation="horizontal">
 
-                <CheckBox
-                    android:id="@+id/autologin"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="자동 로그인"
-                    android:textColor="#4374D9"
-                    android:buttonTint="#4374D9"
-                    android:layout_margin="10dp"></CheckBox>
-                <CheckBox
-                    android:id="@+id/saveid"
+                    android:layout_weight="3"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="4"
+                    android:layout_gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_baseline_perm_identity_24"/>
+
+                        <!--아이콘 찾아서 추가하기-->
+                        <EditText
+                            android:id="@+id/loginId"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="10dp"
+                            android:ems="10"
+                            android:inputType="text"
+                            android:hint="이메일을 입력하세요"
+                            android:textColorHint="#B2CCFF"
+                            android:textColor="#4374D9"
+                            android:textStyle="bold"
+                            android:backgroundTint="#6799FF">
+                        </EditText>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_baseline_lock_open_24"/>
+
+                        <EditText
+                            android:id="@+id/loginPwd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="10dp"
+                            android:ems="10"
+                            android:inputType="textPassword"
+                            android:hint="비밀번호를 입력하세요"
+                            android:textColorHint="#B2CCFF"
+                            android:textColor="#4374D9"
+                            android:textStyle="bold"
+                            android:backgroundTint="#6799FF"></EditText>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/autologin"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:text="자동 로그인"
+                            android:textColor="#4374D9"
+                            android:buttonTint="#4374D9"
+                            android:layout_margin="10dp"></CheckBox>
+                        <CheckBox
+                            android:id="@+id/saveid"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:text="아이디 저장"
+                            android:textColor="#4374D9"
+                            android:buttonTint="#4374D9"
+                            android:layout_margin="10dp"></CheckBox>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="아이디 저장"
-                    android:textColor="#4374D9"
-                    android:buttonTint="#4374D9"
-                    android:layout_margin="10dp"></CheckBox>
+                    android:layout_weight="3"></LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/login"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="8"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/login_start_btn"
+                    android:text="로그인"
+                    android:textColor="@color/white"
+                    android:textSize="17dp"
+                    android:textStyle="bold"></Button>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="5"
+                    android:layout_gravity="center">
+                    <Button
+                        android:id="@+id/createMembtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
+                        android:text="회원가입"
+                        android:textColor="#6799FF"
+                        android:background="#00FF0000"></Button>
+                    <Button
+                        android:id="@+id/findMembtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:text="비밀번호 찾기"
+                        android:textColor="#6799FF"
+                        android:background="#00FF0000"></Button>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/darkGray"
+                    android:textSize="17dp"
+                    android:text="SNS 간편 로그인"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.2"/>
+
                 <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
                     android:id="@+id/naver"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="200dp"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:layout_marginLeft="10dp"/>
+
                 <Button
                     android:id="@+id/kakao"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:drawableBottom="@drawable/kakao_login_medium_narrow"
                     android:background="#00000000"/>
             </LinearLayout>
 
-            <Button
-                android:id="@+id/login"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:background="@drawable/login_start_btn"
-                android:text="로그인"
-                android:textColor="#4374D9"
-                android:textSize="17dp"
-                android:textStyle="bold"></Button>
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                android:layout_margin="10dp">
-                <Button
-                    android:id="@+id/createMembtn"
-                    android:layout_width="150dp"
-                    android:layout_height="55dp"
-                    android:layout_marginLeft="55dp"
-                    android:text="회원가입"
-                    android:textColor="#6799FF"
-                    android:background="#00FF0000"></Button>
-                <Button
-                    android:id="@+id/findMembtn"
-                    android:layout_width="150dp"
-                    android:layout_height="55dp"
-                    android:text="비밀번호 찾기"
-                    android:textColor="#6799FF"
-                    android:background="#00FF0000"></Button>
-            </LinearLayout>
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
         </LinearLayout>
+        <!--하단 여백-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
     </LinearLayout>
 </LinearLayout>
