@@ -70,7 +70,7 @@
                             android:layout_weight="2"
                             android:layout_marginRight="10dp"
                             android:text="변경"
-                            android:backgroundTint="@color/gray"
+                            android:backgroundTint="@color/whiteBlue"
                             android:textColor="@color/black">
                         </Button>
                     </LinearLayout>
@@ -154,7 +154,7 @@
                         android:text="냉장고 삭제"
                         android:gravity="center"
                         android:textColor="@color/black"
-                        android:backgroundTint="@color/whiteBlue"
+                        android:backgroundTint="@color/darkGray"
                         android:id="@+id/fridgeDelete">
                     </Button>
                     <LinearLayout

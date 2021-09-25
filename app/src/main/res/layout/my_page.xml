@@ -174,33 +174,43 @@ android:layout_height="match_parent">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1.5">
+                    android:layout_weight="1.5"
+                    android:orientation="horizontal">
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:layout_marginLeft="20dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_gravity="center"
                         android:text="서비스 이용 약관"
                         android:textColor="@color/skyBlue"
-                        android:textSize="20sp">
-
-                    </TextView>
+                        android:textSize="20sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/ic_baseline_keyboard_arrow_down_24"/>
                 </LinearLayout>
                 <!-- 개인정보 취급 방침 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1.5">
+                    android:layout_weight="1.5"
+                    android:orientation="horizontal">
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginLeft="20dp"
+                        android:layout_marginRight="5dp"
                         android:text="개인정보 취급 방침"
                         android:textColor="@color/skyBlue"
-                        android:textSize="20sp">
-
-                    </TextView>
+                        android:textSize="20sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/ic_baseline_keyboard_arrow_down_24"/>
                 </LinearLayout>
                 <!-- 평가/공유/문의하기 -->
                 <LinearLayout
@@ -217,7 +227,7 @@ android:layout_height="match_parent">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
-                            android:layout_weight="3"
+                            android:layout_weight="2"
                             android:background="@drawable/ic_baseline_thumb_up_24"
                             android:layout_margin="20dp">
                         </TextView>
@@ -241,7 +251,7 @@ android:layout_height="match_parent">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
-                            android:layout_weight="3"
+                            android:layout_weight="2"
                             android:background="@drawable/ic_baseline_share_24"
                             android:layout_margin="20dp">
 
@@ -266,7 +276,7 @@ android:layout_height="match_parent">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
-                            android:layout_weight="3"
+                            android:layout_weight="2"
                             android:background="@drawable/ic_baseline_email_24"
                             android:layout_margin="20dp">
 
@@ -339,7 +349,7 @@ android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="3">
+                android:layout_weight="2">
             </LinearLayout>
             <!-- 팝업 내용 -->
             <LinearLayout
@@ -359,24 +369,43 @@ android:layout_height="match_parent">
                     android:background="@drawable/popup_box"
                     android:orientation="vertical"
                     android:gravity="center">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                    </LinearLayout>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="2"
-                        android:text="계속하려면 비밀번호를 입력해주세요"
-                        android:textSize="17dp"
-                        android:gravity="center">
+                        android:text="비밀번호 확인"
+                        android:textColor="@color/skyBlue"
+                        android:layout_marginLeft="15dp"
+                        android:textSize="25sp">
+                    </TextView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:layout_marginLeft="20dp"
+                        android:text="비밀번호를 입력해주세요."
+                        android:textSize="17dp">
                     </TextView>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="4"
+                        android:layout_weight="2"
                         android:orientation="vertical">
                         <!-- 비밀번호 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="horizontal">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+                            </LinearLayout>
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -393,6 +422,11 @@ android:layout_height="match_parent">
                                 android:inputType="textPassword"
                                 android:id="@+id/pwcPw">
                             </EditText>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
@@ -409,7 +443,7 @@ android:layout_height="match_parent">
                             android:layout_marginRight="5dp"
                             android:text="확인"
                             android:layout_gravity="center"
-                            android:backgroundTint="#979797"
+                            android:backgroundTint="@color/skyBlue"
                             android:id="@+id/pwcOkBtn">
                         </Button>
                         <Button
@@ -420,6 +454,11 @@ android:layout_height="match_parent">
                             android:backgroundTint="#979797"
                             android:id="@+id/pwcCancel">
                         </Button>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
                     </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
@@ -432,7 +471,7 @@ android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="3">
+                android:layout_weight="2">
             </LinearLayout>
 
         </LinearLayout>
@@ -470,19 +509,26 @@ android:layout_height="match_parent">
                     android:background="@drawable/popup_box"
                     android:orientation="vertical"
                     android:gravity="center">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                    </LinearLayout>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="2"
-                        android:text="계정정보수정"
-                        android:textSize="20sp"
-                        android:gravity="center">
+                        android:layout_marginLeft="15dp"
+                        android:text="계정 정보 수정"
+                        android:textColor="@color/skyBlue"
+                        android:textSize="25sp">
                     </TextView>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="7"
-                        android:layout_margin="10dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginLeft="20dp"
                         android:orientation="vertical">
                         <!-- 아이디 -->
                         <LinearLayout
@@ -503,7 +549,9 @@ android:layout_height="match_parent">
                                 android:layout_height="match_parent"
                                 android:layout_weight="8"
                                 android:gravity="center"
-                                android:background="#D3D3D3">
+                                android:text="testId"
+                                android:textColor="@color/black"
+                                android:textSize="15dp">
                             </TextView>
                         </LinearLayout>
                         <!-- 비밀번호 -->
@@ -519,6 +567,10 @@ android:layout_height="match_parent">
                                 android:text="비밀번호"
                                 android:gravity="center">
                             </TextView>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.5"></LinearLayout>
                             <EditText
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -527,9 +579,14 @@ android:layout_height="match_parent">
                                 android:inputType="textPassword"
                                 android:id="@+id/editPw">
                             </EditText>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.5"></LinearLayout>
                             <Button
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_weight="3"
                                 android:text="확인"
                                 android:layout_gravity="center"
                                 android:backgroundTint="#979797"
@@ -549,6 +606,10 @@ android:layout_height="match_parent">
                                 android:text="별      명"
                                 android:gravity="center">
                             </TextView>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.5"></LinearLayout>
                             <EditText
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -556,28 +617,40 @@ android:layout_height="match_parent">
                                 android:hint="새로운 별명"
                                 android:id="@+id/editNickname">
                             </EditText>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.5"></LinearLayout>
                             <Button
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:text="확인"
+                                android:layout_weight="3"
                                 android:layout_gravity="center"
                                 android:backgroundTint="#979797"
                                 android:id="@+id/newNickCh">
                             </Button>
                         </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="0.5">
+                        </LinearLayout>
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"></LinearLayout>
+
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="완료"
                         android:layout_gravity="center"
-                        android:backgroundTint="#979797"
+                        android:backgroundTint="@color/skyBlue"
                         android:id="@+id/editOkBtn">
                     </Button>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
@@ -608,7 +681,7 @@ android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4">
+                android:layout_weight="2">
             </LinearLayout>
             <!-- 팝업 내용 -->
             <LinearLayout
@@ -631,9 +704,19 @@ android:layout_height="match_parent">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:layout_weight="4"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:text="Logout"
+                        android:textSize="25sp"
+                        android:textColor="@color/skyBlue">
+                    </TextView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
                         android:layout_weight="5"
-                        android:text="로그아웃 하시겠습니까?"
-                        android:textSize="20sp"
+                        android:text="계정 로그아웃을 하시겠습니까?"
+                        android:textSize="17sp"
                         android:gravity="center">
                     </TextView>
                     <LinearLayout
@@ -645,8 +728,8 @@ android:layout_height="match_parent">
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="예"
-                            android:backgroundTint="#979797"
+                            android:text="확인"
+                            android:backgroundTint="@color/skyBlue"
                             android:id="@+id/lgyBtn">
                         </Button>
                         <LinearLayout
@@ -657,7 +740,7 @@ android:layout_height="match_parent">
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:backgroundTint="#979797"
-                            android:text="아니오"
+                            android:text="취소"
                             android:id="@+id/lgnBtn">
                         </Button>
                     </LinearLayout>
@@ -673,7 +756,7 @@ android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4">
+                android:layout_weight="2">
             </LinearLayout>
 
         </LinearLayout>
@@ -691,7 +774,7 @@ android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4">
+                android:layout_weight="2">
             </LinearLayout>
             <!-- 팝업 내용 -->
             <LinearLayout
@@ -715,8 +798,18 @@ android:layout_height="match_parent">
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="5"
-                        android:text="계정삭제 하시겠습니까?"
-                        android:textSize="20sp"
+                        android:text="회원 탈퇴"
+                        android:textSize="25sp"
+                        android:textColor="@color/skyBlue"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="15dp">
+                    </TextView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="5"
+                        android:text="정말로 계정을 삭제하시겠습니까?"
+                        android:textSize="17sp"
                         android:gravity="center">
                     </TextView>
                     <LinearLayout
@@ -728,8 +821,8 @@ android:layout_height="match_parent">
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="예"
-                            android:backgroundTint="#979797"
+                            android:text="확인"
+                            android:backgroundTint="@color/skyBlue"
                             android:id="@+id/dlyBtn">
                         </Button>
                         <LinearLayout
@@ -740,11 +833,15 @@ android:layout_height="match_parent">
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:backgroundTint="#979797"
-                            android:text="아니오"
+                            android:text="취소"
                             android:id="@+id/dlnBtn">
                         </Button>
                     </LinearLayout>
-
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
@@ -756,7 +853,7 @@ android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4">
+                android:layout_weight="2">
             </LinearLayout>
 
         </LinearLayout>
@@ -797,9 +894,19 @@ android:layout_height="match_parent">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:layout_weight="4"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:text="냉장고 삭제"
+                        android:textSize="25sp"
+                        android:textColor="@color/skyBlue">
+                    </TextView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
                         android:layout_weight="5"
                         android:text="회원님의 냉장고를 함께 삭제합니다."
-                        android:textSize="20sp"
+                        android:textSize="17sp"
                         android:gravity="center">
                     </TextView>
                     <LinearLayout
@@ -811,7 +918,7 @@ android:layout_height="match_parent">
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="예"
+                            android:text="삭제"
                             android:backgroundTint="#979797"
                             android:id="@+id/friOk">
                         </Button>
@@ -822,12 +929,16 @@ android:layout_height="match_parent">
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="#979797"
+                            android:backgroundTint="@color/skyBlue"
                             android:text="권한 위임"
                             android:id="@+id/friNo">
                         </Button>
                     </LinearLayout>
-
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
