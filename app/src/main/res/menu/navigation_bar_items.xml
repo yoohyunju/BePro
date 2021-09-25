@@ -14,7 +14,7 @@
         android:title="add" />
     <item
         android:id="@+id/myPage"
-        android:icon="@drawable/ic_baseline_person_outline_24"
+        android:icon="@drawable/ic_baseline_person_24"
         android:title="myPage" />
     <item
         android:id="@+id/notice"

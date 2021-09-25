@@ -10,6 +10,7 @@
     <color name="gray">#d1d1d1</color>
     <color name="darkGray">#7D8182</color>
     <color name="skyBlue">#82a9dd</color>
+    <color name="darkBlue">#1E548F</color>
     <color name="whiteBlue">#C7E1FF</color>
     <color name="purpleBlue">#5586EB</color>
 </resources>

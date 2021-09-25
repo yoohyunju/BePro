@@ -209,19 +209,22 @@ public class MainActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.home:
+                    item.setChecked(true);
                     transaction.replace(R.id.frameLayout, mHome).commitAllowingStateLoss();
                     break;
 
                 case R.id.recipe:
+                    item.setChecked(true);
                     transaction.replace(R.id.frameLayout, mRecipe).commitAllowingStateLoss();
                     break;
 
                 case R.id.add:
+                    item.setChecked(true);
                     showItemAddDialog(); //Dialog 함수 호출
                     break;
 
                 case R.id.myPage:
-                    // TODO: 프로젝트 병합 후 주석 해제
+                    item.setChecked(true);
                     //객체 데이터 보내기
                     mMyPage.user = user;
                     mMyPage.fridgeAdapter = fridgeAdapter;
@@ -230,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case R.id.notice:
+                    item.setChecked(true);
                     transaction.replace(R.id.frameLayout, mNotice).commitAllowingStateLoss();
                     break;
             }
