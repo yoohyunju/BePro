@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private NoticeActivity mNotice;
     private BottomNavigationView mNavView;
 
-    private LinearLayout mFridgeListOpenBtn, mAddFridgeBtn, mSelfAddBtn, mFridgeSettingBtn;
+    private LinearLayout mFridgeListOpenBtn, mAddFridgeBtn, mSelfAddBtn, mFridgeSettingBtn, m_btnOCR;;
     private Dialog mAddItemDialog, mFridgeListDialog, mFridgeAddDialog, mSelfAddDialog;
     private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeNameAddBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn, mSelfAddConfirmBtn, mSelfItemAddBtn;
 
@@ -261,6 +261,14 @@ public class MainActivity extends AppCompatActivity {
         mAddItemDialog.setCanceledOnTouchOutside(false); //창 바깥 부분 터치 닫기 설정 해제
 
         mAddItemDialog.show(); //Dialog 띄우기
+
+        m_btnOCR = mAddItemDialog.findViewById(R.id.btn_OCR);
+        m_btnOCR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //ocr 실행 (실행 전 사진촬영/앨범 선택 추가)
+            }
+        });
 
         //품목 추가 취소 버튼
         mAddCancelBtn = mAddItemDialog.findViewById(R.id.addCancelBtn);

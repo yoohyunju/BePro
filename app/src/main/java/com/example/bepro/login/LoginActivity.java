@@ -73,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                 ,"5T0Mo1V63V"
                 ,"냉장고 안에 무엇이"
         );
+        
 
         //네이버 JSON 에서 가져온 USER 정보
         userData = getSharedPreferences("userData", MODE_PRIVATE);
