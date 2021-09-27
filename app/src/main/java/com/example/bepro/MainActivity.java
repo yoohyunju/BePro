@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager; //앱 fragment에서 작업을 추가, 삭제, 교체하고 백 스택에 추가하는 클래스
     private FragmentTransaction transaction; //fragment 변경을 위한 트랜잭션(작업단위)
@@ -70,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<FoodItems> foodItems = new ArrayList<>();
 
     //JSON DATA 받아올 변수
-    String foodName, foodNum, foodExp;
+    String friIdx, foodName, foodNum, foodExp, foodRegistrant;
 
 
     //TODO: 프로젝트 병합 후 주석 해제
@@ -340,34 +339,19 @@ public class MainActivity extends AppCompatActivity {
                         EditText mFoodTotal = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editFoodTotalCount);
                         TextView mFoodExpDate = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.selfAddFoodExpDate);
 
-                        //TODO: 나머지 항목들도 추가
+                        friIdx = String.valueOf(settingData.getFridgeIndex()); //냉장고 인덱스
                         foodName = mFoodName.getText().toString(); //사용자 입력 식품명
                         foodNum = mFoodTotal.getText().toString(); //사용자 입력 개수
                         foodExp = mFoodExpDate.getText().toString(); //사용자 입력 남은 날짜
+                        foodRegistrant = user.getNickname(); //등록인
+
+                        //System.out.println("냉장고 인덱스: "+ friIdx + " 등록인: " + foodRegistrant);
 
                         //TODO: 여러 품목 data를 반복적으로 삽입하려면?
                         if(foodName.isEmpty() != true && foodNum.isEmpty() != true && foodExp.isEmpty() != true){ //카드뷰에 입력 데이터가 있을 시
-                            //TODO: UI에 즉시 추가하면 이전 DB 데이터 사라짐 -> Home 리사이클러 뷰 가져와서 해결하기
-
-                            //RecyclerView mHomeRecyclerView = findViewById(R.id.homeRecyclerView);
-                            //foodAdapter = new FoodAdapter(getApplicationContext(), foodItems);
-                            //mHomeRecyclerView.setAdapter(foodAdapter);
-
-                            //홈 리사이클러 뷰
-                            /*
-                            home.mHomeRecyclerView = findViewById(R.id.homeRecyclerView);
-                            home.foodAdapter = new FoodAdapter(getApplicationContext(), foodItems); //어댑터 생성자 호출
-                            home.mHomeRecyclerView.setAdapter(home.foodAdapter);
-
-                            //TODO: EXP 임시 데이터 수정 필요
-                            home.foodAdapter.addItem(new FoodItems(foodName, Integer.parseInt(foodNum), "1"));
-                            home.foodAdapter.notifyDataSetChanged();
-
-                             */
 
                             //bundle로 data 넘기기 (품목 추가 시 바로 UI에 보이게 하는 용도)
                             HomeActivity home = new HomeActivity();
-
 
                             Bundle bundle = new Bundle();
                             bundle.putString("foodName", foodName);
@@ -377,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
                             home.setArguments(bundle);
 
                             //품목 직접 입력 기능 함수 호출
-                            selfFoodItemInsert(foodName, foodNum, foodExp);
+                            selfFoodItemInsert(friIdx, foodName, foodNum, foodExp, foodRegistrant);
 
                             if(i == adapter.getItemCount() - 1){ //마지막 값 까지 추가되면 팝업창 닫기
                                 mSelfAddDialog.dismiss();
@@ -436,8 +420,6 @@ public class MainActivity extends AppCompatActivity {
         // TODO: 프로젝트 병합 후 주석 해제
         addFridge = mFridgeAddDialog.findViewById(R.id.fridgeName);
         addFridge.setText(null);
-
-
 
         //팝업창 사이즈 조절
         WindowManager.LayoutParams params = mFridgeAddDialog.getWindow().getAttributes();
@@ -583,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     //품목 data 추가
-    public void selfFoodItemInsert(String foodName, String foodNum, String foodExp){
+    public void selfFoodItemInsert(String friIdx, String foodName, String foodNum, String foodExp, String foodRegistrant){
         String URL = "http://3.37.119.236:80/food/insertFood.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -601,9 +583,11 @@ public class MainActivity extends AppCompatActivity {
         }){
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> requestedParams = new HashMap<>();
+                requestedParams.put("friIdx", friIdx);
                 requestedParams.put("foodName", foodName);
                 requestedParams.put("foodNum", foodNum);
                 requestedParams.put("foodExp", foodExp);
+                requestedParams.put("foodRegistrant", foodRegistrant);
 
                 return requestedParams;
             }

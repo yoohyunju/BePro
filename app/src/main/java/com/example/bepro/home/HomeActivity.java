@@ -2,17 +2,15 @@ package com.example.bepro.home;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,35 +19,23 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import androidx.appcompat.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-/*
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-*/
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.bepro.R;
@@ -87,7 +73,7 @@ public class HomeActivity extends Fragment {
     String formatMonth, formatDay;
 
     int friIdx, foodIdx, foodNum;
-    String foodName, foodRegistrant, foodExp, foodDate, foodRemainDate,foodMemo, selfAddFoodName, selfAddFoodNum, selfAddFoodExp;
+    String foodName, foodRegistrant, foodExp, foodDate, foodRemainDate, foodMemo, selfAddFoodName, selfAddFoodNum, selfAddFoodExp;
 
     //달력 관련 변수 정의
     private LinearLayout datePickerBtn;
@@ -585,7 +571,6 @@ public class HomeActivity extends Fragment {
 
         return strCount;
     }
-
 
     //D-day 값 계산 함수
     public int onCalculatorDate (int dateEndY, int dateEndM, int dateEndD) {
