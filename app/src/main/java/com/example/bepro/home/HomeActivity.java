@@ -105,12 +105,7 @@ public class HomeActivity extends Fragment {
         mHomeRecyclerView.setAdapter(foodAdapter);
 
         //TODO: 다른 페이지 갔다가 오면 또 정렬이 안됨,,,
-        try {
-            foodItemSetting(); //PHP 연결후 JSON data 가져와서 품목 DTO 셋팅하는 함수
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        foodItemSetting();
 
         //품목 검색창
         mSearchView = homeView.findViewById(R.id.searchView);
@@ -140,7 +135,6 @@ public class HomeActivity extends Fragment {
 
         mSpinner.setAdapter(mAdapter);
 
-        itemSortFunc(); //품목 정렬 함수
 
         //foodAdapter.addItem(new FoodItems("banana", "2021-07-23", "7"));
         //foodAdapter.addItem(new FoodItems("apple", "2021-07-14", "2"));
@@ -151,7 +145,7 @@ public class HomeActivity extends Fragment {
             @Override
             public void onItemClick(FoodAdapter.ViewHolder holder, View view, int position) {
                 FoodItems item = foodAdapter.getItem(position); //아이템 클릭 시 어댑터에서 해당 아이템 객체 가져옴
-                showDetailDialog(item);
+                showDetailDialog(item,position);
 
             }
         });
@@ -169,66 +163,68 @@ public class HomeActivity extends Fragment {
         detailFoodRegistrant = mDetailDialog.findViewById(R.id.detailItemFoodRegistrant); //등록인
         detailFoodMemo = mDetailDialog.findViewById(R.id.detailItemFoodMemo); //메모
 
-        return homeView;
-    }
-
-    public void itemSortFunc(){
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                switch (position){
-                    case 0: //유통기한 짧은 순
-                        Comparator<FoodItems> shortExp = new Comparator<FoodItems>() {
-                            @Override
-                            public int compare(FoodItems item1, FoodItems item2) {
-                                return item1.getFoodExpiryDate().compareTo(item2.getFoodExpiryDate());
-                            }
-                        };
-
-                        Collections.sort(foodItems, shortExp);
-                        foodAdapter.notifyDataSetChanged();
-                        System.out.println("스피너에서 notifyDataSetChanged 실행");
-
-                        break;
-
-                    case 1: //등록 오래된 순
-                        Comparator<FoodItems> oldResister = new Comparator<FoodItems>() {
-                            @Override
-                            public int compare(FoodItems item1, FoodItems item2) {
-                                return item1.getFoodDate().compareTo(item2.getFoodDate());
-                            }
-                        };
-
-                        Collections.sort(foodItems, oldResister);
-                        foodAdapter.notifyDataSetChanged();
-
-                        break;
-
-                    case 2: //등록 최신순
-                        Comparator<FoodItems> newResister = new Comparator<FoodItems>() {
-                            @Override
-                            public int compare(FoodItems item1, FoodItems item2) {
-                                return item2.getFoodDate().compareTo(item1.getFoodDate());
-                            }
-                        };
-
-                        Collections.sort(foodItems, newResister);
-                        foodAdapter.notifyDataSetChanged();
-
-                        break;
-                }
+                itemSortFunc(position);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                //mTextView.setText("");
+
             }
         });
+
+
+        return homeView;
+    }
+
+    public void itemSortFunc(int position){
+        switch (position){
+            case 0: //유통기한 짧은 순
+                Comparator<FoodItems> shortExp = new Comparator<FoodItems>() {
+                    @Override
+                    public int compare(FoodItems item1, FoodItems item2) {
+                        return item1.getFoodExpiryDate().compareTo(item2.getFoodExpiryDate());
+                    }
+                };
+
+                Collections.sort(foodItems, shortExp);
+                foodAdapter.notifyDataSetChanged();
+                System.out.println("스피너에서 notifyDataSetChanged 실행");
+
+                break;
+
+            case 1: //등록 오래된 순
+                Comparator<FoodItems> oldResister = new Comparator<FoodItems>() {
+                    @Override
+                    public int compare(FoodItems item1, FoodItems item2) {
+                        return item1.getFoodDate().compareTo(item2.getFoodDate());
+                    }
+                };
+
+                Collections.sort(foodItems, oldResister);
+                foodAdapter.notifyDataSetChanged();
+
+                break;
+
+            case 2: //등록 최신순
+                Comparator<FoodItems> newResister = new Comparator<FoodItems>() {
+                    @Override
+                    public int compare(FoodItems item1, FoodItems item2) {
+                        return item2.getFoodDate().compareTo(item1.getFoodDate());
+                    }
+                };
+
+                Collections.sort(foodItems, newResister);
+                foodAdapter.notifyDataSetChanged();
+
+                break;
+        }
     }
 
     //품목 직접 추가 시 UI에 즉시 품목 추가 함수
-    public void selfAddItemFunc() {
+    public void selfAddItemFunc() throws ParseException {
         //bundle로 data 가져오기
         Bundle bundle = this.getArguments();
 
@@ -242,13 +238,13 @@ public class HomeActivity extends Fragment {
             System.out.println("직접 입력 남은기한: " + selfAddFoodExp);
 
             //TODO: NPE 해결
-            //foodItems.add(new FoodItems(selfAddFoodName, "2021-09-13", selfAddFoodExp));
-            //foodAdapter.notifyDataSetChanged();
+            foodItems.add(new FoodItems(selfAddFoodName, selfAddFoodExp, getRemainDate(selfAddFoodExp)));
+
         }
     }
 
     //품목 상세 정보 팝업창
-    public void showDetailDialog(FoodItems item) {
+    public void showDetailDialog(FoodItems item,int position) {
 
         //팝업창 사이즈 조절
         WindowManager.LayoutParams params = mDetailDialog.getWindow().getAttributes();
@@ -321,7 +317,7 @@ public class HomeActivity extends Fragment {
                 homeFoodRemainDate.setText(updateFoodRemainDate);
 
                 foodItemSetting(); //수정 후 목록 재설정
-                itemSortFunc(); // 품목 재정렬
+                itemSortFunc(mSpinner.getSelectedItemPosition()); // 품목 재정렬
 
                 //foodAdapter.notifyDataSetChanged();
                 mDetailDialog.dismiss(); //다이얼로그 닫기
@@ -335,7 +331,7 @@ public class HomeActivity extends Fragment {
             public void onClick(View v) {
                 String foodIdx = String.valueOf(item.getFoodIdx());
                 foodItemDelete(foodIdx);
-                foodAdapter.removeItem(item.getFoodIdx()-1); //아이템 인덱스는 0부터 시작하므로 -1 해줌
+                foodAdapter.removeItem(position);
                 foodAdapter.notifyDataSetChanged();
 
                 mDetailDialog.dismiss(); //다이얼로그 닫기
@@ -394,6 +390,7 @@ public class HomeActivity extends Fragment {
                         foodItems.add(new FoodItems(friIdx, foodIdx, foodName, foodNum, foodRegistrant, foodExp, foodDate, foodRemainDate, foodMemo));
                     }
                     foodAdapter.notifyDataSetChanged();
+                    itemSortFunc(mSpinner.getSelectedItemPosition());
                     System.out.println("셋팅 함수에서 notifyDataSetChanged 실행");
 
                 }catch (JSONException | ParseException e){

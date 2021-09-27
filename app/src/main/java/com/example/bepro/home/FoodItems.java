@@ -13,6 +13,21 @@ public class FoodItems {
     private String foodRemainDate; //유통기한 남은 날짜
     private String foodMemo; //메모
 
+    @Override
+    public String toString() {
+        return "FoodItems{" +
+                "friIdx=" + friIdx +
+                ", foodIdx=" + foodIdx +
+                ", foodName='" + foodName + '\'' +
+                ", foodNumber=" + foodNumber +
+                ", foodRegistrant='" + foodRegistrant + '\'' +
+                ", foodExpiryDate='" + foodExpiryDate + '\'' +
+                ", foodDate='" + foodDate + '\'' +
+                ", foodRemainDate='" + foodRemainDate + '\'' +
+                ", foodMemo='" + foodMemo + '\'' +
+                '}';
+    }
+
     public FoodItems(String foodName, int foodNumber) {
         this.foodName = foodName;
         this.foodNumber = foodNumber;

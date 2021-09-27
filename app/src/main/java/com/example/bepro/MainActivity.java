@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -335,31 +337,32 @@ public class MainActivity extends AppCompatActivity {
                     for(int i=0; i < adapter.getItemCount(); i++){ //아이템 개수만큼 반복
                         adapter.setPosition(i);
 
-                        EditText mFoodName = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editAddFoodName);
-                        EditText mFoodTotal = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editFoodTotalCount);
-                        TextView mFoodExpDate = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.selfAddFoodExpDate);
-
-                        friIdx = String.valueOf(settingData.getFridgeIndex()); //냉장고 인덱스
-                        foodName = mFoodName.getText().toString(); //사용자 입력 식품명
-                        foodNum = mFoodTotal.getText().toString(); //사용자 입력 개수
-                        foodExp = mFoodExpDate.getText().toString(); //사용자 입력 남은 날짜
-                        foodRegistrant = user.getNickname(); //등록인
-
                         //System.out.println("냉장고 인덱스: "+ friIdx + " 등록인: " + foodRegistrant);
 
                         //TODO: 여러 품목 data를 반복적으로 삽입하려면?
-                        if(foodName.isEmpty() != true && foodNum.isEmpty() != true && foodExp.isEmpty() != true){ //카드뷰에 입력 데이터가 있을 시
+                        if(TextUtils.isEmpty(foodName) != true && TextUtils.isEmpty(foodNum)!= true && TextUtils.isEmpty(foodExp) != true){ //카드뷰에 입력 데이터가 있을 시
+                            EditText mFoodName = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editAddFoodName);
+                            EditText mFoodTotal = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editFoodTotalCount);
+                            TextView mFoodExpDate = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.selfAddFoodExpDate);
+
+                            friIdx = String.valueOf(settingData.getFridgeIndex()); //냉장고 인덱스
+                            foodName = mFoodName.getText().toString(); //사용자 입력 식품명
+                            foodNum = mFoodTotal.getText().toString(); //사용자 입력 개수
+                            foodExp = mFoodExpDate.getText().toString(); //사용자 입력 남은 날짜
+                            foodRegistrant = user.getNickname(); //등록인
 
                             //bundle로 data 넘기기 (품목 추가 시 바로 UI에 보이게 하는 용도)
-                            HomeActivity home = new HomeActivity();
-
                             Bundle bundle = new Bundle();
                             bundle.putString("foodName", foodName);
-                            bundle.putString("foodNum", foodNum);
+                            bundle.putInt("foodNum", Integer.parseInt(foodNum));
                             bundle.putString("foodExp", foodExp);
 
-                            home.setArguments(bundle);
-
+                            mHome.setArguments(bundle);
+                            try {
+                                mHome.selfAddItemFunc();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                             //품목 직접 입력 기능 함수 호출
                             selfFoodItemInsert(friIdx, foodName, foodNum, foodExp, foodRegistrant);
 
@@ -367,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
                                 mSelfAddDialog.dismiss();
                                 mAddItemDialog.dismiss();
 
-                                home.selfAddItemFunc(); // UI 바로 추가
+                                mHome.foodAdapter.notifyDataSetChanged(); // UI 바로 추가
                                 //home.foodItemSetting(); //DB 품목 리스트 재설정 TODO: null 존재시 앱 종료
                             }
                         }else{
