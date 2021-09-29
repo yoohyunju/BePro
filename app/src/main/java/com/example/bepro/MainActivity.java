@@ -346,18 +346,18 @@ public class MainActivity extends AppCompatActivity {
                         adapter.setPosition(i);
 
                         //System.out.println("냉장고 인덱스: "+ friIdx + " 등록인: " + foodRegistrant);
+                        EditText mFoodName = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editAddFoodName);
+                        EditText mFoodTotal = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editFoodTotalCount);
+                        TextView mFoodExpDate = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.selfAddFoodExpDate);
+
+                        friIdx = String.valueOf(settingData.getFridgeIndex()); //냉장고 인덱스
+                        foodName = mFoodName.getText().toString(); //사용자 입력 식품명
+                        foodNum = mFoodTotal.getText().toString(); //사용자 입력 개수
+                        foodExp = mFoodExpDate.getText().toString(); //사용자 입력 남은 날짜
+                        foodRegistrant = user.getNickname(); //등록인
 
                         //TODO: 여러 품목 data를 반복적으로 삽입하려면?
                         if(TextUtils.isEmpty(foodName) != true && TextUtils.isEmpty(foodNum)!= true && TextUtils.isEmpty(foodExp) != true){ //카드뷰에 입력 데이터가 있을 시
-                            EditText mFoodName = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editAddFoodName);
-                            EditText mFoodTotal = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editFoodTotalCount);
-                            TextView mFoodExpDate = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.selfAddFoodExpDate);
-
-                            friIdx = String.valueOf(settingData.getFridgeIndex()); //냉장고 인덱스
-                            foodName = mFoodName.getText().toString(); //사용자 입력 식품명
-                            foodNum = mFoodTotal.getText().toString(); //사용자 입력 개수
-                            foodExp = mFoodExpDate.getText().toString(); //사용자 입력 남은 날짜
-                            foodRegistrant = user.getNickname(); //등록인
 
                             //bundle로 data 넘기기 (품목 추가 시 바로 UI에 보이게 하는 용도)
                             Bundle bundle = new Bundle();

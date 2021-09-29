@@ -187,7 +187,7 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
 
                 int correctMonth = month + 1; //timezone 때문인지 모르겠으나,, 한달 오차가 나서 +1로 보정해줌
 
-                if(month < 10){ //한 자리수 달이면 0붙여줌
+                if(correctMonth < 10){ //한 자리수 달이면 0붙여줌
                     formatMonth = "0" + correctMonth;
                 }else{
                     formatMonth = String.valueOf(correctMonth);

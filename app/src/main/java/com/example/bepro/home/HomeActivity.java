@@ -272,7 +272,11 @@ public class HomeActivity extends Fragment {
         detailFoodName.setText(item.getFoodName());
         detailFoodNum.setText(String.valueOf(item.getFoodNumber()));
         detailFoodRemainDate.setText(item.getFoodRemainDate() + "일");
-        detailFoodDate.setText(item.getFoodDate());
+
+        String foodDate = item.getFoodDate();
+        String[] foodDateArray = foodDate.split("\\s"); //공백 기준으로 문자열 잘라 등록일 날짜 추출
+        detailFoodDate.setText(foodDateArray[0]);
+
         detailFoodRegistrant.setText(item.getFoodRegistrant());
         detailFoodMemo.setText(item.getFoodMemo());
 
@@ -488,26 +492,41 @@ public class HomeActivity extends Fragment {
     //유통기한 남은 날짜 계산 함수
     public String getRemainDate(String foodExpDate) throws ParseException {
 
-        //TODO: 지난 날짜일 경우 지남이라고 표시되기
         String remainDate = "";
 
         Calendar getToday = Calendar.getInstance();
         getToday.setTime(new Date()); //현재 날짜
         //Log.d("now date: ", String.valueOf(new Date()));
 
+        //사용자 입력 유통기한 데이터 yyyy-MM-dd 형식으로 저장
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(foodExpDate);
         Calendar expDate = Calendar.getInstance();
         expDate.setTime(date); //품목 유통기한
 
+        //System.out.println("오늘날짜 밀리초: " + getToday.getTimeInMillis() + ", " + "유통기한 밀리초: " + expDate.getTimeInMillis());
+
+        //TODO: 버그 수정 테스트 중
+        //double detailDiffDays = Math.round((expDate.getTimeInMillis() - getToday.getTimeInMillis()) / ONE_DAY); //소수점 첫째에서 반올림
+        //System.out.println("날짜 계산식 ("+(expDate.getTimeInMillis() + "-" + getToday.getTimeInMillis()) + ")" + "/" + ONE_DAY + " = " + detailDiffDays);
+
         long diffDays = (expDate.getTimeInMillis() - getToday.getTimeInMillis()) / ONE_DAY;
+
+        //System.out.println("남은 날짜 계산식: " + expDate.getTimeInMillis() + "-" + getToday.getTimeInMillis() + "/" + ONE_DAY);
+
+        //long diffDays = (expDate.getTimeInMillis() - getToday.getTimeInMillis()) / ONE_DAY;
 
         if(diffDays > 0){
             remainDate = String.valueOf(diffDays + 1);
+            //System.out.println("남은 날짜가 양수: " + remainDate);
             return remainDate;
         }else if (diffDays == 0){
-            return remainDate = String.valueOf(diffDays);
+            remainDate = String.valueOf(diffDays);
+            //System.out.println("당일: " + remainDate);
+            return remainDate;
         }else {
-            return remainDate = String.valueOf(diffDays);
+            remainDate = String.valueOf(diffDays);
+            //System.out.println("남은 날짜가 음수: " + remainDate);
+            return remainDate;
         }
 
     }
@@ -522,7 +541,7 @@ public class HomeActivity extends Fragment {
 
             int correctMonth = month + 1; //timezone 때문인지 모르겠으나,, 한달 오차가 나서 +1로 보정해줌
 
-            if(month < 10){ //한 자리수 달이면 0붙여줌
+            if(correctMonth < 10){ //한 자리수 달이면 0붙여줌
                 formatMonth = "0" + correctMonth;
             }else{
                 formatMonth = String.valueOf(correctMonth);
@@ -534,8 +553,6 @@ public class HomeActivity extends Fragment {
                 formatDay = String.valueOf(day);
             }
             detailFoodExp.setText(year + "-" + formatMonth + "-" + formatDay);
-
-            //TODO: 10월 달 입력 시 DB에 제대로 추가 안되는 버그
 
         }
     };

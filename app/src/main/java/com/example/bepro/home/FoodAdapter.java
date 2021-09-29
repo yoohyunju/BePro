@@ -56,7 +56,8 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
         }else if(remainDate == 0){
             holder.tvFoodRemain.setText("오늘까지");
         }else{
-            holder.tvFoodRemain.setText(foodItem.getFoodRemainDate() + "일 지남");
+            int formatRemainDate = Integer.parseInt(foodItem.getFoodRemainDate()) * -1;
+            holder.tvFoodRemain.setText(formatRemainDate + "일 지남");
         }
 
 
