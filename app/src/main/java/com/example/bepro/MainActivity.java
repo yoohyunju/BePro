@@ -1,18 +1,27 @@
 package com.example.bepro;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -40,20 +49,35 @@ import com.example.bepro.my_page.MyPageActivity;
 import com.example.bepro.notice.NoticeActivity;
 import com.example.bepro.recipe.RecipeActivity;
 import com.example.bepro.home.SelfAddItemAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions;
+import com.pedro.library.AutoPermissions;
+import com.pedro.library.AutoPermissionsListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AutoPermissionsListener {
     private FragmentManager fragmentManager; //앱 fragment에서 작업을 추가, 삭제, 교체하고 백 스택에 추가하는 클래스
     private FragmentTransaction transaction; //fragment 변경을 위한 트랜잭션(작업단위)
 
@@ -71,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<FoodItems> foodItems = new ArrayList<>();
 
     //JSON DATA 받아올 변수
-    String friIdx, foodName, foodNum, foodExp, foodRegistrant;
+    String friIdx, foodName, foodNum, foodExp, foodRegistrant, text;
 
 
     //TODO: 프로젝트 병합 후 주석 해제
@@ -85,11 +109,19 @@ public class MainActivity extends AppCompatActivity {
     UserData user = new UserData(); //user 객체
     FridgeSettingData settingData = new FridgeSettingData();
 
+    Bitmap testImage;
+    InputImage inputImage;
+    File file;
+    Uri uri;
+    private static final int ALBUM_RESULT_CODE = 0; //앨범 선택
+    private static final int CAMERA_RESULT_CODE = 101; //앨범 선택
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AutoPermissions.Companion.loadAllPermissions(this, 101);
 
         mNavView = findViewById(R.id.navigation);
         mNavView.setOnItemSelectedListener(new ItemSelectedListener()); //BottomNavigationView에 이벤트 리스너 연결
@@ -202,6 +234,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[],
+                                           int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
+    }
+
+    @Override
+    public void onDenied(int requestCode, @NotNull String[] permissions) {
+
+    }
+
+    @Override
+    public void onGranted(int requestCode, @NotNull String[] permissions) {
+
+    }
+
     //BottomNavigationView 이벤트 리스너 구현
     private class ItemSelectedListener implements NavigationBarView.OnItemSelectedListener {
         @Override
@@ -266,7 +315,28 @@ public class MainActivity extends AppCompatActivity {
         m_btnOCR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ocr 실행 (실행 전 사진촬영/앨범 선택 추가)
+                //ocr 실행 (text 인식 결과 - log 확인 (cropper 추가 후 품목 수정))
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("영수증 등록");
+                builder.setMessage("사진을 가져올 방법을 선택해주세요!");
+
+                builder.setPositiveButton("카메라로 전환", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        takePhoto();
+                    }
+                });
+                builder.setNegativeButton("앨범에서 가져오기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(intent, ALBUM_RESULT_CODE);
+                    }
+                });
+                builder.setCancelable(true);
+                builder.create().show();
             }
         });
 
@@ -612,4 +682,98 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void takePhoto(){
+        try {
+            file = createFile();
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        if(Build.VERSION.SDK_INT >= 24) {
+            uri = FileProvider.getUriForFile(this, "org.techtown.capture.intent.fileprovider", file);
+        } else {
+            uri = Uri.fromFile(file);
+        }
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(intent, CAMERA_RESULT_CODE);
+    }
+
+    private File createFile() {
+        String filename = "capture.jpg";
+        File outFile = new File(getExternalCacheDir(), filename);
+
+        return outFile;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode){
+            case CAMERA_RESULT_CODE:
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
+                    inputImage = InputImage.fromBitmap(bitmap, 0);
+                    getText(inputImage);
+                    break;
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            case ALBUM_RESULT_CODE:
+                Uri uri = data.getData();
+                //url bitmap 으로 전환
+                try {
+                    testImage = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                inputImage = InputImage.fromBitmap(testImage, 0);
+                getText(inputImage);
+                break;
+        }
+    }
+
+    //text에서 한글 뽑아내기
+    public static String getOnlyKor(String str){
+        StringBuffer sb = new StringBuffer();
+        if(str!=null && str.length()!=0){
+            Pattern p = Pattern.compile("[가-힣]");
+            Matcher m = p.matcher(str);
+            while (m.find()) {
+                sb.append(m.group());
+            }
+        }
+        return sb.toString();
+    }
+
+    public void getText(InputImage image){
+        System.out.println("텍스트 인식 시작");
+        TextRecognizer recognizer = TextRecognition.getClient(new KoreanTextRecognizerOptions.Builder().build());
+        Task<Text> result =
+                recognizer.process(image)
+                        .addOnSuccessListener(new OnSuccessListener<Text>() {
+                            @Override
+                            public void onSuccess(@NonNull @NotNull Text visionText) {
+                                for(Text.TextBlock block:visionText.getTextBlocks()){
+                                    text = block.getText();
+                                    for(Text.Line line : block.getLines()) {
+                                        String lineText = line.getText();
+                                        System.out.println(getOnlyKor(lineText));
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull @NotNull Exception e) {
+                                System.out.println("이미지 인식 실패");
+                            }
+                        });
+    }
 }
