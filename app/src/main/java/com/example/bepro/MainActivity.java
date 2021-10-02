@@ -571,7 +571,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                         int friIdx = jsonObject.getInt("friIdx");
                         String authority = jsonObject.getString("friAuth");
 
-                        if (authority.equals("owner")){
+                        if (authority.equals("admin")){
                             //나의 냉장고 (권한 위임 후 객체 데이터 삭제)
                             user.MyFridge(friIdx);
                         }
