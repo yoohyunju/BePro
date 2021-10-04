@@ -93,7 +93,6 @@ public class HomeActivity extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup homeView = (ViewGroup) inflater.inflate(R.layout.home, container, false);
 
-        //홈 리사이클러 뷰 TODO: main으로 옮기기
         mHomeRecyclerView = homeView.findViewById(R.id.homeRecyclerView);
 
         //리사이클러 뷰에 레이아웃 매니저 설정
@@ -104,7 +103,6 @@ public class HomeActivity extends Fragment {
         foodAdapter = new FoodAdapter(getContext(), foodItems);
         mHomeRecyclerView.setAdapter(foodAdapter);
 
-        //TODO: 다른 페이지 갔다가 오면 또 정렬이 안됨,,,
         foodItemSetting();
 
         //품목 검색창
@@ -185,6 +183,7 @@ public class HomeActivity extends Fragment {
                 Comparator<FoodItems> shortExp = new Comparator<FoodItems>() {
                     @Override
                     public int compare(FoodItems item1, FoodItems item2) {
+                        //문자 오름차순 정렬
                         return item1.getFoodExpiryDate().compareTo(item2.getFoodExpiryDate());
                     }
                 };
@@ -199,7 +198,16 @@ public class HomeActivity extends Fragment {
                 Comparator<FoodItems> oldResister = new Comparator<FoodItems>() {
                     @Override
                     public int compare(FoodItems item1, FoodItems item2) {
-                        return item1.getFoodDate().compareTo(item2.getFoodDate());
+                        //정수 오름차순 정렬
+                        int ret = 0;
+
+                        if (item1.getFoodIdx() < item2.getFoodIdx())
+                            ret = -1;
+                        else if (item1.getFoodIdx() == item2.getFoodIdx())
+                            ret = 0;
+                        else ret = 1;
+
+                        return ret;
                     }
                 };
 
@@ -212,7 +220,16 @@ public class HomeActivity extends Fragment {
                 Comparator<FoodItems> newResister = new Comparator<FoodItems>() {
                     @Override
                     public int compare(FoodItems item1, FoodItems item2) {
-                        return item2.getFoodDate().compareTo(item1.getFoodDate());
+                        //정수 내림차순 정렬
+                        int ret = 0;
+
+                        if (item1.getFoodIdx() < item2.getFoodIdx())
+                            ret = 1;
+                        else if (item1.getFoodIdx() == item2.getFoodIdx())
+                            ret = 0;
+                        else ret = -1;
+
+                        return ret;
                     }
                 };
 
@@ -278,7 +295,11 @@ public class HomeActivity extends Fragment {
         detailFoodDate.setText(foodDateArray[0]);
 
         detailFoodRegistrant.setText(item.getFoodRegistrant());
-        detailFoodMemo.setText(item.getFoodMemo());
+
+        if(item.getFoodMemo().equals("null")){
+            detailFoodMemo.setText("");
+        }else
+            detailFoodMemo.setText(item.getFoodMemo());
 
         //datePicker : 디데이 날짜 입력 버튼, 클릭시 DatePickerDialog 띄움
         datePicker.setOnClickListener(new View.OnClickListener() {
@@ -386,10 +407,6 @@ public class HomeActivity extends Fragment {
                         foodRemainDate = getRemainDate(foodExp); //남은 기한
                         foodMemo = jsonObject.getString("foodMemo"); //메모
 
-                        if(foodMemo == null){ //foodMemo가 null이면
-                            detailFoodMemo.setText(" ");
-                        }
-
                         //ArrayList에 Data add
                         foodItems.add(new FoodItems(friIdx, foodIdx, foodName, foodNum, foodRegistrant, foodExp, foodDate, foodRemainDate, foodMemo));
                     }
@@ -496,36 +513,22 @@ public class HomeActivity extends Fragment {
 
         Calendar getToday = Calendar.getInstance();
         getToday.setTime(new Date()); //현재 날짜
-        //Log.d("now date: ", String.valueOf(new Date()));
 
         //사용자 입력 유통기한 데이터 yyyy-MM-dd 형식으로 저장
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(foodExpDate);
         Calendar expDate = Calendar.getInstance();
         expDate.setTime(date); //품목 유통기한
 
-        //System.out.println("오늘날짜 밀리초: " + getToday.getTimeInMillis() + ", " + "유통기한 밀리초: " + expDate.getTimeInMillis());
-
-        //TODO: 버그 수정 테스트 중
-        //double detailDiffDays = Math.round((expDate.getTimeInMillis() - getToday.getTimeInMillis()) / ONE_DAY); //소수점 첫째에서 반올림
-        //System.out.println("날짜 계산식 ("+(expDate.getTimeInMillis() + "-" + getToday.getTimeInMillis()) + ")" + "/" + ONE_DAY + " = " + detailDiffDays);
-
-        long diffDays = (expDate.getTimeInMillis() - getToday.getTimeInMillis()) / ONE_DAY;
-
-        //System.out.println("남은 날짜 계산식: " + expDate.getTimeInMillis() + "-" + getToday.getTimeInMillis() + "/" + ONE_DAY);
-
-        //long diffDays = (expDate.getTimeInMillis() - getToday.getTimeInMillis()) / ONE_DAY;
+        long diffDays = expDate.getTimeInMillis()/ ONE_DAY - getToday.getTimeInMillis()/ ONE_DAY;
 
         if(diffDays > 0){
-            remainDate = String.valueOf(diffDays + 1);
-            //System.out.println("남은 날짜가 양수: " + remainDate);
+            remainDate = String.valueOf(diffDays);
             return remainDate;
         }else if (diffDays == 0){
             remainDate = String.valueOf(diffDays);
-            //System.out.println("당일: " + remainDate);
             return remainDate;
         }else {
             remainDate = String.valueOf(diffDays);
-            //System.out.println("남은 날짜가 음수: " + remainDate);
             return remainDate;
         }
 
