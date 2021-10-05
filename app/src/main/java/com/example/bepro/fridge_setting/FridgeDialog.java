@@ -11,13 +11,14 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.bepro.R;
 
-public class Dialog {
+public class FridgeDialog {
     Context context;
     boolean result;
-    Dialog(Context context){
+    FridgeDialog(Context context){
         this.context=context;
     }
     boolean showDialog(String title,String message,String positve){
+
         AlertDialog.Builder msgBuilder = new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)

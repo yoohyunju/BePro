@@ -1,13 +1,20 @@
 package com.example.bepro.fridge_setting;
 
-import android.content.Context;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,12 +28,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.bepro.R;
+import com.example.bepro.UserData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.List;
-
+import android.app.Dialog;
+import android.widget.Toast;
 
 public class FridgeMemberActivity extends AppCompatActivity {
 
@@ -46,17 +55,27 @@ public class FridgeMemberActivity extends AppCompatActivity {
     TextView fridgeListCount;
 
     //alertDialog
-    Dialog dialog;
+    FridgeDialog fridgeDialog;
+
+    //fridgeCodeDialog
+    Dialog fridgeCodeDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Context c = FridgeMemberActivity.this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fridge_setting);
 
+        //Intent intent = getIntent();
+        UserData user = new UserData();//(UserData)intent.getSerializableExtra("user");
+        user.setAuthority("admin");
+        Log.i("test",user.toString());
+
         parseJSON=new ParseJSON(getApplicationContext());
         sendRequestImp = new SendRequestImp(getApplicationContext());
-        dialog = new Dialog(FridgeMemberActivity.this);
+
+        fridgeDialog = new FridgeDialog(FridgeMemberActivity.this);
+        fridgeCodeDialog = new Dialog(FridgeMemberActivity.this);
+        fridgeCodeDialog.setContentView(R.layout.fridge_code_popup);
 
         ////////////RequestQueue 생성
         if(requestQueue != null) {
@@ -66,15 +85,16 @@ public class FridgeMemberActivity extends AppCompatActivity {
         ////////////냉장고 회원 리스트
         listView = (ListView)findViewById(R.id.friMemberListView); //리스트뷰 참조
         fridgeListCount = (TextView)findViewById(R.id.fridgeListCount);
-        friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp,dialog,fridgeListCount); //Adapter 생성
+        friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp,FridgeMemberActivity.this,fridgeListCount,user.getAuthority()); //Adapter 생성
 
-
-        ////////////애니메이션 설정
-        LeftAnim = AnimationUtils.loadAnimation(this,R.anim.translate_left); //anim 폴더의 애니메이션을 가져와서 준비
-        RightAnim = AnimationUtils.loadAnimation(this,R.anim.translate_right); //anim 폴더의 애니메이션을 가져와서 준비
-        //애니메이션 객체 전달
-        friMemberListViewAdapter.setLeftAnim(LeftAnim);
-        friMemberListViewAdapter.setRightAnim(RightAnim);
+        if(user.getAuthority().equals("admin")) {
+            ////////////애니메이션 설정
+            LeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left); //anim 폴더의 애니메이션을 가져와서 준비
+            RightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right); //anim 폴더의 애니메이션을 가져와서 준비
+            //애니메이션 객체 전달
+            friMemberListViewAdapter.setLeftAnim(LeftAnim);
+            friMemberListViewAdapter.setRightAnim(RightAnim);
+        }
 
 
         ////////////데이터 요청
@@ -85,21 +105,37 @@ public class FridgeMemberActivity extends AppCompatActivity {
         fridgeQuit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.showDialog("냉장고를 탈퇴하시겠습니까?","정말로 냉장고를 탈퇴하시겠습니까?","냉장고를 탈퇴하였습니다.");
+                fridgeDialog.showDialog("냉장고를 탈퇴하시겠습니까?","정말로 냉장고를 탈퇴하시겠습니까?","냉장고를 탈퇴하였습니다.");
                 //sendRequestImp.deleteFriUser(1,1); //변경 필요 : 현재 회원.
             }
         });
 
-        ////////////냉장고 삭제
-        Button fridgeDelete = (Button)findViewById(R.id.fridgeDelete);
-        fridgeDelete.setOnClickListener(new View.OnClickListener() {
+        ////////////냉장고 삭제 & 냉장고명 변경
+        if(user.getAuthority().equals("admin")) {
+            EditText fridgeName = (EditText)findViewById(R.id.refName);
+            fridgeName.setEnabled(true);
+            Button fridgeNameChangeBtn = (Button)findViewById(R.id.fridgeNameChangeBtn);
+            fridgeNameChangeBtn.setVisibility(View.VISIBLE);
+            Button fridgeDelete = (Button) findViewById(R.id.fridgeDelete);
+            fridgeDelete.setVisibility(View.VISIBLE);
+            fridgeDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fridgeDialog.showDialog("냉장고를 삭제하시겠습니까?", "정말로 냉장고를 삭제하시겠습니까?\n30일 후 완전히 삭제가 됩니다.", "냉장고를 삭제하였습니다.");
+                    //sendRequestImp.deleteFri(4); //변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
+                }
+            });
+        }
+
+        ////////////냉장고 멤버 추가
+        Button fridgeAddUser = (Button)findViewById(R.id.fridgeCodeBtn);
+        fridgeAddUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.showDialog("냉장고를 삭제하시겠습니까?","정말로 냉장고를 삭제하시겠습니까?\n30일 후 완전히 삭제가 됩니다.","냉장고를 삭제하였습니다.");
-                //sendRequestImp.deleteFri(4); //변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
+                Log.i("test","클릭했어");//WHY
+                showFridgeCodeDialog();
             }
         });
-
     }
 
     public void sendRequest(){
@@ -152,4 +188,39 @@ public class FridgeMemberActivity extends AppCompatActivity {
 
     }
 
+    public void showFridgeCodeDialog(){
+        //팝업창 사이즈 조절
+        WindowManager.LayoutParams params = fridgeCodeDialog.getWindow().getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        fridgeCodeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        fridgeCodeDialog.setCanceledOnTouchOutside(false);
+
+        fridgeCodeDialog.show(); //Dialog 띄우기
+
+        Button fridgeCodeBtn = fridgeCodeDialog.findViewById(R.id.fridgeCodeOK); //냉장고 리스트 취소 버튼
+        fridgeCodeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fridgeCodeDialog.dismiss(); //Dialog 닫기
+            }
+        });
+
+        TextView fridgeCodeText = fridgeCodeDialog.findViewById(R.id.fridgeCodeText);
+        fridgeCodeText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                    String code = fridgeCodeText.getText().toString();
+                    ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    ClipData clipData = ClipData.newPlainText("CODE",code); //클립보드에 CODE라는 이름표로 code 값을 복사하여 저장
+                    clipboardManager.setPrimaryClip(clipData);
+
+                    Toast.makeText(getApplicationContext(),"코드가 복사되었습니다.",Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
+
+    }
 }

@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SendRequestImp implements SendRequest{
@@ -28,7 +29,8 @@ public class SendRequestImp implements SendRequest{
     RequestQueue requestQueue;
     String url;
     Request request;
-    Response response;
+
+    ParseJSON parseJSON;
 
     SendRequestImp(Context context){
         this.context=context;
@@ -49,7 +51,7 @@ public class SendRequestImp implements SendRequest{
     }
 
     @Override
-    public void getFriSetAll(){
+    public void getFriSetAll(List<FridgeMember> fridgeMemberList){
         url="http://3.37.119.236:80/fridgeSet/selectFriSet.php?friIdx=4";
         request = new JsonArrayRequest( //지정된 URL에서 JSONObject의 응답 본문을 가져오기 위한 요청
                 Request.Method.POST,
@@ -58,7 +60,11 @@ public class SendRequestImp implements SendRequest{
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.i("test", "테스트 결과는" + response);
+                        try {
+                            fridgeMemberList.addAll(parseJSON.getListFridgeMember(response));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {

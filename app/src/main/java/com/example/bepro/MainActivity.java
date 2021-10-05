@@ -70,6 +70,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -223,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), FridgeMemberActivity.class);
+                intent.putExtra("user", (Serializable) user); //PLUS
                 startActivity(intent);
             }
         });

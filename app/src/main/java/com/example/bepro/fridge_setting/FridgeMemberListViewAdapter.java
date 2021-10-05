@@ -15,26 +15,25 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-
-import com.example.bepro.MainActivity;
 import com.example.bepro.R;
-import com.example.bepro.fridge_setting.FridgeMember;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FridgeMemberListViewAdapter extends BaseAdapter {
     private List<FridgeMember> listViewItemList = new ArrayList<FridgeMember>();
-
+    String authority;
     //쿼리문
     SendRequestImp sendRequestImp;
     //alertDialog
-    Dialog dialog ;
-    FridgeMemberListViewAdapter(SendRequestImp sendRequestImp, Dialog dialog, TextView fridgeListCount){
+    FridgeDialog fridgeDialog;
+
+    FridgeMemberListViewAdapter(SendRequestImp sendRequestImp, Context fridgeContext, TextView fridgeListCount,String authority){
         this.sendRequestImp=sendRequestImp;
-        this.dialog=dialog;
+        fridgeDialog = new FridgeDialog(fridgeContext);
         this.fridgeListCount = fridgeListCount;
+        this.authority=authority;
+        Log.i("test","권한은"+authority);
     }
 
     //이벤트 설정
@@ -83,6 +82,7 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
         ImageView iconImageView = (ImageView) convertView.findViewById(R.id.userImg);
         TextView titleTextView = (TextView) convertView.findViewById(R.id.userNickname);
         Switch userAuthority = (Switch) convertView.findViewById(R.id.userAuthority);
+        TextView userAuthorityText = (TextView)convertView.findViewById(R.id.userAuthorityText);
 
         LinearLayout userSet = (LinearLayout) convertView.findViewById(R.id.userSet);
         Button userOut = (Button)convertView.findViewById(R.id.userOut);
@@ -95,84 +95,93 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
             userAuthority.setChecked(true);
         }
 
-        /////////////////이벤트 설정
-        //클릭했을 때 슬라이딩 이벤트 발생 (회원 정보)
-        userProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                        Log.i("test","leftAnim="+leftAnim);
-//                        Log.i("test",position+"번째 프로필 이벤트 발생, 클릭 객체= "+userProfile+"애니객체= "+userSet+"출력");
-                //열려있는 userSet이 있으면 닫는 과정 처리
-                if(animationListener.getUserSet()!=null && animationListener.getUserSet().getVisibility()==View.VISIBLE){
-//                            Log.i("test","=========\n다름");
-                    LinearLayout userSetBefore = animationListener.getUserSet();
-                    userSetBefore.setVisibility(View.INVISIBLE);
-                    userSetBefore.startAnimation(rightAnim);
-//                            Log.i("test","rightAnim 실행함\n========= ");
-                }
-                animationListener.setUserSet(userSet); //현재 위치의 userSet의 설정을 변경하도록 이벤트 리스너의 참조값을 변경해줌
-                leftAnim.setAnimationListener(animationListener); //변경된 이벤트 리스너를 적용
-                userSet.startAnimation(leftAnim); //userSet이 왼쪽으로 밀려오는 애니메이션 시작
+        if(authority.equals("admin")) {
+            Log.i("test","amin if문 들어감");
+            userAuthority.setVisibility(View.VISIBLE);
+            userAuthorityText.setVisibility(View.GONE);
+            /////////////////이벤트 설정
+            //클릭했을 때 슬라이딩 이벤트 발생 (회원 정보)
+            userProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //                        Log.i("test","leftAnim="+leftAnim);
+                    //                        Log.i("test",position+"번째 프로필 이벤트 발생, 클릭 객체= "+userProfile+"애니객체= "+userSet+"출력");
+                    //열려있는 userSet이 있으면 닫는 과정 처리
+                    if (animationListener.getUserSet() != null && animationListener.getUserSet().getVisibility() == View.VISIBLE) {
+                        //                            Log.i("test","=========\n다름");
+                        LinearLayout userSetBefore = animationListener.getUserSet();
+                        userSetBefore.setVisibility(View.INVISIBLE);
+                        userSetBefore.startAnimation(rightAnim);
+                        //                            Log.i("test","rightAnim 실행함\n========= ");
+                    }
+                    animationListener.setUserSet(userSet); //현재 위치의 userSet의 설정을 변경하도록 이벤트 리스너의 참조값을 변경해줌
+                    leftAnim.setAnimationListener(animationListener); //변경된 이벤트 리스너를 적용
+                    userSet.startAnimation(leftAnim); //userSet이 왼쪽으로 밀려오는 애니메이션 시작
 
-            }});
-        //클릭했을 때 슬라이딩 이벤트 발생 (회원 설정)
-        userSet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                        Log.i("test","rightAnim="+rightAnim);
-//                        Log.i("test",position+"번째 설정 이벤트 발생, 클릭 객체= "+userProfile+"애니객체= "+userSet+"출력");
-                //닫는 과정 처리
-                userSet.setVisibility(View.INVISIBLE);
-                userSet.startAnimation(rightAnim);
-            }
-        });
-        //클릭했을 때 권한 변경 이벤트 발생
-        userAuthority.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    Log.i("test","스위치 이벤트 발생, member로 변경");
-                    sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"member");
-                    listViewItem.setFriSetAuthority("member");
                 }
-                else{
-                    Log.i("test","스위치 이벤트 발생, guest로 변경");
-                    sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"guest");
-                    listViewItem.setFriSetAuthority("guest");
-                }
-            }
-        });
-        //클릭했을 때 내보내기 이벤트 발생
-        userOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(dialog.showDialog("회원을 내보내시겠습니까?",listViewItem.getUserNickname()+" 님을 정말로 내보내시겠습니까?","내보냈습니다.")) {//닫는 과정 처리
-                    Log.i("test","값은"+listViewItem.getUserIdx()+"과"+listViewItem.getFriIdx());
-
-                    //DB 삭제 쿼리
-                    //sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
-
-                    //UI 다시 그리기
-                    userSet.setVisibility(View.INVISIBLE);
-                    listViewItemList.remove(position);
-                    notifyDataSetChanged();
-                    fridgeListCount.setText("냉장고 멤버 (" + getCount() + "명)");
-                }
-            }
-        });
-        //클릭했을 때 권한 위임 이벤트 발생
-        userAdmin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(dialog.showDialog("주인을 위임하시겠습니까?",listViewItem.getUserNickname()+" 님에게 주인을 위임하시겠습니까?\n(님은 member로 내려감.)","위임하였습니다.")) {
+            });
+            //클릭했을 때 슬라이딩 이벤트 발생 (회원 설정)
+            userSet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //                        Log.i("test","rightAnim="+rightAnim);
+                    //                        Log.i("test",position+"번째 설정 이벤트 발생, 클릭 객체= "+userProfile+"애니객체= "+userSet+"출력");
                     //닫는 과정 처리
                     userSet.setVisibility(View.INVISIBLE);
-
-                    //현재 주인인 나의 권한을 다운하는 것 추가해야 함
-                    //sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"admin");
+                    userSet.startAnimation(rightAnim);
                 }
-            }
-        });
+            });
+            //클릭했을 때 권한 변경 이벤트 발생
+            userAuthority.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        Log.i("test", "스위치 이벤트 발생, member로 변경");
+                        sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(), "member");
+                        listViewItem.setFriSetAuthority("member");
+                    } else {
+                        Log.i("test", "스위치 이벤트 발생, guest로 변경");
+                        sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(), "guest");
+                        listViewItem.setFriSetAuthority("guest");
+                    }
+                }
+            });
+            //클릭했을 때 내보내기 이벤트 발생
+            userOut.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (fridgeDialog.showDialog("회원을 내보내시겠습니까?", listViewItem.getUserNickname() + " 님을 정말로 내보내시겠습니까?", "내보냈습니다.")) {//닫는 과정 처리
+                        Log.i("test", "값은" + listViewItem.getUserIdx() + "과" + listViewItem.getFriIdx());
+
+                        //DB 삭제 쿼리
+                        //sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
+
+                        //UI 다시 그리기
+                        userSet.setVisibility(View.INVISIBLE);
+                        listViewItemList.remove(position);
+                        notifyDataSetChanged();
+                        fridgeListCount.setText("냉장고 멤버 (" + getCount() + "명)");
+                    }
+                }
+            });
+            //클릭했을 때 권한 위임 이벤트 발생
+            userAdmin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (fridgeDialog.showDialog("주인을 위임하시겠습니까?", listViewItem.getUserNickname() + " 님에게 주인을 위임하시겠습니까?\n(님은 member로 내려감.)", "위임하였습니다.")) {
+                        //닫는 과정 처리
+                        userSet.setVisibility(View.INVISIBLE);
+
+                        //현재 주인인 나의 권한을 다운하는 것 추가해야 함
+                        //sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"admin");
+                    }
+                }
+            });
+        }
+        else {
+            Log.i("test","amin if문 안들어감");
+            userAuthorityText.setText(listViewItem.getFriSetAuthority());
+        }
         return convertView;
     }
 

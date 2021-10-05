@@ -1,8 +1,9 @@
 package com.example.bepro;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class UserData {
+public class UserData implements Serializable {
     private String password;
     private String type;
     private String nickname;
@@ -10,6 +11,24 @@ public class UserData {
     private String image;
     private String dbImage;
     private String date;
+
+    @Override
+    public String toString() {
+        return "UserData{" +
+                "password='" + password + '\'' +
+                ", type='" + type + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", email='" + email + '\'' +
+                ", image='" + image + '\'' +
+                ", dbImage='" + dbImage + '\'' +
+                ", date='" + date + '\'' +
+                ", update='" + update + '\'' +
+                ", authority='" + authority + '\'' +
+                ", index='" + index + '\'' +
+                ", myFridge=" + myFridge +
+                '}';
+    }
+
     private String update;
     private String authority;
     private String index;

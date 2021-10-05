@@ -43,14 +43,23 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            >
+            android:orientation="horizontal">
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="권한"
                 android:gravity="center_vertical"
-                android:id="@+id/userAuthority">
+                android:id="@+id/userAuthority"
+                android:visibility="gone">
             </Switch>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="guest"
+                android:gravity="center_vertical"
+                android:id="@+id/userAuthorityText"
+                android:visibility="visible">
+            </TextView>
         </LinearLayout>
 
     </LinearLayout>

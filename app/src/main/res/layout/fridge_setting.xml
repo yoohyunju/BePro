@@ -63,6 +63,8 @@
                             android:layout_weight="8"
                             android:layout_marginRight="10dp"
                             android:text="냉장고1"
+
+                            android:enabled="false"
                             ></EditText>
                         <Button
                             android:layout_width="0dp"
@@ -71,7 +73,9 @@
                             android:layout_marginRight="10dp"
                             android:text="변경"
                             android:backgroundTint="@color/whiteBlue"
-                            android:textColor="@color/black">
+                            android:textColor="@color/black"
+                            android:id="@+id/fridgeNameChangeBtn"
+                            android:visibility="invisible">
                         </Button>
                     </LinearLayout>
 
@@ -100,7 +104,8 @@
                         android:text="멤버 추가"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/popup_box"
-                        android:textColor="@color/black">
+                        android:textColor="@color/black"
+                        android:id="@+id/fridgeCodeBtn">
                     </Button>
                 </LinearLayout>
 
@@ -155,7 +160,8 @@
                         android:gravity="center"
                         android:textColor="@color/black"
                         android:backgroundTint="@color/darkGray"
-                        android:id="@+id/fridgeDelete">
+                        android:id="@+id/fridgeDelete"
+                        android:visibility="gone">
                     </Button>
                     <LinearLayout
                         android:layout_width="0dp"
