@@ -26,14 +26,24 @@ public class RecipeActivity extends Fragment {
     // @Nullable : null 허용
     //onCreateView(): fragment가 자신의 UI를 처음으로 그릴 때 호출됨
     //fragment에 이벤트 정의하는 방법
+
+    public RecipeActivity() {
+    }
+
+    public RecipeActivity(String menu) {
+        this.menu = menu;
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.recipe, container, false);
         webView = v.findViewById(R.id.webview);
         webViewSetting(v);
 
-        //품목에서 넘어올 경우
-        //webView.loadUrl("https://www.10000recipe.com/recipe/list.html?q=" + menu);
+        if(menu != null){
+            //품목에서 넘어올 경우
+            webView.loadUrl("https://www.10000recipe.com/recipe/list.html?q=" + menu);
+        }
 
         webView.setOnKeyListener(new View.OnKeyListener() {
             @Override

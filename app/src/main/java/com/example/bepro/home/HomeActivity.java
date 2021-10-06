@@ -74,6 +74,7 @@ public class HomeActivity extends Fragment {
     String[] items = {"유통기한 짧은 순", "등록 오래된 순", "등록 최신순"};
     String updateFoodIdx, updateFoodName, updateFoodNum, updateFoodMemo, updateFoodExp, updateFoodRemainDate;
     String formatMonth, formatDay;
+
     MainActivity mMain = new MainActivity();
     //FridgeSettingData settingData = new FridgeSettingData();
 
@@ -380,11 +381,16 @@ public class HomeActivity extends Fragment {
         mItemDetailRecipeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //검색어 레시피 전달
+                String menu = detailFoodName.getText().toString();
+                System.out.println("레시피 식품명1: " + menu);
+
                 mDetailDialog.dismiss(); //다이얼로그 닫기
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction(); //트랜잭션 시작
-                RecipeActivity recipeFragment = new RecipeActivity();
+                RecipeActivity recipeFragment = new RecipeActivity(menu);
                 transaction.replace(R.id.frameLayout, recipeFragment).commitAllowingStateLoss();
+
             }
         });
 
