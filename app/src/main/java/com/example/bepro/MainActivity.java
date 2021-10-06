@@ -27,9 +27,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,21 +97,21 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
     private CardView mSelfAddCardView;
     ArrayList<FoodItems> foodItems = new ArrayList<>();
+    ArrayList<String> fridgeItems = new ArrayList<>();
 
     //JSON DATA 받아올 변수
     String friIdx, foodName, foodNum, foodExp, foodRegistrant, text;
+    String selectFridgeItem;
 
-
-    //TODO: 프로젝트 병합 후 주석 해제
     public String image, email, type, fridgeName, userIdx;
     ArrayList<Integer> fridgeIdx = new ArrayList<Integer>();
-    TextView selected;
+    public TextView selected;
     EditText addFridge;
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     FridgeAdapter fridgeAdapter;
     UserData user = new UserData(); //user 객체
-    FridgeSettingData settingData = new FridgeSettingData();
+    public FridgeSettingData settingData = new FridgeSettingData();
 
     Bitmap testImage;
     InputImage inputImage;
@@ -116,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     Uri uri;
     private static final int ALBUM_RESULT_CODE = 0; //앨범 선택
     private static final int CAMERA_RESULT_CODE = 101; //앨범 선택
+    public int homeFriIdx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +211,13 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                         }catch (Exception e){
 
                         }
+                        //TODO: 다빈아 여기야!!ㅠㅠ help me~
+                        Bundle bundle = new Bundle();
+                        homeFriIdx = settingData.getFridgeIndex();
+                        bundle.putInt("homeFriIdx", homeFriIdx);
+                        mHome.setArguments(bundle);
+                        mHome.foodItemSetting(homeFriIdx);
+
                     }
                 };
                 GetFridgeSettingRequest getFridgeSetting = new GetFridgeSettingRequest(name.getName(), responseListener);
@@ -376,6 +387,44 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         mSelfAddDialog.setCanceledOnTouchOutside(false); //창 바깥 부분 터치 닫기 설정 해제
 
         mSelfAddDialog.show();
+
+        //냉장고 선택 스피너
+        Spinner fridgeSpinner = mSelfAddDialog.findViewById(R.id.fridgeSelectSpinner);
+
+        ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, fridgeItems);
+        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        fridgeSpinner.setAdapter(mAdapter);
+
+        fridgeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectFridgeItem = (String) fridgeSpinner.getSelectedItem(); //선택된 냉장고명
+
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try{
+                            JSONObject jsonObject = new JSONObject(response);
+                            settingData.setFridgeIndex(jsonObject.getInt("friIDX")); //선택된 냉장고 인덱스
+
+                        }catch (Exception e){
+
+                        }
+                    }
+                };
+                GetFridgeSettingRequest getFridgeSetting = new GetFridgeSettingRequest(selectFridgeItem, responseListener);
+                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                queue.add(getFridgeSetting);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //리사이클러뷰에 레이아웃 매니저 설정
         RecyclerView recyclerView = mSelfAddDialog.findViewById(R.id.addFoodRecyclerView);
@@ -602,6 +651,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         for(int i = 0; i < length; i++){
             String index = fridgeIdx.get(i).toString();
             fridgeAdapter.NameClear();
+            fridgeItems.clear();
             Response.Listener<String> responseListener = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -610,6 +660,9 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                         fridgeName = jsonObject.getString("friName");
                         System.out.println(fridgeName);
                         fridgeAdapter.addItem(new FridgeData(fridgeName));
+
+                        fridgeItems.add(fridgeName);//arrayList에 냉장고명 추가
+
                         recyclerView.setAdapter(fridgeAdapter);
                     } catch (Exception e) {
                         e.printStackTrace();

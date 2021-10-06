@@ -38,6 +38,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.bepro.FridgeSettingData;
+import com.example.bepro.GetFridgeSettingRequest;
+import com.example.bepro.MainActivity;
 import com.example.bepro.R;
 import com.example.bepro.recipe.RecipeActivity;
 
@@ -71,8 +74,10 @@ public class HomeActivity extends Fragment {
     String[] items = {"유통기한 짧은 순", "등록 오래된 순", "등록 최신순"};
     String updateFoodIdx, updateFoodName, updateFoodNum, updateFoodMemo, updateFoodExp, updateFoodRemainDate;
     String formatMonth, formatDay;
+    MainActivity mMain = new MainActivity();
+    //FridgeSettingData settingData = new FridgeSettingData();
 
-    int friIdx, foodIdx, foodNum;
+    int friIdx, foodIdx, foodNum, homeFriIdx;
     String foodName, foodRegistrant, foodExp, foodDate, foodRemainDate, foodMemo, selfAddFoodName, selfAddFoodNum, selfAddFoodExp;
 
     //달력 관련 변수 정의
@@ -103,7 +108,14 @@ public class HomeActivity extends Fragment {
         foodAdapter = new FoodAdapter(getContext(), foodItems);
         mHomeRecyclerView.setAdapter(foodAdapter);
 
-        foodItemSetting();
+        //TODO: 다빈아 여기야!!ㅠㅠ help me~
+        Bundle bundle = this.getArguments();
+
+        if (bundle != null) {
+            bundle = getArguments();
+            homeFriIdx = bundle.getInt("homeFriIdx");
+            foodItemSetting(homeFriIdx);
+        }
 
         //품목 검색창
         mSearchView = homeView.findViewById(R.id.searchView);
@@ -116,7 +128,8 @@ public class HomeActivity extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) { //문자열이 변할 때 마다 문자열 반환 (실시간 검색)
                 if(newText.isEmpty()){
-                    foodItemSetting(); //검색창 비어있을 경우 전체 품목 출력
+                    System.out.println("선택된 냉장고 인덱스: " + mMain.homeFriIdx);
+                    foodItemSetting(homeFriIdx); //검색창 비어있을 경우 전체 품목 출력
                 }else {
                     foodAdapter.getFilter().filter(newText.toString());
                 }
@@ -190,7 +203,6 @@ public class HomeActivity extends Fragment {
 
                 Collections.sort(foodItems, shortExp);
                 foodAdapter.notifyDataSetChanged();
-                System.out.println("스피너에서 notifyDataSetChanged 실행");
 
                 break;
 
@@ -341,7 +353,7 @@ public class HomeActivity extends Fragment {
                 homeFoodExpDate.setText(updateFoodExp);
                 homeFoodRemainDate.setText(updateFoodRemainDate);
 
-                foodItemSetting(); //수정 후 목록 재설정
+                foodItemSetting(homeFriIdx); //수정 후 목록 재설정
                 itemSortFunc(mSpinner.getSelectedItemPosition()); // 품목 재정렬
 
                 //foodAdapter.notifyDataSetChanged();
@@ -379,8 +391,8 @@ public class HomeActivity extends Fragment {
     }
 
     //품목 data 설정
-    public void foodItemSetting(){
-        String URL = "http://3.37.119.236:80/food/selectFood.php";
+    public void foodItemSetting(final int fridgeIdx) {
+        String URL = "http://3.37.119.236:80/food/selectFood.php/?fridgeIdx="+ fridgeIdx;
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.POST, URL, null, new Response.Listener<JSONArray>() {
             //volley 라이브러리의 GET 방식은 버튼 누를때마다 새로운 갱신 데이터를 불러들이지 않아 POST 방식 사용
@@ -412,7 +424,6 @@ public class HomeActivity extends Fragment {
                     }
                     foodAdapter.notifyDataSetChanged();
                     itemSortFunc(mSpinner.getSelectedItemPosition());
-                    System.out.println("셋팅 함수에서 notifyDataSetChanged 실행");
 
                 }catch (JSONException | ParseException e){
                     e.printStackTrace();
@@ -427,11 +438,13 @@ public class HomeActivity extends Fragment {
                 Toast.makeText(getContext(), "ERROR", Toast.LENGTH_SHORT).show();
             }
         });
+        //GetFridgeSettingRequest getFridgeSetting = new GetFridgeSettingRequest(new FoodItems.getFriIdx(), responseListener);
 
         //실제 요청 작업을 수행해주는 요청큐 객체 생성
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         //요청큐에 요청 객체 생성
         requestQueue.add(jsonArrayRequest);
+        //requestQueue.add(getFridgeSetting);
 
     }
 
