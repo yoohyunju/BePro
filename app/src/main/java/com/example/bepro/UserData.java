@@ -23,14 +23,13 @@ public class UserData implements Serializable {
                 ", dbImage='" + dbImage + '\'' +
                 ", date='" + date + '\'' +
                 ", update='" + update + '\'' +
-                ", authority='" + authority + '\'' +
                 ", index='" + index + '\'' +
                 ", myFridge=" + myFridge +
                 '}';
     }
 
     private String update;
-    private String authority;
+
     private String index;
     ArrayList<Integer> myFridge = new ArrayList<>();
 
@@ -103,14 +102,6 @@ public class UserData implements Serializable {
 
     public void setUpdate(String update) {
         this.update = update;
-    }
-
-    public String getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(String authority) {
-        this.authority = authority;
     }
 
     public String getIndex() {

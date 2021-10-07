@@ -55,6 +55,8 @@ public class FridgeAdapter extends RecyclerView.Adapter<FridgeAdapter.ViewHolder
 
     public ArrayList<Integer> getFridgeIDX() { return fridgeIndex; }
 
+    public void itemClear(){items.clear();}
+
     public void indexClear() { fridgeIndex.clear(); }
 
     public void NameClear() { items.clear(); }
@@ -90,7 +92,7 @@ public class FridgeAdapter extends RecyclerView.Adapter<FridgeAdapter.ViewHolder
        }
 
        public void setItem(FridgeData item){
-           textView.setText(item.getName());
+           textView.setText(item.getFriId());
        }
    }
 }

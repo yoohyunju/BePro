@@ -38,6 +38,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.bepro.FridgeData;
 import com.example.bepro.FridgeSettingData;
 import com.example.bepro.GetFridgeSettingRequest;
 import com.example.bepro.MainActivity;
@@ -78,7 +79,8 @@ public class HomeActivity extends Fragment {
     MainActivity mMain = new MainActivity();
     //FridgeSettingData settingData = new FridgeSettingData();
 
-    int friIdx, foodIdx, foodNum, homeFriIdx;
+    FridgeData fridgeData;
+    int friIdx, foodIdx, foodNum;
     String foodName, foodRegistrant, foodExp, foodDate, foodRemainDate, foodMemo, selfAddFoodName, selfAddFoodNum, selfAddFoodExp;
 
     //달력 관련 변수 정의
@@ -94,6 +96,7 @@ public class HomeActivity extends Fragment {
     TextView dateResult;
     LinearLayout datePicker;
 
+    Bundle bundle;
     //onCreateView(): fragment가 자신의 UI를 처음으로 그릴 때 호출됨
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -110,13 +113,14 @@ public class HomeActivity extends Fragment {
         mHomeRecyclerView.setAdapter(foodAdapter);
 
         //TODO: 다빈아 여기야!!ㅠㅠ help me~
-        Bundle bundle = this.getArguments();
-
-        if (bundle != null) {
-            bundle = getArguments();
-            homeFriIdx = bundle.getInt("homeFriIdx");
-            foodItemSetting(homeFriIdx);
-        }
+//        bundle = this.getArguments();
+//
+//        if (bundle != null) {
+//            bundle = getArguments();
+//            homeFriIdx = bundle.getString("homeFriIdx");
+//            foodItemSetting(homeFriIdx);
+//            Log.i("test","번들"+homeFriIdx);
+//        }
 
         //품목 검색창
         mSearchView = homeView.findViewById(R.id.searchView);
@@ -129,8 +133,8 @@ public class HomeActivity extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) { //문자열이 변할 때 마다 문자열 반환 (실시간 검색)
                 if(newText.isEmpty()){
-                    System.out.println("선택된 냉장고 인덱스: " + mMain.homeFriIdx);
-                    foodItemSetting(homeFriIdx); //검색창 비어있을 경우 전체 품목 출력
+                    System.out.println("선택된 냉장고 인덱스: " + fridgeData.getFriIdx());
+                    foodItemSetting(fridgeData.getFriIdx()); //검색창 비어있을 경우 전체 품목 출력
                 }else {
                     foodAdapter.getFilter().filter(newText.toString());
                 }
@@ -191,6 +195,15 @@ public class HomeActivity extends Fragment {
         return homeView;
     }
 
+    public void setHomeData(){
+        bundle = getArguments();
+
+        if (bundle != null) {
+            fridgeData = (FridgeData)bundle.getSerializable("fridgeData");
+            foodItemSetting(fridgeData.getFriIdx());
+            Log.i("test","번들"+fridgeData.toString());
+        }
+    }
     public void itemSortFunc(int position){
         switch (position){
             case 0: //유통기한 짧은 순
@@ -354,7 +367,7 @@ public class HomeActivity extends Fragment {
                 homeFoodExpDate.setText(updateFoodExp);
                 homeFoodRemainDate.setText(updateFoodRemainDate);
 
-                foodItemSetting(homeFriIdx); //수정 후 목록 재설정
+                foodItemSetting(fridgeData.getFriIdx()); //수정 후 목록 재설정
                 itemSortFunc(mSpinner.getSelectedItemPosition()); // 품목 재정렬
 
                 //foodAdapter.notifyDataSetChanged();
@@ -397,8 +410,8 @@ public class HomeActivity extends Fragment {
     }
 
     //품목 data 설정
-    public void foodItemSetting(final int fridgeIdx) {
-        String URL = "http://3.37.119.236:80/food/selectFood.php/?fridgeIdx="+ fridgeIdx;
+    public void foodItemSetting(int fridgeIdx) {
+        String URL = "http://3.37.119.236:80/food/selectFood.php/?fridgeIdx="+fridgeIdx;
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.POST, URL, null, new Response.Listener<JSONArray>() {
             //volley 라이브러리의 GET 방식은 버튼 누를때마다 새로운 갱신 데이터를 불러들이지 않아 POST 방식 사용
