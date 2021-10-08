@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     private NoticeActivity mNotice;
     private BottomNavigationView mNavView;
 
-    private LinearLayout mFridgeListOpenBtn, mAddFridgeBtn, mSelfAddBtn, mFridgeSettingBtn, m_btnOCR;;
+    private LinearLayout mFridgeListOpenBtn, mAddFridgeBtn, mSelfAddBtn, mFridgeSettingBtn, m_btnOCR, fridgeInviteCodeAddBtn;
     private Dialog mAddItemDialog, mFridgeListDialog, mFridgeAddDialog, mSelfAddDialog;
     private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeNameAddBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn, mSelfAddConfirmBtn, mSelfItemAddBtn;
 
@@ -535,6 +535,15 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
         mFridgeAddDialog.show();
 
+        //코드로 추가하기 버튼 TODO
+        fridgeInviteCodeAddBtn = mFridgeAddDialog.findViewById(R.id.fridgeInviteCodeAddBtn);
+        fridgeInviteCodeAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         // TODO: 프로젝트 병합 후 주석 해제
         //냉장고 추가하기 확인 버튼
         mFridgeNameAddBtn = mFridgeAddDialog.findViewById(R.id.fridgeNameAddBtn);
@@ -575,6 +584,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     }
 
     public void getMyFridge(String userIDX){
+        FridgeCode fridgeCode = new FridgeCode();
         fridgeAdapter.itemClear();
         String URL = "http://3.37.119.236:80/fridgeSet/fridge.php?userIDX="+userIDX; //local 경로
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(
@@ -591,13 +601,15 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                                         jsonObject.getInt("friIdx"),
                                         jsonObject.getString("friSetAuthority"),
                                         jsonObject.getString("friId"),
-                                        jsonObject.getString("friCode")
+                                        fridgeCode.getCode(jsonObject.getInt("friIdx"))
                                 );
                                 fridgeAdapter.addItem(fridgeDatum);
-                                Log.i("test","가져온 데이터="+fridgeDatum.toString());
+                                Log.i("test","결과 : "+fridgeDatum.toString());
                             }
 
                         } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
