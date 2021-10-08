@@ -1,18 +1,6 @@
 package com.example.bepro;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,6 +24,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -47,11 +45,11 @@ import com.android.volley.toolbox.Volley;
 import com.example.bepro.fridge_setting.FridgeMemberActivity;
 import com.example.bepro.home.FoodItems;
 import com.example.bepro.home.HomeActivity;
+import com.example.bepro.home.SelfAddItemAdapter;
 import com.example.bepro.login.snsRequest;
 import com.example.bepro.my_page.MyPageActivity;
 import com.example.bepro.notice.NoticeActivity;
 import com.example.bepro.recipe.RecipeActivity;
-import com.example.bepro.home.SelfAddItemAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -64,6 +62,8 @@ import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions;
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             @Override
             public void onClick(View v) {
                 //ocr 실행 (text 인식 결과 - log 확인 (cropper 추가 후 품목 수정))
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                /*AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("영수증 등록");
                 builder.setMessage("사진을 가져올 방법을 선택해주세요!");
 
@@ -321,7 +321,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                     }
                 });
                 builder.setCancelable(true);
-                builder.create().show();
+                builder.create().show();*/
+                CropImage.activity(null).setGuidelines(CropImageView.Guidelines.ON).start(MainActivity.this);
             }
         });
 
@@ -709,7 +710,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode){
-            case CAMERA_RESULT_CODE:
+            /*case CAMERA_RESULT_CODE:
                 try {
                     Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
                     inputImage = InputImage.fromBitmap(bitmap, 0);
@@ -729,6 +730,21 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
                 inputImage = InputImage.fromBitmap(testImage, 0);
                 getText(inputImage);
+                break;*/
+            case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK) {
+                    Uri resultUri = result.getUri();
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(resultUri));
+                        inputImage = InputImage.fromBitmap(bitmap, 0);
+                        getText(inputImage);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Exception error = result.getError();
+                }
                 break;
         }
     }
@@ -770,4 +786,10 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                             }
                         });
     }
+    /*public void onSelectImageClick(View view) {
+        //File mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+        //String filePath = file.getPath();
+        //CropImage.activity().start(this);
+        CropImage.activity(null).setGuidelines(CropImageView.Guidelines.ON).start(MainActivity.this);
+    }*/
 }

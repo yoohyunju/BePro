@@ -73,4 +73,6 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-analytics'
+
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 }
