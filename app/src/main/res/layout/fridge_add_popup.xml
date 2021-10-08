@@ -97,6 +97,21 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/fridgeInviteCodeAddBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="20dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15dp"
+                        android:textColor="@color/darkBlue"
+                        android:background="@drawable/popup_box2"
+                        android:text="초대 코드로 추가하기"/>
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
