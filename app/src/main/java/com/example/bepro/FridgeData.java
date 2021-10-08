@@ -3,21 +3,6 @@ package com.example.bepro;
 import java.io.Serializable;
 
 public class FridgeData implements Serializable{
-//    String name;
-//
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    public FridgeData(String name) {
-//        this.name = name;
-//    }
-
-    //위에 나중에 다 없애기
 
     private int friIdx; //냉장고 인덱스
     private String friSetAuthority; //내가 가진 냉장고 권한

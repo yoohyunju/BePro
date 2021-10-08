@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -64,14 +65,17 @@ public class FridgeMemberActivity extends AppCompatActivity {
 
     //기타
     EditText fridgeName;
+    TextView fridgeCodeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fridge_setting);
 
+
         Intent intent = getIntent();
         FridgeData fridgeData = (FridgeData)intent.getSerializableExtra("fridgeData");
+        UserData userData = (UserData)intent.getSerializableExtra("userData");
         Log.i("test","fridgeData = "+fridgeData.toString());
 
         parseJSON=new ParseJSON(getApplicationContext());
@@ -91,7 +95,57 @@ public class FridgeMemberActivity extends AppCompatActivity {
         fridgeListCount = (TextView)findViewById(R.id.fridgeListCount);
         friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp,FridgeMemberActivity.this,fridgeListCount,fridgeData.getFriSetAuthority()); //Adapter 생성
 
+        ////////////데이터 요청
+        sendRequest(fridgeData.getFriIdx());
+
+        ////////////초기설정
+        fridgeName = (EditText)findViewById(R.id.refName);
+        fridgeName.setText(fridgeData.getFriId());
+        fridgeCodeText = fridgeCodeDialog.findViewById(R.id.fridgeCodeText);
+        fridgeCodeText.setText(fridgeData.getFriCode());
+
+        ////////////냉장고 탈퇴
+        Button fridgeQuit = (Button)findViewById(R.id.fridgeQuit);
+        fridgeQuit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fridgeDialog.showDialog("냉장고를 탈퇴하시겠습니까?","정말로 냉장고를 탈퇴하시겠습니까?","냉장고를 탈퇴하였습니다.");
+                sendRequestImp.deleteFriUser(Integer.parseInt(userData.getIndex()),fridgeData.getFriIdx()); //TODO : 변경 필요 : 현재 회원.
+            }
+        });
+
+        ////////////관리자면 할 수 있는 것들 설정
         if(fridgeData.getFriSetAuthority().equals("admin")) {
+            //냉장고 이름 설정
+            fridgeName.setEnabled(true);
+            Button fridgeNameChangeBtn = (Button)findViewById(R.id.fridgeNameChangeBtn);
+            fridgeNameChangeBtn.setVisibility(View.VISIBLE);
+            fridgeNameChangeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(fridgeName.length()==0){
+                        Toast.makeText(getApplicationContext(),"값이 비어있습니다.",Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        sendRequestImp.updateFriId(fridgeData.getFriIdx(), fridgeName.getText().toString());
+                        fridgeName.clearFocus();
+                        InputMethodManager manager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                        manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                }
+            });
+
+            //냉장고 삭제
+            Button fridgeDelete = (Button) findViewById(R.id.fridgeDelete);
+            fridgeDelete.setVisibility(View.VISIBLE);
+            fridgeDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fridgeDialog.showDialog("냉장고를 삭제하시겠습니까?", "정말로 냉장고를 삭제하시겠습니까?\n30일 후 완전히 삭제가 됩니다.", "냉장고를 삭제하였습니다.");
+                    sendRequestImp.deleteFri(fridgeData.getFriIdx()); //TODO 변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
+                }
+            });
+
             ////////////애니메이션 설정
             LeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left); //anim 폴더의 애니메이션을 가져와서 준비
             RightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right); //anim 폴더의 애니메이션을 가져와서 준비
@@ -101,52 +155,18 @@ public class FridgeMemberActivity extends AppCompatActivity {
         }
 
 
-        ////////////데이터 요청
-        sendRequest();
-
-        ////////////냉장고명 초기설정
-        fridgeName = (EditText)findViewById(R.id.refName);
-        fridgeName.setText(fridgeData.getFriId());
-
-        ////////////냉장고 탈퇴
-        Button fridgeQuit = (Button)findViewById(R.id.fridgeQuit);
-        fridgeQuit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fridgeDialog.showDialog("냉장고를 탈퇴하시겠습니까?","정말로 냉장고를 탈퇴하시겠습니까?","냉장고를 탈퇴하였습니다.");
-                //sendRequestImp.deleteFriUser(1,1); //변경 필요 : 현재 회원.
-            }
-        });
-
-        ////////////냉장고 삭제 & 냉장고명 변경
-        if(fridgeData.getFriSetAuthority().equals("admin")) {
-            fridgeName.setEnabled(true);
-            Button fridgeNameChangeBtn = (Button)findViewById(R.id.fridgeNameChangeBtn);
-            fridgeNameChangeBtn.setVisibility(View.VISIBLE);
-            Button fridgeDelete = (Button) findViewById(R.id.fridgeDelete);
-            fridgeDelete.setVisibility(View.VISIBLE);
-            fridgeDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    fridgeDialog.showDialog("냉장고를 삭제하시겠습니까?", "정말로 냉장고를 삭제하시겠습니까?\n30일 후 완전히 삭제가 됩니다.", "냉장고를 삭제하였습니다.");
-                    //sendRequestImp.deleteFri(4); //변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
-                }
-            });
-        }
-
         ////////////냉장고 멤버 추가
         Button fridgeAddUser = (Button)findViewById(R.id.fridgeCodeBtn);
         fridgeAddUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("test","클릭했어");//WHY
                 showFridgeCodeDialog();
             }
         });
     }
 
-    public void sendRequest(){
-        String url="http://3.37.119.236:80/fridgeSet/selectFriSet.php?friIdx=4";
+    public void sendRequest(int fridgeIdx){
+        String url="http://3.37.119.236:80/fridgeSet/selectFriSet.php?friIdx="+fridgeIdx;
         JsonArrayRequest request = new JsonArrayRequest( //지정된 URL에서 JSONObject의 응답 본문을 가져오기 위한 요청
                 Request.Method.POST,
                 url,
@@ -214,7 +234,6 @@ public class FridgeMemberActivity extends AppCompatActivity {
             }
         });
 
-        TextView fridgeCodeText = fridgeCodeDialog.findViewById(R.id.fridgeCodeText);
         fridgeCodeText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         mFridgeSettingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fridgeIntent.putExtra("userData",(Serializable)user);
                 startActivity(fridgeIntent);
             }
         });

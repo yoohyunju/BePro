@@ -95,7 +95,7 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
             userAuthority.setChecked(true);
         }
 
-        if(authority.equals("admin")) {
+        if(authority.equals("admin") && position!=0) {
             Log.i("test","amin if문 들어감");
             userAuthority.setVisibility(View.VISIBLE);
             userAuthorityText.setVisibility(View.GONE);

@@ -7,4 +7,5 @@ public interface SendRequest {
     public void deleteFriUser(long userIdx, long friIdx);
     public void deleteFri(long friIdx);
     public void setFriAuthority(long friSetIdx, String friSetAuthority);
+    public void updateFriId(int friIdx, String friId);
 }

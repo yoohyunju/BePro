@@ -101,7 +101,7 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="멤버 추가"
+                        android:text="초대 코드"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/popup_box"
                         android:textColor="@color/black"

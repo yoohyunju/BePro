@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -154,5 +155,36 @@ public class SendRequestImp implements SendRequest{
         );
         sendRequest();
     }
+
+    @Override
+    public void updateFriId(int friIdx, String friId) {
+        url = "http://3.37.119.236:80/fridgeSet/updateFriName.php?friIdx="+friIdx+"&friId="+friId;
+        request = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("test","updateFriId:"+url);
+                        if(response.equals("success")) {
+                            Log.i("test", "setFriAuhority 성공");
+                            Toast.makeText(context, "냉장고 이름이 변경되었습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Log.i("test", "setFriAuhority 실패" + response);
+                            Toast.makeText(context, "냉장고 이름 변경에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("test","setFriAuhority 에러!"+error);
+                    }
+                }
+        );
+        sendRequest();
+    }
+
 
 }
