@@ -49,12 +49,28 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="10dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13dp"
+                            android:text="초대 코드를 길게 누르면 클립보드에 복사됩니다."/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/popup_box2"
+                        android:gravity="center"
                         android:layout_margin="20dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="15dp"
                             android:text="코드가 출력될 공간"
+                            android:gravity="center"
+                            android:textColor="@color/black"
                             android:id="@+id/fridgeCodeText"/>
                     </LinearLayout>
 

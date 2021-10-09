@@ -92,12 +92,13 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     private BottomNavigationView mNavView;
 
     private LinearLayout mFridgeListOpenBtn, mAddFridgeBtn, mSelfAddBtn, mFridgeSettingBtn, m_btnOCR, fridgeInviteCodeAddBtn;
-    private Dialog mAddItemDialog, mFridgeListDialog, mFridgeAddDialog, mSelfAddDialog;
-    private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeNameAddBtn, mFridgeAddCancelBtn, mSelfAddCancelBtn, mSelfAddConfirmBtn, mSelfItemAddBtn;
+    private Dialog mAddItemDialog, mFridgeListDialog, mFridgeAddDialog, mSelfAddDialog, mFridgeInviteAddDialog;
+    private Button mAddCancelBtn, mFridgeListCancelBtn, mFridgeNameAddBtn, mFridgeAddCancelBtn,
+            mSelfAddCancelBtn, mSelfAddConfirmBtn, mSelfItemAddBtn, mFridgeInviteCancelBtn, mFridgeInviteCodeAddBtn;
 
     private CardView mSelfAddCardView;
     ArrayList<FoodItems> foodItems = new ArrayList<>();
-    ArrayList<String> fridgeItems = new ArrayList<>();
+    ArrayList<FridgeData> fridgeItems = new ArrayList<>();
 
     //JSON DATA 받아올 변수
     String friIdx, foodName, foodNum, foodExp, foodRegistrant, text;
@@ -165,6 +166,9 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
         mSelfAddDialog = new Dialog(MainActivity.this);
         mSelfAddDialog.setContentView(R.layout.self_item_add_popup); //품목 직접 추가 팝업 xml 연결
+
+        mFridgeInviteAddDialog = new Dialog(MainActivity.this);
+        mFridgeInviteAddDialog.setContentView(R.layout.fridge_invite_popup); //초대 코드 추가 팝업 xml 연결
 
         mFridgeListOpenBtn = findViewById(R.id.fridgeListOpenBtn);
         mFridgeListOpenBtn.setOnClickListener(new View.OnClickListener() {
@@ -364,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         //냉장고 선택 스피너
         Spinner fridgeSpinner = mSelfAddDialog.findViewById(R.id.fridgeSelectSpinner);
 
-        ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(
+        ArrayAdapter<FridgeData> mAdapter = new ArrayAdapter<FridgeData>(
                 this, android.R.layout.simple_spinner_item, fridgeItems);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -540,6 +544,35 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         fridgeInviteCodeAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //팝업창 사이즈 조절
+                WindowManager.LayoutParams params = mFridgeInviteAddDialog.getWindow().getAttributes();
+                params.width = WindowManager.LayoutParams.MATCH_PARENT;
+
+                mFridgeInviteAddDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                mFridgeInviteAddDialog.setCanceledOnTouchOutside(false);
+
+                mFridgeInviteAddDialog.show();
+
+                mFridgeInviteCancelBtn = mFridgeInviteAddDialog.findViewById(R.id.fridgeInviteCancelBtn);
+                mFridgeInviteCodeAddBtn = mFridgeInviteAddDialog.findViewById(R.id.fridgeInviteCodeAddBtn);
+
+                //냉장고 초대 코드 취소 버튼
+                mFridgeInviteCancelBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mFridgeInviteAddDialog.dismiss();
+                    }
+                });
+
+                //냉장고 초대 코드 확인 버튼
+                mFridgeInviteCodeAddBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mFridgeInviteAddDialog.dismiss();
+                    }
+                });
+
+
 
             }
         });
@@ -603,7 +636,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                                         jsonObject.getString("friId"),
                                         fridgeCode.getCode(jsonObject.getInt("friIdx"))
                                 );
-                                fridgeAdapter.addItem(fridgeDatum);
+                                fridgeAdapter.addItem(fridgeDatum); //냉장고 목록 데이터 추가
+                                //setFridgeAuthority(fridgeDatum.getFriSetAuthority()); //냉장고 권한에 따른 기능 제한 함수
                                 Log.i("test","결과 : "+fridgeDatum.toString());
                             }
 
@@ -804,4 +838,20 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         //CropImage.activity().start(this);
         CropImage.activity(null).setGuidelines(CropImageView.Guidelines.ON).start(MainActivity.this);
     }*/
+
+    public void setFridgeAuthority(String friSetAuthority){
+        switch (friSetAuthority) {
+            case "admin":
+                //visible
+                break;
+            case "member":
+                //visible
+                break;
+            case "guest":
+                //품목 삭제, 확인
+                // 품목 추가는 업로드 할 냉장고 선택 시 권한을 가져와서 guest면 등록 불가하다는 메시지 뜨게
+                break;
+        }
+
+    }
 }

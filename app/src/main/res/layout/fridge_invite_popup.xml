@@ -42,7 +42,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="20dp"
-                            android:text="냉장고 추가하기"
+                            android:text="초대 코드로 추가하기"
                             android:textColor="@color/skyBlue"/>
                     </LinearLayout>
 
@@ -54,7 +54,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="13dp"
-                            android:text="추가할 냉장고 명을 입력해주세요."/>
+                            android:text="추가할 냉장고의 초대 코드를 입력해주세요."/>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -83,7 +83,7 @@
                             android:id="@+id/fridgeName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="냉장고명"
+                            android:hint="초대 코드"
                             android:textSize="15dp"/>
 
                     </LinearLayout>
@@ -97,31 +97,14 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/fridgeInviteCodeAddBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/button_box"
-                    android:layout_margin="10dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="15dp"
-                        android:layout_margin="3dp"
-                        android:textColor="@color/black"
-                        android:text="초대 코드로 추가하기"/>
-                </LinearLayout>
-
-                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="20"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
                     android:layout_gravity="center"
                     android:gravity="center">
 
                     <Button
-                        android:id="@+id/fridgeAddCancelBtn"
+                        android:id="@+id/fridgeInviteCancelBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/gray"
@@ -130,7 +113,7 @@
                         android:textColor="@color/black"/>
 
                     <Button
-                        android:id="@+id/fridgeNameAddBtn"
+                        android:id="@+id/fridgeInviteCodeAddBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/skyBlue"

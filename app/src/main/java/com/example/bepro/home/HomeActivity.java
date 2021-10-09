@@ -121,6 +121,7 @@ public class HomeActivity extends Fragment {
 //            foodItemSetting(homeFriIdx);
 //            Log.i("test","번들"+homeFriIdx);
 //        }
+        //foodItemSetting(fridgeData.getFriIdx());
 
         //품목 검색창
         mSearchView = homeView.findViewById(R.id.searchView);
