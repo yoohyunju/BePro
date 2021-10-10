@@ -1,6 +1,8 @@
 package com.example.bepro;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -98,11 +100,12 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
     private CardView mSelfAddCardView;
     ArrayList<FoodItems> foodItems = new ArrayList<>();
-    ArrayList<FridgeData> fridgeItems = new ArrayList<>();
+    ArrayList<String> fridgeIdxItems = new ArrayList<>();
+    ArrayList<FridgeData> fridgeSpinnerItems = new ArrayList<>();
+    FridgeData fridgeData = new FridgeData();
 
     //JSON DATA 받아올 변수
-    String friIdx, foodName, foodNum, foodExp, foodRegistrant, text;
-    String selectFridgeItem;
+    String friIdx, foodName, foodNum, foodExp, foodRegistrant, text, authority;
 
     public String image, email, type, fridgeName, userIdx;
     ArrayList<Integer> fridgeIdx = new ArrayList<Integer>();
@@ -133,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         mNavView.setOnItemSelectedListener(new ItemSelectedListener()); //BottomNavigationView에 이벤트 리스너 연결
 
         fridgeIntent = new Intent(getApplicationContext(), FridgeMemberActivity.class);
-        // TODO: 프로젝트 병합 후 주석 해제
+
         //로그인 데이터 받아오기
         Intent intent = getIntent();
         image = intent.getStringExtra("userImage");
@@ -146,7 +149,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         user.setEmail(email);
         user.setType(type);
 
-        getUser();
+        getUser(); //사용자 정보 셋팅
+        //System.out.println("시작하자마자 냉장고 인덱스: "+ fridgeData.getFriIdx());
 
         //fragment 객체 생성
         mHome = new HomeActivity();
@@ -178,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             }
         });
 
-        // TODO: 프로젝트 병합 후 주석 해제
         //냉장고 리스트
         fridgeAdapter = new FridgeAdapter();
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -190,14 +193,17 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             @Override
             public void onFridgeClick(FridgeAdapter.ViewHolder holder, View view, int position) {
                 //선택에 따라 품목 부분 가져오기
-                FridgeData name = fridgeAdapter.getItem(position);
+                //FridgeData name = fridgeAdapter.getItem(position);
+                fridgeData = fridgeAdapter.getItem(position);
                 selected = findViewById(R.id.myFridge);
-                selected.setText(name.getFriId());
+                selected.setText(fridgeData.getFriId());
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("fridgeData",fridgeAdapter.getItem(position));
                 mHome.setArguments(bundle);
                 mHome.setHomeData();
+
+                authority = fridgeData.getFriSetAuthority();
 
                 fridgeIntent.putExtra("fridgeData",fridgeAdapter.getItem(position));
 
@@ -259,7 +265,12 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
                 case R.id.add:
                     item.setChecked(true);
-                    showItemAddDialog(); //Dialog 함수 호출
+
+                    if(authority.equals("guest")){
+                        Toast.makeText(MainActivity.this, "품목 등록 권한이 없습니다.", Toast.LENGTH_SHORT).show();
+                    }else{
+                        showItemAddDialog(); //Dialog 함수 호출
+                    }
                     break;
 
                 case R.id.myPage:
@@ -369,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         Spinner fridgeSpinner = mSelfAddDialog.findViewById(R.id.fridgeSelectSpinner);
 
         ArrayAdapter<FridgeData> mAdapter = new ArrayAdapter<FridgeData>(
-                this, android.R.layout.simple_spinner_item, fridgeItems);
+                this, android.R.layout.simple_spinner_item, fridgeSpinnerItems);
         mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         fridgeSpinner.setAdapter(mAdapter);
@@ -377,24 +388,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         fridgeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectFridgeItem = (String) fridgeSpinner.getSelectedItem(); //선택된 냉장고명
-
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try{
-                            JSONObject jsonObject = new JSONObject(response);
-                            settingData.setFridgeIndex(jsonObject.getInt("friIDX")); //선택된 냉장고 인덱스
-
-                        }catch (Exception e){
-
-                        }
-                    }
-                };
-                GetFridgeSettingRequest getFridgeSetting = new GetFridgeSettingRequest(selectFridgeItem, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                queue.add(getFridgeSetting);
-
+                fridgeData = (FridgeData) fridgeSpinner.getItemAtPosition(position);
+                //Log.i("냉장고 스피너 ","냉장고 인덱스: " + fridgeData.getFriIdx() + "냉장고 명: " + fridgeData.getFriId());
             }
 
             @Override
@@ -448,19 +443,19 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                         EditText mFoodTotal = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.editFoodTotalCount);
                         TextView mFoodExpDate = recyclerView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.selfAddFoodExpDate);
 
-                        friIdx = String.valueOf(settingData.getFridgeIndex()); //냉장고 인덱스
+                        friIdx = String.valueOf(fridgeData.getFriIdx()); //냉장고 인덱스
                         foodName = mFoodName.getText().toString(); //사용자 입력 식품명
                         foodNum = mFoodTotal.getText().toString(); //사용자 입력 개수
                         foodExp = mFoodExpDate.getText().toString(); //사용자 입력 남은 날짜
                         foodRegistrant = user.getNickname(); //등록인
 
-                        //TODO: 여러 품목 data를 반복적으로 삽입하려면?
                         if(TextUtils.isEmpty(foodName) != true && TextUtils.isEmpty(foodNum)!= true && TextUtils.isEmpty(foodExp) != true){ //카드뷰에 입력 데이터가 있을 시
 
                             //bundle로 data 넘기기 (품목 추가 시 바로 UI에 보이게 하는 용도)
                             Bundle bundle = new Bundle();
+                            bundle.putString("friIdx", friIdx);
                             bundle.putString("foodName", foodName);
-                            bundle.putInt("foodNum", Integer.parseInt(foodNum));
+                            bundle.putString("foodNum", foodNum);
                             bundle.putString("foodExp", foodExp);
 
                             mHome.setArguments(bundle);
@@ -526,7 +521,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
     //냉장고 추가하기 팝업창
     public void showFridgeAddDialog(){
-        // TODO: 프로젝트 병합 후 주석 해제
         addFridge = mFridgeAddDialog.findViewById(R.id.fridgeName);
         addFridge.setText(null);
 
@@ -614,10 +608,30 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         });
     }
 
+    /*냉장고 인덱스로 냉장고 이름을 얻는 함수
+    public void getFridgeName(String friIdx){
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try{
+                    JSONObject jsonObject = new JSONObject(response);
+                    fridgeData.setFriId(jsonObject.getString("friName")); //인덱스에 해당하는 냉장고 이름
+
+                }catch (Exception e){
+
+                }
+            }
+        };
+        FridgeNameRequest getFridgeName = new FridgeNameRequest(friIdx, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+        queue.add(getFridgeName);
+    }
+     */
+
     public void getMyFridge(String userIDX){
         FridgeCode fridgeCode = new FridgeCode();
         fridgeAdapter.itemClear();
-        String URL = "http://3.37.119.236:80/fridgeSet/fridge.php?userIDX="+userIDX; //local 경로
+        String URL = "http://3.37.119.236:80/fridgeSet/fridge.php?userIDX="+userIDX;
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(
                 Request.Method.POST,
                 URL,
@@ -628,21 +642,49 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                         try {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);
-                                FridgeData fridgeDatum = new FridgeData(
+                                fridgeData = new FridgeData(
                                         jsonObject.getInt("friIdx"),
                                         jsonObject.getString("friSetAuthority"),
                                         jsonObject.getString("friId"),
                                         fridgeCode.getCode(jsonObject.getInt("friIdx"))
                                 );
-                                fridgeAdapter.addItem(fridgeDatum); //냉장고 목록 데이터 추가
-                                //setFridgeAuthority(fridgeDatum.getFriSetAuthority()); //냉장고 권한에 따른 기능 제한 함수
-                                Log.i("test","결과 : "+fridgeDatum.toString());
+
+                                if(i == 0) { //내가 가진 첫번째 냉장고
+
+                                    selected = findViewById(R.id.myFridge);
+                                    selected.setText(fridgeData.getFriId()); //냉장고 이름 셋팅
+
+                                    System.out.println("첫번째 냉장고명: "+ fridgeData.getFriId());
+
+                                    //home으로 냉장고 객체 전달
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("fridgeData", fridgeData);
+                                    mHome.setArguments(bundle);
+                                    mHome.setHomeData();
+
+                                    authority = fridgeData.getFriSetAuthority();
+                                }
+
+                                fridgeAdapter.addItem(fridgeData); //냉장고 목록 데이터 추가
+
+                                //스피너 데이터 셋팅
+                                fridgeSpinnerItems.add(new FridgeData(fridgeData.getFriIdx(), fridgeData.getFriId()));
+                                //fridgeIdxItems.add(String.valueOf(fridgeData.getFriIdx()));
+
+                                mHome.setHomeData();
+
+                                Log.i("test","결과 : "+fridgeData.toString());
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (Exception e) {
                             e.printStackTrace();
+                        }
+
+                        if(response.length() == 0){ //내가 가진 냉장고가 없으면
+                            addBasicFridge(); //기본 냉장고 추가 함수 실행
+
                         }
                     }
                 }, new Response.ErrorListener() { //리퀘스트 실패했을 때 실행하는 부분
@@ -681,6 +723,56 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         snsRequest snsRequest = new snsRequest(type, email, responseListener);
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(snsRequest);
+    }
+
+    //기본 냉장고 함수
+    public void addBasicFridge(){
+        // 기본 냉장고
+       // if(fridgeData.getFriIdx() == 0){ //선택된 냉장고 인덱스가 없으면 실행 (내 소유의 냉장고 x)
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("기본 냉장고 추가").setMessage("기본 냉장고가 추가됩니다.");
+
+            builder.setPositiveButton("확인", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    //Toast.makeText(getApplicationContext(), "기본 냉장고 생성", Toast.LENGTH_SHORT).show();
+                    String addFridgeName = "나의 냉장고";
+
+                    Response.Listener<String> responseListener = new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try{
+
+                            }catch (Exception e){
+
+                            }
+                        }
+                    };
+                    AddFridgeNameRequest addFridgeNameRequest = new AddFridgeNameRequest(addFridgeName, userIdx, responseListener);
+                    RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                    queue.add(addFridgeNameRequest);
+
+                    //현재 냉장고 데이터(품목, 냉장고명, 냉장고 리스트) 셋팅
+                    selected = findViewById(R.id.myFridge);
+                    selected.setText(fridgeData.getFriId()); //기본 냉장고 이름 셋팅
+
+                    getMyFridge(userIdx); //내 소유의 냉장고 데이터 배열
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("fridgeData", fridgeData);
+                    mHome.setArguments(bundle);
+                    mHome.setHomeData();
+
+                    authority = fridgeData.getFriSetAuthority();
+
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
     }
 
 
@@ -787,19 +879,4 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         CropImage.activity(null).setGuidelines(CropImageView.Guidelines.ON).start(MainActivity.this);
     }*/
 
-    public void setFridgeAuthority(String friSetAuthority){
-        switch (friSetAuthority) {
-            case "admin":
-                //visible
-                break;
-            case "member":
-                //visible
-                break;
-            case "guest":
-                //품목 삭제, 확인
-                // 품목 추가는 업로드 할 냉장고 선택 시 권한을 가져와서 guest면 등록 불가하다는 메시지 뜨게
-                break;
-        }
-
-    }
 }

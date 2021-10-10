@@ -19,14 +19,14 @@ public class FridgeData implements Serializable{
         this.friCode = friCode;
     }
 
+    public FridgeData(int friIdx, String friId) { //key, value
+        this.friIdx = friIdx;
+        this.friId = friId;
+    }
+
     @Override
     public String toString() {
-        return "FridgeData{" +
-                "friIdx=" + friIdx +
-                ", friSetAuthority='" + friSetAuthority + '\'' +
-                ", friId=" + friId +
-                ", friCode='" + friCode + '\'' +
-                '}';
+        return friId;
     }
 
     public int getFriIdx() {

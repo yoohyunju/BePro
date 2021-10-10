@@ -74,14 +74,14 @@ public class HomeActivity extends Fragment {
     ArrayList<FoodItems> foodItems = new ArrayList<>();
     String[] items = {"유통기한 짧은 순", "등록 오래된 순", "등록 최신순"};
     String updateFoodIdx, updateFoodName, updateFoodNum, updateFoodMemo, updateFoodExp, updateFoodRemainDate;
-    String formatMonth, formatDay;
+    String formatMonth, formatDay, fridgeAuthority;
 
     MainActivity mMain = new MainActivity();
     //FridgeSettingData settingData = new FridgeSettingData();
 
     FridgeData fridgeData;
     int friIdx, foodIdx, foodNum;
-    String foodName, foodRegistrant, foodExp, foodDate, foodRemainDate, foodMemo, selfAddFoodName, selfAddFoodNum, selfAddFoodExp;
+    String foodName, foodRegistrant, foodExp, foodDate, foodRemainDate, foodMemo, selfAddFoodName, selfAddFoodNum, selfAddFoodExp, selfAddFriIdx;
 
     //달력 관련 변수 정의
     private LinearLayout datePickerBtn;
@@ -112,16 +112,7 @@ public class HomeActivity extends Fragment {
         foodAdapter = new FoodAdapter(getContext(), foodItems);
         mHomeRecyclerView.setAdapter(foodAdapter);
 
-        //TODO: 다빈아 여기야!!ㅠㅠ help me~
-//        bundle = this.getArguments();
-//
-//        if (bundle != null) {
-//            bundle = getArguments();
-//            homeFriIdx = bundle.getString("homeFriIdx");
-//            foodItemSetting(homeFriIdx);
-//            Log.i("test","번들"+homeFriIdx);
-//        }
-        //foodItemSetting(fridgeData.getFriIdx());
+        setHomeData(); //홈 냉장고, 품목 데이터 셋팅
 
         //품목 검색창
         mSearchView = homeView.findViewById(R.id.searchView);
@@ -196,15 +187,20 @@ public class HomeActivity extends Fragment {
         return homeView;
     }
 
+    //선택한 냉장고 data 셋팅
     public void setHomeData(){
         bundle = getArguments();
 
         if (bundle != null) {
             fridgeData = (FridgeData)bundle.getSerializable("fridgeData");
-            foodItemSetting(fridgeData.getFriIdx());
+            foodItemSetting(fridgeData.getFriIdx()); //냉장고 인덱스 전달 후 품목 셋팅
             Log.i("test","번들"+fridgeData.toString());
+
+            fridgeAuthority = fridgeData.getFriSetAuthority(); //냉장고 권한
+
         }
     }
+
     public void itemSortFunc(int position){
         switch (position){
             case 0: //유통기한 짧은 순
@@ -274,6 +270,7 @@ public class HomeActivity extends Fragment {
 
         if (bundle != null){
             bundle = getArguments();
+            selfAddFriIdx = bundle.getString("friIdx");
             selfAddFoodName = bundle.getString("foodName");
             selfAddFoodNum = bundle.getString("foodNum");
             selfAddFoodExp = bundle.getString("foodExp");
@@ -281,8 +278,10 @@ public class HomeActivity extends Fragment {
             System.out.println("직접 입력 식품명: " + selfAddFoodName);
             System.out.println("직접 입력 남은기한: " + selfAddFoodExp);
 
-            //TODO: NPE 해결
-            foodItems.add(new FoodItems(selfAddFoodName, selfAddFoodExp, getRemainDate(selfAddFoodExp)));
+            //현재 선택된 냉장고와 품목 추가한 냉장고가 같을 때만 UI에 즉시 추가
+            if(Integer.parseInt(selfAddFriIdx) == fridgeData.getFriIdx()){
+                foodItems.add(new FoodItems(selfAddFoodName, selfAddFoodExp, getRemainDate(selfAddFoodExp)));
+            }
 
         }
     }
@@ -312,7 +311,7 @@ public class HomeActivity extends Fragment {
         Locale.setDefault(Locale.KOREAN);
 
         //JSON data를 각 오브젝트에 셋팅
-        detailFrigeName.setText(String.valueOf(item.getFriIdx()));
+        detailFrigeName.setText(fridgeData.getFriId());
         detailFoodName.setText(item.getFoodName());
         detailFoodNum.setText(String.valueOf(item.getFoodNumber()));
         detailFoodRemainDate.setText(item.getFoodRemainDate() + "일");
@@ -336,8 +335,16 @@ public class HomeActivity extends Fragment {
             }
         });
 
+        //버튼 모음
+        mItemDetailCancelBtn = mDetailDialog.findViewById(R.id.itemDetailCancelBtn); //품목 정보 취소 버튼
+        mItemUpdateBtn = mDetailDialog.findViewById(R.id.itemUpdateBtn); //품목 정보 확인(수정) 버튼
+        mItemDeleteBtn = mDetailDialog.findViewById(R.id.itemDeleteBtn); //품목 삭제 버튼
+        mItemDetailRecipeBtn = mDetailDialog.findViewById(R.id.itemDetailRecipeBtn); //추천 레시피 버튼
+
+        setFridgeAuthority(fridgeAuthority); //권한에 따른 기능 제한 함수
+        System.out.println("현재 사용자 권한: "+ fridgeAuthority);
+
         //품목 정보 취소 버튼
-        mItemDetailCancelBtn = mDetailDialog.findViewById(R.id.itemDetailCancelBtn);
         mItemDetailCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -346,7 +353,6 @@ public class HomeActivity extends Fragment {
         });
 
         //품목 정보 확인(수정) 버튼
-        mItemUpdateBtn = mDetailDialog.findViewById(R.id.itemUpdateBtn);
         mItemUpdateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -377,7 +383,6 @@ public class HomeActivity extends Fragment {
         });
 
         //품목 삭제 버튼
-        mItemDeleteBtn = mDetailDialog.findViewById(R.id.itemDeleteBtn);
         mItemDeleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -391,7 +396,6 @@ public class HomeActivity extends Fragment {
         });
 
         //추천 레시피 버튼
-        mItemDetailRecipeBtn = mDetailDialog.findViewById(R.id.itemDetailRecipeBtn);
         mItemDetailRecipeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -659,5 +663,42 @@ public class HomeActivity extends Fragment {
         return result;
     }
 
+    //권한에 따른 기능 제한 함수
+    public void setFridgeAuthority(String friSetAuthority){
+        switch (friSetAuthority) {
+            case "admin":
+            case "member":
+                //textView 활성화
+                detailFoodName.setFocusableInTouchMode(true);
+                detailFoodName.setFocusable(true);
 
+                detailFoodNum.setFocusableInTouchMode(true);
+                detailFoodNum.setFocusable(true);
+
+                detailFoodMemo.setFocusableInTouchMode(true);
+                detailFoodMemo.setFocusable(true);
+
+                mItemUpdateBtn.setVisibility(View.VISIBLE); //품목 확인(수정) 버튼 비활성화
+                mItemDeleteBtn.setVisibility(View.VISIBLE); //품목 삭제 버튼 비활성화
+
+                break;
+
+            case "guest":
+                //textView 비활성화
+                detailFoodName.setClickable(false);
+                detailFoodName.setFocusable(false);
+
+                detailFoodNum.setClickable(false);
+                detailFoodNum.setFocusable(false);
+
+                detailFoodMemo.setClickable(false);
+                detailFoodMemo.setFocusable(false);
+
+                mItemUpdateBtn.setVisibility(View.GONE); //품목 확인(수정) 버튼 비활성화
+                mItemDeleteBtn.setVisibility(View.INVISIBLE); //품목 삭제 버튼 비활성화
+
+                break;
+        }
+
+    }
 }
