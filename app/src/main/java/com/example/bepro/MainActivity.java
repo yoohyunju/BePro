@@ -577,7 +577,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             }
         });
 
-        // TODO: 프로젝트 병합 후 주석 해제
         //냉장고 추가하기 확인 버튼
         mFridgeNameAddBtn = mFridgeAddDialog.findViewById(R.id.fridgeNameAddBtn);
         mFridgeNameAddBtn.setOnClickListener(new View.OnClickListener() {
@@ -585,7 +584,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             public void onClick(View v) {
                 String addFridgeName = addFridge.getText().toString();
                 Log.i("test","추가 이름 : " + addFridgeName);
-                //추가된 냉장고 db에 넣기, 나머지 DB 부분 처리
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -723,60 +721,10 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
     }
 
-    public void takePhoto(){
-        try {
-            file = createFile();
-            if (file.exists()) {
-                file.delete();
-            }
-            file.createNewFile();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-
-        if(Build.VERSION.SDK_INT >= 24) {
-            uri = FileProvider.getUriForFile(this, "org.techtown.capture.intent.fileprovider", file);
-        } else {
-            uri = Uri.fromFile(file);
-        }
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult(intent, CAMERA_RESULT_CODE);
-    }
-
-    private File createFile() {
-        String filename = "capture.jpg";
-        File outFile = new File(getExternalCacheDir(), filename);
-
-        return outFile;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode){
-            /*case CAMERA_RESULT_CODE:
-                try {
-                    Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
-                    inputImage = InputImage.fromBitmap(bitmap, 0);
-                    getText(inputImage);
-                    break;
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            case ALBUM_RESULT_CODE:
-                Uri uri = data.getData();
-                //url bitmap 으로 전환
-                try {
-                    testImage = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                inputImage = InputImage.fromBitmap(testImage, 0);
-                getText(inputImage);
-                break;*/
             case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
                 if (resultCode == RESULT_OK) {
