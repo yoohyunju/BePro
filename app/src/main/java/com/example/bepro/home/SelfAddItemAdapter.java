@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bepro.MainActivity;
 import com.example.bepro.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,10 +41,10 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
     @Override
     // 뷰홀더가 재활용 될 시 호출, 데이터만 바꿔줌
     public void onBindViewHolder(@NonNull @NotNull ViewHolder viewHolder, final int position) {
-        //FoodItems foodItem = items.get(position);
-        //viewHolder.setItem(foodItem);
+        FoodItems foodItem = items.get(position);
+        viewHolder.setItem(foodItem);
 
-        //viewHolder.mFoodName.setText(items.get(position).getFoodName()); //식품명
+        viewHolder.mFoodName.setText(items.get(position).getFoodName()); //식품명
         //viewHolder.mFoodTotal.setText(items.get(position).getFoodTotalCount()); //개수
         //viewHolder.mFoodRemainDate.setText(items.get(position).getFoodRemainDate()); //남은날짜
         //viewHolder.tvFoodExp.setText(foodItem.getFoodExpiryDate()); //유통기한
@@ -121,7 +122,7 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
             super(itemView);
 
             //뷰객체에 들어있는 텍스트뷰 참조
-            //mFoodName = itemView.findViewById(R.id.editAddFoodName); //식품명
+            mFoodName = itemView.findViewById(R.id.editAddFoodName); //식품명
             //mFoodTotal = itemView.findViewById(R.id.editFoodTotalCount); //개수
             //mFoodRemainDate = itemView.findViewById(R.id.selfAddFoodRemainDate); //남은날짜
 

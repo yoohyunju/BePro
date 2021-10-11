@@ -84,7 +84,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity implements AutoPermissionsListener {
+public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager; //앱 fragment에서 작업을 추가, 삭제, 교체하고 백 스택에 추가하는 클래스
     private FragmentTransaction transaction; //fragment 변경을 위한 트랜잭션(작업단위)
 
@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
     //JSON DATA 받아올 변수
     String friIdx, foodName, foodNum, foodExp, foodRegistrant, text, authority;
+    public ArrayList<String> OCRText = new ArrayList<>();
 
     public String image, email, type, fridgeName, userIdx;
     ArrayList<Integer> fridgeIdx = new ArrayList<Integer>();
@@ -132,8 +133,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        AutoPermissions.Companion.loadAllPermissions(this, 101);
 
         mNavView = findViewById(R.id.navigation);
         mNavView.setOnItemSelectedListener(new ItemSelectedListener()); //BottomNavigationView에 이벤트 리스너 연결
@@ -231,22 +230,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[],
-                                           int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
-    }
-
-    @Override
-    public void onDenied(int requestCode, @NotNull String[] permissions) {
-
-    }
-
-    @Override
-    public void onGranted(int requestCode, @NotNull String[] permissions) {
-
-    }
 
     //BottomNavigationView 이벤트 리스너 구현
     private class ItemSelectedListener implements NavigationBarView.OnItemSelectedListener {
@@ -339,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                 });
                 builder.setCancelable(true);
                 builder.create().show();*/
+                //이미지 결과를 가지고 와서 크롭퍼 띄우는 코드 (카메라, 갤러리, 파일 중에서 이미지를 가져옴)
                 CropImage.activity(null).setGuidelines(CropImageView.Guidelines.ON).start(MainActivity.this);
             }
         });
@@ -407,6 +391,29 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
         SelfAddItemAdapter adapter = new SelfAddItemAdapter();
         recyclerView.setAdapter(adapter);
+
+        //OCR 인식 데이터 카드뷰에 셋팅
+        if(OCRText.isEmpty()){ //카메라 인식 데이터가 존재하지 않음
+            System.out.println("갤러리 문자 인식 데이터가 없습니다.");
+        } else{ //카메라 인식 데이터가 존재
+            String foodItem = "";
+
+            for(int i=0; i < OCRText.size(); i++){
+                if(OCRText.get(i).isEmpty()){ //품목 null 필터링
+                    continue;
+                }else {
+                    foodItem = OCRText.get(i);
+                    //System.out.println("문자 인식 데이터: "+ foodItem);
+
+                    adapter.addItem(new FoodItems(foodItem)); //카드뷰 추가
+                    adapter.notifyDataSetChanged();
+
+                }
+                //System.out.println("어댑터 아이템 개수: "+ adapter.getItemCount());
+
+            }
+
+        }
 
         //취소 버튼
         mSelfAddCancelBtn = mSelfAddDialog.findViewById(R.id.selfAddCancelBtn);
@@ -899,6 +906,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
     }
 
+    //크롭된 이미지 가지고 와서 OCR 인식
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -947,8 +955,11 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                                     for(Text.Line line : block.getLines()) {
                                         String lineText = line.getText();
                                         System.out.println(getOnlyKor(lineText));
+                                        OCRText.add(getOnlyKor(lineText));
                                     }
                                 }
+                                mAddItemDialog.dismiss(); //품목 등록창 닫기
+                                showSelfAddDialog(); //품목 직접 추가 팝업 실행
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {

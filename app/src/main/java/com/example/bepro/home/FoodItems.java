@@ -28,9 +28,8 @@ public class FoodItems {
                 '}';
     }
 
-    public FoodItems(String foodName, int foodNumber) {
+    public FoodItems(String foodName) {
         this.foodName = foodName;
-        this.foodNumber = foodNumber;
     }
 
     public FoodItems(String foodName, String foodExpiryDate, String foodRemainDate) {
