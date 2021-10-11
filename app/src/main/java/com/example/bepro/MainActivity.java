@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -123,6 +124,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     Uri uri;
     private static final int ALBUM_RESULT_CODE = 0; //앨범 선택
     private static final int CAMERA_RESULT_CODE = 101; //앨범 선택
+
+    int fridgePosition=0;
 
     Intent fridgeIntent;
     @Override
@@ -217,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         mFridgeSettingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fridgeIntent.putExtra("userData",(Serializable)user);
                 startActivity(fridgeIntent);
             }
         });
@@ -499,7 +501,10 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         mFridgeListDialog.setCanceledOnTouchOutside(false);
 
         mFridgeListDialog.show(); //Dialog 띄우기
-
+        Log.i("test","!!! == 냉장고 리스트 팝업 ==!!!"); //PLUS:지워
+        for(int i=0;i<fridgeAdapter.getItemCount();i++){
+            Log.i ("test","냉장고 리스트 : "+fridgeAdapter.getItem(i));
+        }
         mFridgeListCancelBtn = mFridgeListDialog.findViewById(R.id.fridgeListCancelBtn); //냉장고 리스트 취소 버튼
         mFridgeListCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -562,7 +567,51 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                 mFridgeInviteCodeAddBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mFridgeInviteAddDialog.dismiss();
+                        addFridge = mFridgeInviteAddDialog.findViewById(R.id.fridgeName);
+                        String code = addFridge.getText().toString();
+                        FridgeCode fridgeCode = new FridgeCode();
+//TODO:다비나여기
+                        String url= null;
+                        try {
+                            url = "http://3.37.119.236/fridgeSet/addFridgeUser.php?friIdx="+fridgeCode.getFriIdx(code)+"&userIdx="+user.getIndex();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),"초대코드확인 오류"+e,Toast.LENGTH_SHORT).show();
+                        }
+                        RequestQueue requestQueue;
+                        StringRequest request = new StringRequest(
+                                Request.Method.GET,
+                                url,
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        if(response.equals("success")) {
+                                            Toast.makeText(getApplicationContext(), "냉장고가 추가되었습니다." , Toast.LENGTH_SHORT).show();
+                                            mFridgeInviteAddDialog.dismiss();
+                                            getMyFridgeAndShowList(userIdx);
+                                        }
+                                        else {
+                                            Log.i("test", "냉장고 추가에 실패했습니다. 코드를 다시 확인해주세요.");
+                                            Toast.makeText(getApplicationContext(),"냉장고 추가에 실패했습니다. 코드를 다시 확인해주세요.",Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.i("test","코드로 추가하는거 에러!"+error);
+                                    }
+                                }
+                        );
+                        request.setShouldCache(false); //이전 결과 있어도 새로 요청하여 응답을 보여준다.
+                        request.setRetryPolicy(new com.android.volley.DefaultRetryPolicy(
+                                20000,
+                                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                        requestQueue = Volley.newRequestQueue(MainActivity.this); // requestQueue 초기화 필수
+                        requestQueue.add(request);
+                        Log.i("test","냉장고 코드로 추가 요청을 보냈어요. : "+url);
+
                     }
                 });
 
@@ -582,9 +631,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                     @Override
                     public void onResponse(String response) {
                         try{
-                            getMyFridge(userIdx);
-                            mFridgeAddDialog.dismiss();
-                            showFridgeListDialog(); //이전 다이얼로그 재시작
+                            getMyFridgeAndShowList(userIdx);
                         }catch (Exception e){
 
                         }
@@ -629,8 +676,6 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
      */
 
     public void getMyFridge(String userIDX){
-        FridgeCode fridgeCode = new FridgeCode();
-        fridgeAdapter.itemClear();
         String URL = "http://3.37.119.236:80/fridgeSet/fridge.php?userIDX="+userIDX;
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(
                 Request.Method.POST,
@@ -640,6 +685,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
+                            FridgeCode fridgeCode = new FridgeCode();
+                            fridgeAdapter.itemClear();
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 fridgeData = new FridgeData(
@@ -669,6 +716,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
                                 //스피너 데이터 셋팅
                                 fridgeSpinnerItems.add(new FridgeData(fridgeData.getFriIdx(), fridgeData.getFriId()));
+                                fridgeIntent.putExtra("fridgeData",fridgeAdapter.getItem(0));
                                 //fridgeIdxItems.add(String.valueOf(fridgeData.getFriIdx()));
 
                                 mHome.setHomeData();
@@ -698,6 +746,48 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             requestQueue.add(jsonArrayRequest);
     }
 
+    public void getMyFridgeAndShowList(String userIDX){
+        mFridgeAddDialog.dismiss();
+        String URL = "http://3.37.119.236:80/fridgeSet/fridge.php?userIDX="+userIDX;
+        JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(
+                Request.Method.POST,
+                URL,
+                null,
+                new Response.Listener<JSONArray>() { //리퀘스트 성공했을 때 실행하는 부분
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            FridgeCode fridgeCode = new FridgeCode();
+                            fridgeAdapter.itemClear();
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                fridgeData = new FridgeData(
+                                        jsonObject.getInt("friIdx"),
+                                        jsonObject.getString("friSetAuthority"),
+                                        jsonObject.getString("friId"),
+                                        fridgeCode.getCode(jsonObject.getInt("friIdx"))
+                                );
+                                fridgeAdapter.addItem(fridgeData); //냉장고 목록 데이터 추가
+                                Log.i("test","결과 : "+fridgeData.toString());
+                                showFridgeListDialog();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() { //리퀘스트 실패했을 때 실행하는 부분
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String TAG = "";
+                Log.e(TAG, "Error " + error.getMessage());
+            }
+        });
+        RequestQueue requestQueue= Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+    }
 
     public void getUser(){
         //DB에서 회원 데이터 받아오기
@@ -714,6 +804,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                     userIdx = jsonObject.getString("userIDX");
 
                     getMyFridge(user.getIndex());
+                    fridgeIntent.putExtra("userData",(Serializable)user);
                     Log.i("test","getUser()한 이후 값 = "+user.toString()); //PLUS
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -743,29 +834,24 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                     Response.Listener<String> responseListener = new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            try{
+                            //현재 냉장고 데이터(품목, 냉장고명, 냉장고 리스트) 셋팅
+                            selected = findViewById(R.id.myFridge);
+                            selected.setText(fridgeData.getFriId()); //기본 냉장고 이름 셋팅
 
-                            }catch (Exception e){
+                            getMyFridge(userIdx); //내 소유의 냉장고 데이터 배열
 
-                            }
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("fridgeData", fridgeData);
+                            mHome.setArguments(bundle);
+                            mHome.setHomeData();
+
+                            authority = fridgeData.getFriSetAuthority();
                         }
                     };
                     AddFridgeNameRequest addFridgeNameRequest = new AddFridgeNameRequest(addFridgeName, userIdx, responseListener);
                     RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
                     queue.add(addFridgeNameRequest);
 
-                    //현재 냉장고 데이터(품목, 냉장고명, 냉장고 리스트) 셋팅
-                    selected = findViewById(R.id.myFridge);
-                    selected.setText(fridgeData.getFriId()); //기본 냉장고 이름 셋팅
-
-                    getMyFridge(userIdx); //내 소유의 냉장고 데이터 배열
-
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("fridgeData", fridgeData);
-                    mHome.setArguments(bundle);
-                    mHome.setHomeData();
-
-                    authority = fridgeData.getFriSetAuthority();
 
                 }
             });

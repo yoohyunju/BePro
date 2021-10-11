@@ -30,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.bepro.FridgeData;
+import com.example.bepro.MainActivity;
 import com.example.bepro.R;
 import com.example.bepro.UserData;
 
@@ -71,7 +72,6 @@ public class FridgeMemberActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fridge_setting);
-
 
         Intent intent = getIntent();
         FridgeData fridgeData = (FridgeData)intent.getSerializableExtra("fridgeData");
