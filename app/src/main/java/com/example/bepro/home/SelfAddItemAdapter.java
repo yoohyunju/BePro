@@ -56,7 +56,7 @@ public class SelfAddItemAdapter extends RecyclerView.Adapter<SelfAddItemAdapter.
                 //TODO: 다른 카드뷰가 삭제되는 문제 수정
                 setPosition(position); //클릭한 아이템 position set
                 removeItem(position); //아이템 삭제 함수 호출
-                Toast.makeText(v.getContext(), position + "번째 아이템 삭제", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(), position + "번째 아이템 삭제", Toast.LENGTH_SHORT).show();
 
             }
         });

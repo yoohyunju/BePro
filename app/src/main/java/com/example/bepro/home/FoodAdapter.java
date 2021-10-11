@@ -17,8 +17,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
-public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> implements OnFoodItemClickListener, Filterable {
+public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> implements OnFoodItemClickListener {
     Context context;
     ArrayList<FoodItems> items = new ArrayList<FoodItems>();
     OnFoodItemClickListener listener;
@@ -98,7 +100,31 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
 
     }
 
-    //Filterable implement (품목 검색 로직)
+    // 초성 검색 함수
+    public void filter(String charText) {
+        List<FoodItems> itemFilterList = new ArrayList<>();
+        charText = charText.toLowerCase(Locale.getDefault()).trim();
+
+        if (charText.length() == 0) {
+            itemFilterList.addAll(items);
+        } else {
+            for (FoodItems foodItems : items) {
+                String iniName = HangulUtils.getHangulInitialSound(foodItems.getFoodName(), charText);
+                if (iniName.indexOf(charText) >= 0) { // 초성 검색어가 있으면 해당 데이터 리스트에 추가
+                    itemFilterList.add(foodItems);
+                } else if (foodItems.getFoodName().toLowerCase(Locale.getDefault()).contains(charText)) {
+                    itemFilterList.add(foodItems);
+                }
+                System.out.println("한글 검색: "+itemFilterList);
+            }
+        }
+        items.clear();
+        items.addAll(itemFilterList);
+        notifyDataSetChanged();
+    }
+
+    /*
+    //Filterable implement (품목 검색 로직) //영어만 검색 가능..
     @Override
     public Filter getFilter() {
         return itemFilter;
@@ -134,6 +160,8 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> im
 
         }
     };
+
+     */
 
     //아이템 뷰를 저장하는 뷰홀더 클래스
     static class ViewHolder extends RecyclerView.ViewHolder{

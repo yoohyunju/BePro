@@ -96,6 +96,10 @@ public class HomeActivity extends Fragment {
     TextView dateResult;
     LinearLayout datePicker;
 
+    TextView homeFoodName;
+    TextView homeFoodExpDate;
+    TextView homeFoodRemainDate;
+
     Bundle bundle;
     //onCreateView(): fragment가 자신의 UI를 처음으로 그릴 때 호출됨
     @Override
@@ -128,7 +132,7 @@ public class HomeActivity extends Fragment {
                     System.out.println("선택된 냉장고 인덱스: " + fridgeData.getFriIdx());
                     foodItemSetting(fridgeData.getFriIdx()); //검색창 비어있을 경우 전체 품목 출력
                 }else {
-                    foodAdapter.getFilter().filter(newText.toString());
+                    foodAdapter.filter(newText);
                 }
                 return false;
             }
@@ -317,15 +321,20 @@ public class HomeActivity extends Fragment {
         detailFoodRemainDate.setText(item.getFoodRemainDate() + "일");
 
         String foodDate = item.getFoodDate();
-        String[] foodDateArray = foodDate.split("\\s"); //공백 기준으로 문자열 잘라 등록일 날짜 추출
-        detailFoodDate.setText(foodDateArray[0]);
+
+        if(foodDate != null){ //NPE 방지
+            String[] foodDateArray = foodDate.split("\\s"); //공백 기준으로 문자열 잘라 등록일 날짜 추출
+            detailFoodDate.setText(foodDateArray[0]);
+        }
 
         detailFoodRegistrant.setText(item.getFoodRegistrant());
 
-        if(item.getFoodMemo().equals("null")){
-            detailFoodMemo.setText("");
-        }else
-            detailFoodMemo.setText(item.getFoodMemo());
+        if(item.getFoodMemo() != null){
+            if(item.getFoodMemo().equals("null")){
+                detailFoodMemo.setText("");
+            }else
+                detailFoodMemo.setText(item.getFoodMemo());
+        }
 
         //datePicker : 디데이 날짜 입력 버튼, 클릭시 DatePickerDialog 띄움
         datePicker.setOnClickListener(new View.OnClickListener() {
@@ -365,20 +374,22 @@ public class HomeActivity extends Fragment {
 
                 foodItemUpdate(updateFoodIdx, updateFoodName, updateFoodNum, updateFoodMemo, updateFoodExp);
 
-                TextView homeFoodName = mHomeRecyclerView.findViewById(R.id.foodName);
-                TextView homeFoodExpDate = mHomeRecyclerView.findViewById(R.id.foodExpiryDate);
-                TextView homeFoodRemainDate = mHomeRecyclerView.findViewById(R.id.foodRemainDate);
+                System.out.println("품목 수정 내용: "+updateFoodName + ", " + updateFoodExp + ", " + updateFoodRemainDate);
+
+                mDetailDialog.dismiss(); //다이얼로그 닫기
+
+                homeFoodName = mHomeRecyclerView.findViewById(R.id.foodName);
+                homeFoodExpDate = mHomeRecyclerView.findViewById(R.id.foodExpiryDate);
+                homeFoodRemainDate = mHomeRecyclerView.findViewById(R.id.foodRemainDate);
 
                 //수정 사항 UI 즉시 반영
                 homeFoodName.setText(updateFoodName);
                 homeFoodExpDate.setText(updateFoodExp);
                 homeFoodRemainDate.setText(updateFoodRemainDate);
+                foodAdapter.notifyDataSetChanged();
 
                 foodItemSetting(fridgeData.getFriIdx()); //수정 후 목록 재설정
                 itemSortFunc(mSpinner.getSelectedItemPosition()); // 품목 재정렬
-
-                //foodAdapter.notifyDataSetChanged();
-                mDetailDialog.dismiss(); //다이얼로그 닫기
             }
         });
 
