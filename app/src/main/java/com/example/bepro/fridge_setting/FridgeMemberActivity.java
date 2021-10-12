@@ -31,6 +31,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.bepro.FridgeData;
 import com.example.bepro.MainActivity;
+import com.example.bepro.MainIntent;
 import com.example.bepro.R;
 import com.example.bepro.UserData;
 
@@ -67,6 +68,19 @@ public class FridgeMemberActivity extends AppCompatActivity {
     //기타
     EditText fridgeName;
     TextView fridgeCodeText;
+    UserData userData;
+
+    //뒤로가기 이벤트
+    @Override
+    public void onBackPressed() {
+        Log.i("test","뒤로가기 발생");
+        super.onBackPressed();
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.putExtra("userImage", userData.getImage());
+        intent.putExtra("userEmail", userData.getEmail());
+        intent.putExtra("userType", userData.getType());
+        startActivity(intent); //액티비티 열기
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +89,10 @@ public class FridgeMemberActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         FridgeData fridgeData = (FridgeData)intent.getSerializableExtra("fridgeData");
-        UserData userData = (UserData)intent.getSerializableExtra("userData");
-        Log.i("test","fridgeData = "+fridgeData.toString());
+        userData = (UserData)intent.getSerializableExtra("userData");
+
+        Log.i("test","FridgeMemberActivity 실행 = "+fridgeData.toString());
+        Log.i("test","User = "+userData.toString());
 
         parseJSON=new ParseJSON(getApplicationContext());
         sendRequestImp = new SendRequestImp(getApplicationContext());
@@ -93,8 +109,8 @@ public class FridgeMemberActivity extends AppCompatActivity {
         ////////////냉장고 회원 리스트
         listView = (ListView)findViewById(R.id.friMemberListView); //리스트뷰 참조
         fridgeListCount = (TextView)findViewById(R.id.fridgeListCount);
-        friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp,FridgeMemberActivity.this,fridgeListCount,fridgeData.getFriSetAuthority()); //Adapter 생성
-
+        friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp,FridgeMemberActivity.this,fridgeListCount,fridgeData,userData); //Adapter 생성
+        friMemberListViewAdapter.setFridgeMemberActivity(this);
         ////////////데이터 요청
         sendRequest(fridgeData.getFriIdx());
 

@@ -1,6 +1,10 @@
 package com.example.bepro.fridge_setting;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,26 +18,38 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.bepro.FridgeData;
 import com.example.bepro.R;
+import com.example.bepro.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FridgeMemberListViewAdapter extends BaseAdapter {
+    FridgeMemberActivity fridgeMemberActivity;
     private List<FridgeMember> listViewItemList = new ArrayList<FridgeMember>();
-    String authority;
+    FridgeData fridgeData;
+    UserData userData;
     //쿼리문
     SendRequestImp sendRequestImp;
     //alertDialog
     FridgeDialog fridgeDialog;
+    AlertDialog.Builder builder;
 
-    FridgeMemberListViewAdapter(SendRequestImp sendRequestImp, Context fridgeContext, TextView fridgeListCount,String authority){
+    FridgeMemberListViewAdapter(SendRequestImp sendRequestImp, Context fridgeContext, TextView fridgeListCount,FridgeData fridgeData,UserData userData){
         this.sendRequestImp=sendRequestImp;
         fridgeDialog = new FridgeDialog(fridgeContext);
         this.fridgeListCount = fridgeListCount;
-        this.authority=authority;
-        Log.i("test","권한은"+authority);
+        this.fridgeData = fridgeData;
+        this.userData=userData;
+
+        builder = new AlertDialog.Builder(fridgeContext);
+    }
+
+    public void setFridgeMemberActivity(FridgeMemberActivity fridgeMemberActivity) {
+        this.fridgeMemberActivity = fridgeMemberActivity;
     }
 
     //이벤트 설정
@@ -95,7 +111,7 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
             userAuthority.setChecked(true);
         }
 
-        if(authority.equals("admin") && position!=0) {
+        if(fridgeData.getFriSetAuthority().equals("admin") && position!=0) {
             Log.i("test","amin if문 들어감");
             userAuthority.setVisibility(View.VISIBLE);
             userAuthorityText.setVisibility(View.GONE);
@@ -154,13 +170,14 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
                         Log.i("test", "값은" + listViewItem.getUserIdx() + "과" + listViewItem.getFriIdx());
 
                         //DB 삭제 쿼리
-                        //sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
+                        sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
 
                         //UI 다시 그리기
                         userSet.setVisibility(View.INVISIBLE);
                         listViewItemList.remove(position);
                         notifyDataSetChanged();
                         fridgeListCount.setText("냉장고 멤버 (" + getCount() + "명)");
+
                     }
                 }
             });
@@ -168,15 +185,55 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
             userAdmin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (fridgeDialog.showDialog("주인을 위임하시겠습니까?", listViewItem.getUserNickname() + " 님에게 주인을 위임하시겠습니까?\n(님은 member로 내려감.)", "위임하였습니다.")) {
-                        //닫는 과정 처리
-                        userSet.setVisibility(View.INVISIBLE);
+                    builder.setTitle("테스트");
+                    builder.setMessage(listViewItem.getUserNickname() + " 님에게 냉장고 주인 권한을 위임하시겠습니까?\n");
+                    builder.setPositiveButton("예",new DialogInterface.OnClickListener() { //사용자의 허락
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(context,"위임하였습니다.",Toast.LENGTH_SHORT).show();
 
-                        //현재 주인인 나의 권한을 다운하는 것 추가해야 함
-                        //sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"admin");
-                    }
+                            sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"admin");
+                            sendRequestImp.setFriAuthority(listViewItemList.get(0).getFriSetIdx(),"member");
+                            fridgeData.setFriSetAuthority("member");
+
+                            Intent intent = ((Activity)context).getIntent();
+                            ((Activity)context).finish(); //현재 액티비티 종료 실시
+                            ((Activity)context).overridePendingTransition(0, 0); //효과 없애기
+                            ((Activity)context).startActivity(intent); //현재 액티비티 재실행 실시
+                            ((Activity)context).overridePendingTransition(0, 0); //효과 없애기
+
+                            userSet.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                    builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    builder.show();
                 }
             });
+//            userAdmin.setOnClickListener(new View.OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    if (fridgeDialog.showDialog("주인을 위임하시겠습니까?", listViewItem.getUserNickname() + " 님에게 주인을 위임하시겠습니까?\n(님은 member로 내려감.)", "위임하였습니다.")) {
+//                        //닫는 과정 처리
+//                        userSet.setVisibility(View.INVISIBLE);
+//
+//                        //sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"admin");
+//                        //sendRequestImp.setFriAuthority(Integer.parseInt(idx),"member");
+//
+//                    }
+////                    Intent intent = ((Activity)context).getIntent();
+////                    ((Activity)context).finish(); //현재 액티비티 종료 실시
+////                    ((Activity)context).overridePendingTransition(0, 0); //효과 없애기
+////                    ((Activity)context).startActivity(intent); //현재 액티비티 재실행 실시
+////                    ((Activity)context).overridePendingTransition(0, 0); //효과 없애기
+//                }
+//
+//
+//            });
         }
         else {
             Log.i("test","amin if문 안들어감");
@@ -247,5 +304,9 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
         
     }
 
+    //dialog
+    public void showDialog(){
+
+    }
 }
 

@@ -9,9 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -30,7 +28,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,8 +60,6 @@ import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions;
-import com.pedro.library.AutoPermissions;
-import com.pedro.library.AutoPermissionsListener;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -75,7 +70,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -145,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         email = intent.getStringExtra("userEmail");
         type = intent.getStringExtra("userType");
 
+
         if(image != null)
             //SNS 로그인
             user.setImage(image);
@@ -208,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
                 authority = fridgeData.getFriSetAuthority();
 
                 fridgeIntent.putExtra("fridgeData",fridgeAdapter.getItem(position));
-
                 mFridgeListDialog.cancel();
             }
         });
@@ -220,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(fridgeIntent);
+                finish();
             }
         });
 
