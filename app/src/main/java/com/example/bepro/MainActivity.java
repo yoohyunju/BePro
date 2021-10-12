@@ -572,7 +572,7 @@ public class MainActivity extends AppCompatActivity {
                         addFridge = mFridgeInviteAddDialog.findViewById(R.id.fridgeName);
                         String code = addFridge.getText().toString();
                         FridgeCode fridgeCode = new FridgeCode();
-//TODO:다비나여기
+
                         String url= null;
                         try {
                             url = "http://3.37.119.236/fridgeSet/addFridgeUser.php?friIdx="+fridgeCode.getFriIdx(code)+"&userIdx="+user.getIndex();
@@ -591,6 +591,9 @@ public class MainActivity extends AppCompatActivity {
                                             Toast.makeText(getApplicationContext(), "냉장고가 추가되었습니다." , Toast.LENGTH_SHORT).show();
                                             mFridgeInviteAddDialog.dismiss();
                                             getMyFridgeAndShowList(userIdx);
+                                        }
+                                        else if(response.equals("overlap")){
+                                            Toast.makeText(getApplicationContext(), "이미 소속되어있는 냉장고입니다." , Toast.LENGTH_SHORT).show();
                                         }
                                         else {
                                             Log.i("test", "냉장고 추가에 실패했습니다. 코드를 다시 확인해주세요.");

@@ -192,7 +192,7 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
             userAdmin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    builder.setTitle("테스트");
+                    builder.setTitle("권한을 위임하시겠습니까?");
                     builder.setMessage(listViewItem.getUserNickname() + " 님에게 냉장고 주인 권한을 위임하시겠습니까?\n");
                     builder.setPositiveButton("예",new DialogInterface.OnClickListener() { //사용자의 허락
                         @Override

@@ -12,7 +12,10 @@ public class FridgeCode {
     private String key = "20211008KeyBePro";
 
     public String getCode(int fridgeIdx) throws Exception {
-        return encByKey(key,Integer.toString(fridgeIdx));
+        String code =encByKey(key,Integer.toString(fridgeIdx));
+        StringBuffer sb = new StringBuffer(code);
+        sb.deleteCharAt(code.length()-1);
+        return sb.toString();
     }
     public int getFriIdx(String fridgeCode) throws Exception {
         return Integer.parseInt(decByKey(key,fridgeCode));
