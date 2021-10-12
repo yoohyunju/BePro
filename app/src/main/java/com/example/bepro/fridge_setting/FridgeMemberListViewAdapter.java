@@ -35,12 +35,10 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
     //쿼리문
     SendRequestImp sendRequestImp;
     //alertDialog
-    FridgeDialog fridgeDialog;
     AlertDialog.Builder builder;
 
     FridgeMemberListViewAdapter(SendRequestImp sendRequestImp, Context fridgeContext, TextView fridgeListCount,FridgeData fridgeData,UserData userData){
         this.sendRequestImp=sendRequestImp;
-        fridgeDialog = new FridgeDialog(fridgeContext);
         this.fridgeListCount = fridgeListCount;
         this.fridgeData = fridgeData;
         this.userData=userData;
@@ -166,19 +164,28 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
             userOut.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (fridgeDialog.showDialog("회원을 내보내시겠습니까?", listViewItem.getUserNickname() + " 님을 정말로 내보내시겠습니까?", "내보냈습니다.")) {//닫는 과정 처리
-                        Log.i("test", "값은" + listViewItem.getUserIdx() + "과" + listViewItem.getFriIdx());
+                    builder.setTitle("회원을 내보내시겠습니까?");
+                    builder.setMessage(listViewItem.getUserNickname() + " 님을 정말로 내보내시겠습니까?\n");
+                    builder.setPositiveButton("예",new DialogInterface.OnClickListener() { //사용자의 허락
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(context,"내보냈습니다.",Toast.LENGTH_SHORT).show();
+                            //DB 삭제 쿼리
+                            sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
 
-                        //DB 삭제 쿼리
-                        sendRequestImp.deleteFriUser(listViewItem.getUserIdx(),listViewItem.getFriIdx());
-
-                        //UI 다시 그리기
-                        userSet.setVisibility(View.INVISIBLE);
-                        listViewItemList.remove(position);
-                        notifyDataSetChanged();
-                        fridgeListCount.setText("냉장고 멤버 (" + getCount() + "명)");
-
-                    }
+                            //UI 다시 그리기
+                            userSet.setVisibility(View.INVISIBLE);
+                            listViewItemList.remove(position);
+                            notifyDataSetChanged();
+                            fridgeListCount.setText("냉장고 멤버 (" + getCount() + "명)");
+                        }
+                    });
+                    builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    builder.show();
                 }
             });
             //클릭했을 때 권한 위임 이벤트 발생
@@ -213,27 +220,6 @@ public class FridgeMemberListViewAdapter extends BaseAdapter {
                     builder.show();
                 }
             });
-//            userAdmin.setOnClickListener(new View.OnClickListener() {
-//
-//                @Override
-//                public void onClick(View v) {
-//                    if (fridgeDialog.showDialog("주인을 위임하시겠습니까?", listViewItem.getUserNickname() + " 님에게 주인을 위임하시겠습니까?\n(님은 member로 내려감.)", "위임하였습니다.")) {
-//                        //닫는 과정 처리
-//                        userSet.setVisibility(View.INVISIBLE);
-//
-//                        //sendRequestImp.setFriAuthority(listViewItem.getFriSetIdx(),"admin");
-//                        //sendRequestImp.setFriAuthority(Integer.parseInt(idx),"member");
-//
-//                    }
-////                    Intent intent = ((Activity)context).getIntent();
-////                    ((Activity)context).finish(); //현재 액티비티 종료 실시
-////                    ((Activity)context).overridePendingTransition(0, 0); //효과 없애기
-////                    ((Activity)context).startActivity(intent); //현재 액티비티 재실행 실시
-////                    ((Activity)context).overridePendingTransition(0, 0); //효과 없애기
-//                }
-//
-//
-//            });
         }
         else {
             Log.i("test","amin if문 안들어감");
