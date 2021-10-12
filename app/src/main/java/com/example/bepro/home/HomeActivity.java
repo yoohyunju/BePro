@@ -567,7 +567,7 @@ public class HomeActivity extends Fragment {
         Calendar expDate = Calendar.getInstance();
         expDate.setTime(date); //품목 유통기한
 
-        long diffDays = expDate.getTimeInMillis()/ ONE_DAY - getToday.getTimeInMillis()/ ONE_DAY;
+        long diffDays = expDate.getTimeInMillis()/ ONE_DAY - getToday.getTimeInMillis()/ ONE_DAY + 1; //날짜 오차 해결
 
         if(diffDays > 0){
             remainDate = String.valueOf(diffDays);
