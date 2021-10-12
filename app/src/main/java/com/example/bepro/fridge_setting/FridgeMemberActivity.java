@@ -1,7 +1,9 @@
 package com.example.bepro.fridge_setting;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -31,6 +33,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.bepro.FridgeData;
 import com.example.bepro.MainActivity;
+
 import com.example.bepro.R;
 import com.example.bepro.UserData;
 
@@ -59,7 +62,7 @@ public class FridgeMemberActivity extends AppCompatActivity {
     TextView fridgeListCount;
 
     //alertDialog
-    FridgeDialog fridgeDialog;
+    AlertDialog.Builder builder;
 
     //fridgeCodeDialog
     Dialog fridgeCodeDialog;
@@ -67,6 +70,19 @@ public class FridgeMemberActivity extends AppCompatActivity {
     //기타
     EditText fridgeName;
     TextView fridgeCodeText;
+    UserData userData;
+
+    //뒤로가기 이벤트
+    @Override
+    public void onBackPressed() {
+        Log.i("test","뒤로가기 발생");
+        super.onBackPressed();
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.putExtra("userImage", userData.getImage());
+        intent.putExtra("userEmail", userData.getEmail());
+        intent.putExtra("userType", userData.getType());
+        startActivity(intent); //액티비티 열기
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,13 +91,15 @@ public class FridgeMemberActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         FridgeData fridgeData = (FridgeData)intent.getSerializableExtra("fridgeData");
-        UserData userData = (UserData)intent.getSerializableExtra("userData");
-        Log.i("test","fridgeData = "+fridgeData.toString());
+        userData = (UserData)intent.getSerializableExtra("userData");
+        Log.i("test","FridgeMemberActivity 실행 = "+fridgeData.toString());
+        Log.i("test","User = "+userData.toString());
+
+        builder = new AlertDialog.Builder(this);
 
         parseJSON=new ParseJSON(getApplicationContext());
         sendRequestImp = new SendRequestImp(getApplicationContext());
 
-        fridgeDialog = new FridgeDialog(FridgeMemberActivity.this);
         fridgeCodeDialog = new Dialog(FridgeMemberActivity.this);
         fridgeCodeDialog.setContentView(R.layout.fridge_code_popup);
 
@@ -93,8 +111,8 @@ public class FridgeMemberActivity extends AppCompatActivity {
         ////////////냉장고 회원 리스트
         listView = (ListView)findViewById(R.id.friMemberListView); //리스트뷰 참조
         fridgeListCount = (TextView)findViewById(R.id.fridgeListCount);
-        friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp,FridgeMemberActivity.this,fridgeListCount,fridgeData.getFriSetAuthority()); //Adapter 생성
-
+        friMemberListViewAdapter = new FridgeMemberListViewAdapter(sendRequestImp,FridgeMemberActivity.this,fridgeListCount,fridgeData,userData); //Adapter 생성
+        friMemberListViewAdapter.setFridgeMemberActivity(this);
         ////////////데이터 요청
         sendRequest(fridgeData.getFriIdx());
 
@@ -109,8 +127,27 @@ public class FridgeMemberActivity extends AppCompatActivity {
         fridgeQuit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fridgeDialog.showDialog("냉장고를 탈퇴하시겠습니까?","정말로 냉장고를 탈퇴하시겠습니까?","냉장고를 탈퇴하였습니다.");
-                sendRequestImp.deleteFriUser(Integer.parseInt(userData.getIndex()),fridgeData.getFriIdx()); //TODO : 변경 필요 : 현재 회원.
+                builder.setTitle("냉장고를 탈퇴하시겠습니까?");
+                builder.setMessage("정말로 냉장고를 탈퇴하시겠습니까?");
+                builder.setPositiveButton("예",new DialogInterface.OnClickListener() { //사용자의 허락
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(fridgeData.getFriSetAuthority().equals("admin")&&friMemberListViewAdapter.getCount()>1){
+                            Toast.makeText(getApplicationContext(), "권한 위임 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), "냉장고를 탈퇴하였습니다.", Toast.LENGTH_SHORT).show();
+                            sendRequestImp.deleteFriUser(Integer.parseInt(userData.getIndex()), fridgeData.getFriIdx());
+                            onBackPressed();
+                        }
+                    }
+                });
+                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder.show();
             }
         });
 
@@ -141,8 +178,28 @@ public class FridgeMemberActivity extends AppCompatActivity {
             fridgeDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    fridgeDialog.showDialog("냉장고를 삭제하시겠습니까?", "정말로 냉장고를 삭제하시겠습니까?\n30일 후 완전히 삭제가 됩니다.", "냉장고를 삭제하였습니다.");
-                    sendRequestImp.deleteFri(fridgeData.getFriIdx()); //TODO 변경 필요 : 현재 냉장고 인덱스 가져와서 넣기.
+                    builder.setTitle("냉장고를 삭제하시겠습니까?");
+                    builder.setMessage("정말로 냉장고를 삭제하시겠습니까?\n30일 후 완전히 삭제가 됩니다.");
+                    builder.setPositiveButton("예",new DialogInterface.OnClickListener() { //사용자의 허락
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(friMemberListViewAdapter.getCount()>1){
+                                Toast.makeText(getApplicationContext(),"회원을 비우고 다시 시도해주세요.",Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Toast.makeText(getApplicationContext(), "냉장고를 삭제하였습니다.", Toast.LENGTH_SHORT).show();
+                                sendRequestImp.deleteFriUser(Integer.parseInt(userData.getIndex()), fridgeData.getFriIdx());
+                                sendRequestImp.deleteFri(fridgeData.getFriIdx());
+                                onBackPressed();
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    builder.show();
                 }
             });
 
